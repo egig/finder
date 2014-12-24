@@ -1,8 +1,8 @@
 /*!
- * OpenFinder Jquery Plugin
+ * Drafterbit Finder Jquery Plugin
  * Version: 0.1.0
  * Author: egig <egigundari@gmail.com>
- * https://github.com/egig/openfinder
+ * https://github.com/drafterbit/finder
  *
  * Free file finder for web
  * make use of twbs and fontawesome.
