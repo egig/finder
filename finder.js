@@ -13,7 +13,7 @@
 ;(function ($, window, document, undefined) {
 
     // Create the defaults
-    var pluginName = "openFinder",
+    var pluginName = "finder",
         defaults = {
             width: '100%',
             height: 600,
