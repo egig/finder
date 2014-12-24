@@ -1,180 +1,267 @@
 <?php namespace Drafterbit;
 
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Gregwar\Image\Image;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder as SymfonyFinder;
-use Gregwar\Image\Image;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 
 class Finder {
-	
-	protected $root;
-	protected $fileSystem;
+    
+    /**
+     * Root of filesystem to browse;
+     *
+     * @var string
+     */
+    protected $root;
 
-	public function __construct($root, Filesystem $fileSystem = null)
-	{
-		$this->root = realpath($root);
-		$this->fileSystem = is_null($fileSystem) ? new Filesystem : $fileSystem;
-	}
+    /**
+     *
+     * Symfony Filesystem Component
+     *
+     * @var Symfony\Component\Filesystem\Filesystem
+     */
+    protected $fileSystem;
 
-	protected function createFinder()
-	{
-		return new SymfonyFinder;
-	}
+    /**
+     * The Constructor.
+     *
+     * @param string $root
+     * @param string Symfony\Component\Filesystem\Filesystem $fileSystem
+     */
+    public function __construct($root, Filesystem $fileSystem = null)
+    {
+        $this->root = realpath($root);
+        $this->fileSystem = is_null($fileSystem) ? new Filesystem : $fileSystem;
+    }
 
-	protected function createImage()
-	{
-		return new Image;
-	}
+    /**
+     * Crate symfony finder instance
+     *
+     * @return object
+     */
+    protected function createFinder()
+    {
+        return new SymfonyFinder;
+    }
 
-	protected function preparePath($path)
-	{
-		return realpath(implode(DIRECTORY_SEPARATOR, array($this->root, trim($path, DIRECTORY_SEPARATOR))));
-	}
+    /**
+     * Crate image instance
+     *
+     * @return object
+     */
+    protected function createImage()
+    {
+        return new Image;
+    }
 
-	public function ls($relativePath)
-	{
-		$path = $this->preparePath($relativePath);
+    /**
+     * Clean path, add root and fixes trailing slash, etc.
+     *
+     * @param string $path
+     * @return string
+     */
+    protected function preparePath($path)
+    {
+        return realpath(implode(DIRECTORY_SEPARATOR, array($this->root, trim($path, DIRECTORY_SEPARATOR))));
+    }
 
-		$finder = $this->createFinder();
-		$finder->in($path)->depth(0)->sortByType();
+    /**
+     * List file in specified path
+     *
+     * @param string $relativePath
+     * @return array
+     */
+    public function ls($relativePath)
+    {
+        $path = $this->preparePath($relativePath);
 
-		$items = array();
-		foreach ($finder as $item) {
+        $finder = $this->createFinder();
+        $finder->in($path)->depth(0)->sortByType();
 
-			$instance = $item;
+        $items = array();
+        foreach ($finder as $item) {
 
-			//if file is image, chekc iif there is thumbnail already exist
-			// create one if no thumbnail found
-			if ($this->isImage($instance)) {
+            $instance = $item;
 
-				$relative = $this->fileSystem->makePathRelative(pathinfo($instance->getRealPath(), PATHINFO_DIRNAME), $this->root);
+            // if file is image, chekk if there is thumbnail already exist
+            // create one if no thumbnail found
+            if ($this->isImage($instance)) {
 
-				$thumbnailPath = $this->root.'/.thumb/'.$relative.'/thumbnail_'.$instance->getFileName();
+                $relative = $this->fileSystem->makePathRelative(pathinfo($instance->getRealPath(), PATHINFO_DIRNAME), $this->root);
 
-				if(!is_file($thumbnailPath)) {
-					$this->createThumbnail($instance->getRealPath(), $thumbnailPath);
-				}
+                $thumbnailPath = $this->root.'/.thumb/'.$relative.'/thumbnail_'.$instance->getFileName();
 
-				$instance->isImage = true;
-				$instance->thumbnail = $thumbnailPath;
-			}
+                if(!is_file($thumbnailPath)) {
+                    $this->createThumbnail($instance->getRealPath(), $thumbnailPath);
+                }
 
-			$items[] = $this->format($instance);
-		}
-		
-		return $items;
-	}
+                $instance->isImage = true;
+                $instance->thumbnail = $thumbnailPath;
+            }
 
-	public function delete($relativePath)
-	{
-		$path = $this->preparePath($relativePath);
-		$instance = new \SplFileInfo($path);
+            $items[] = $this->format($instance);
+        }
+        
+        return $items;
+    }
 
-		$items = array();
+    /**
+     * Delete given path, either folder or file.
+     *
+     * @param string $relativePath
+     * @return array
+     */
+    public function delete($relativePath)
+    {
+        $path = $this->preparePath($relativePath);
+        $instance = new \SplFileInfo($path);
 
-		if ($this->isImage($path)) {
+        $items = array();
 
-			$relative = $this->fileSystem->makePathRelative(pathinfo($instance->getRealPath(), PATHINFO_DIRNAME), $this->root);
-			$thumbnailPath = $this->root.'/.thumb/'.$relative.'/thumbnail_'.$instance->getFileName();
+        if ($this->isImage($path)) {
 
-			if(is_file($thumbnailPath)) {
-				$this->fileSystem->remove($thumbnailPath);
-			}
-		}
+            $relative = $this->fileSystem->makePathRelative(pathinfo($instance->getRealPath(), PATHINFO_DIRNAME), $this->root);
+            $thumbnailPath = $this->root.'/.thumb/'.$relative.'/thumbnail_'.$instance->getFileName();
 
-		$this->fileSystem->remove($path);
-		$items['status'] = 'success';
-		$items['message'] = "$relativePath just deleted";
-		
-		return $items;
-	}
+            if(is_file($thumbnailPath)) {
+                $this->fileSystem->remove($thumbnailPath);
+            }
+        }
 
-	public function mkdir($path, $folderName)
-	{
-		try {
+        $this->fileSystem->remove($path);
+        $items['status'] = 'success';
+        $items['message'] = "$relativePath just deleted";
+        
+        return $items;
+    }
 
-			$path = $this->preparePath($path);
+    /**
+     * Create folder on specified parent
+     *
+     * @param string $path;
+     * @param string $folderName;
+     * @return array;
+     */
+    public function mkdir($path, $folderName)
+    {
+        try {
 
-			$this->fileSystem->mkdir($path.'/'.$folderName);
+            $path = $this->preparePath($path);
 
-			$data['created'] = $folderName;
-			$data['status'] = 'success';
-			$data['message'] = "Folder '$folderName' just created";
-			
-			return $data;
-		} catch (IOExceptionInterface $e) {
-			$data['message'] = $e->getMessage();
-			$data['status'] = 'error';
-		}
-		
-		return $data;
-	}
+            $this->fileSystem->mkdir($path.'/'.$folderName);
 
-	protected function format($file)
-	{
-		$path = trim($this->fileSystem->makePathRelative($file->getRealPath(), $this->root), '/');
+            $data['created'] = $folderName;
+            $data['status'] = 'success';
+            $data['message'] = "Folder '$folderName' just created";
+            
+            return $data;
+        } catch (IOExceptionInterface $e) {
+            $data['message'] = $e->getMessage();
+            $data['status'] = 'error';
+        }
+        
+        return $data;
+    }
 
-		$type = 'file';
+    /**
+     * Format data returned to client
+     *
+     * @param SplFileInfo $file
+     * @return array
+     */
+    protected function format($file)
+    {
+        $path = trim($this->fileSystem->makePathRelative($file->getRealPath(), $this->root), '/');
 
-		if($file->isDir()) {
-			$type = 'dir';
-		} else if (isset($file->isImage)) {
-			$type = 'image';
-		}
+        $type = 'file';
 
-		return array(
-			'thumbnail' => isset($file->thumbnail) ? $file->thumbnail : false,
-			'base64' => isset($file->thumbnail) ? $this->getBase64Image($file->thumbnail) : false,
-			'type' => $type,
-			'path' => $path,
-			'label' => $file->getFileName()
-		);
-	}
+        if($file->isDir()) {
+            $type = 'dir';
+        } else if (isset($file->isImage)) {
+            $type = 'image';
+        }
 
-	private function createThumbnail($src, $dest, $width = null, $height = 60)
-	{
-		$this->createImage()->fromFile($src)
-			    ->resize($width, $height)
-			    ->save($dest);
-	}
+        return array(
+            'thumbnail' => isset($file->thumbnail) ? $file->thumbnail : false,
+            'base64' => isset($file->thumbnail) ? $this->getBase64Image($file->thumbnail) : false,
+            'type' => $type,
+            'path' => $path,
+            'label' => $file->getFileName()
+        );
+    }
 
-	private function isImage($file) {
+    /**
+     * Creat image thumbnail and save in given destination
+     *
+     * @param string $source
+     * @param string $dest
+     * @param string $width
+     * @param string $height
+     * @return void
+     */
+    private function createThumbnail($src, $dest, $width = null, $height = 60)
+    {
+        $this->createImage()->fromFile($src)
+                ->resize($width, $height)
+                ->save($dest);
+    }
+
+    /**
+     * Check if a filepath is image or not
+     *
+     * @param string $file
+     */
+    private function isImage($file) {
         return false !== @exif_imagetype($file);
-	}
+    }
 
-	private function getBase64Image($path, $type = "jpg")
-	{
-		$mime = $type;
+    /**
+     * Get base64 string encoded image;
+     *
+     * @param string $path
+     * @param string $type
+     * @return string
+     */
+    private function getBase64Image($path, $type = "jpg")
+    {
+        $mime = $type;
         if ($mime == 'jpg') {
             $mime = 'jpeg';
         }
 
         return 'data:image/'.$mime.';base64,'.base64_encode(file_get_contents($path));
-	}
+    }
 
-	public function upload($relpath, $files) {
+    /**
+     * Upload file
+     *
+     * @param string $relpath
+     * @param array $files
+     * @return array
+     */
+    public function upload($relpath, $files) {
 
-		$path = $this->preparePath($relpath);
+        $path = $this->preparePath($relpath);
 
-		$returned = array();
+        $returned = array();
 
-		foreach ($files as $file) {
+        foreach ($files as $file) {
 
-			$array = array();
-			
-			if ($file instanceof UploadedFile ) {
+            $array = array();
+            
+            if ($file instanceof UploadedFile ) {
 
-				$name = $file->getClientOriginalName();
-				if($file->move($path, $name)) {
-					$array['status'] = 'ok';
-					$array['uploaded'] = $relpath.'/'.$name;
-				}
-			}
+                $name = $file->getClientOriginalName();
+                if($file->move($path, $name)) {
+                    $array['status'] = 'ok';
+                    $array['uploaded'] = $relpath.'/'.$name;
+                }
+            }
 
-			$returned[] = $array;
-		}
+            $returned[] = $array;
+        }
 
-		return $returned;
-	}
+        return $returned;
+    }
 }
