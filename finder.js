@@ -18,6 +18,7 @@
             width: '100%',
             height: 600,
             onSelect: false,
+            data: {}
         };
 
     // The actual plugin constructor
@@ -49,7 +50,7 @@
 
             // init data
             // this also make this._caches.currentPath = '/'
-            $('a[href="/"].of-node').click();            
+            $('a[href="/"].of-node').click();
         },
 
         listen: function (el, options) {
@@ -111,11 +112,13 @@
 
         listenUpload: function(p) {
 
-            $('#upload-form').ajaxForm({
-               data: {
+            var data = $.extend({
                     path: p,
                     op: 'upload'
-               },
+               }, this.options.data);
+
+            $('#upload-form').ajaxForm({
+               data: data,
                success: $.proxy(function(data){
                     this.refresh(p);
 
@@ -129,11 +132,13 @@
 
         listenCreateFolder: function(p) {
 
-            $('#new-folder-form').ajaxForm({
-               data: {
+            var data = $.extend({
                     path: p,
                     op: 'mkdir'
-               },
+               },  this.options.data);
+
+            $('#new-folder-form').ajaxForm({
+               data: data,
                success: $.proxy(function(data){
                     this.refresh(p);
                     $('#new-folder-dialog').modal('hide');
@@ -253,9 +258,12 @@
         },
 
         request: function(op, path) {
+
+            var data = $.extend({op: op, path: path }, this.options.data);
+
             $.ajax({
                 url: this.options.url,
-                data: {op: op, path: path },
+                data: data,
                 async: false
             }).done(function(res){
                 result = res;  
