@@ -15,6 +15,10 @@
     // Create the defaults
     var pluginName = "finder",
         defaults = {
+            url: null,
+            manage: true,
+            upload: true,
+            uploadUrl: null,
             width: '100%',
             height: 600,
             onSelect: false,
@@ -58,7 +62,31 @@
             $(el).on('click', 'a.of-node', $.proxy(this.toggle, this));
 
             // context menu
-            $(el).contextmenu({
+            if(options.manage) {
+               this.listenContextMenu(el);
+            }
+
+            this.listenUpload(this._caches.currentPath);
+            this.listenCreateFolder(this._caches.currentPath);
+
+            // item click
+            $(el).on('click', '.of-item a', function(e){
+                e.preventDefault();
+            });
+
+            // item image
+            $(el).on('click', '.img-item a', function(e){
+                e.preventDefault();
+
+                if($.isFunction(options.onISelect)) {
+                    options.onISelect(e);
+                }
+            });
+
+        },
+
+        listenContextMenu: function (el){
+             $(el).contextmenu({
               onItem: $.proxy(this.handleContext, this),
               before: function (e, element, target) {
 
@@ -90,24 +118,6 @@
                     return true;
                   }
             });
-
-            this.listenUpload(this._caches.currentPath);
-            this.listenCreateFolder(this._caches.currentPath);
-
-            // item click
-            $(el).on('click', '.of-item a', function(e){
-                e.preventDefault();
-            });
-
-            // item image
-            $(el).on('click', '.img-item a', function(e){
-                e.preventDefault();
-
-                if($.isFunction(options.onISelect)) {
-                    options.onISelect(e);
-                }
-            });
-
         },
 
         listenUpload: function(p) {
@@ -428,7 +438,6 @@
                 .html('<i class="fa fa-th"></i>');
                 */
 
-
             uploadBtn =  this.createEl('A', {
                     href: '#',
                     'data-toggle': 'modal',
@@ -447,9 +456,11 @@
 
             toolBar = this.createEl('DIV').addClass('row toolBar');
 
-            $(toolBar)
-                .append(uploadBtn);
-                //.append(searchForm)
+            if(this.options.upload) {
+                $(toolBar)
+                    .append(uploadBtn);
+                    //.append(searchForm)
+            }
 
             return toolBar;
         },
