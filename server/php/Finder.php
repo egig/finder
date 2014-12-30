@@ -213,7 +213,8 @@ class Finder {
      * @param string $file
      */
     private function isImage($file) {
-        return false !== @exif_imagetype($file);
+
+        return false !== @getimagesize($file);
     }
 
     /**
