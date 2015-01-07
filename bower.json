@@ -1,0 +1,25 @@
+{
+  "name": "finder",
+  "main": "finder.js",
+  "version": "0.0.0",
+  "homepage": "https://github.com/drafterbit/finder",
+  "authors": [
+    "egig <egigundari@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "latest",
+    "bootstrap": "latest",
+    "jquery-form": "latest",
+    "bootstrap-contextmenu": "latest",
+    "fontawesome": "latest",
+    "egig-notify": "latest"
+  }
+}
