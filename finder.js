@@ -10,7 +10,209 @@
  * Licensed under MIT
  * ========================================================= */
 
-;(function ($, window, document, undefined) {
+DT = {};
+
+DT.Element = {
+
+    // Create element
+    create: function(name, attr) {
+        el = document.createElement(name);
+
+        if(typeof attr != 'undefined') {
+            $.each( attr, function( key, value ) {
+                $(el).attr(key, value);
+            });
+        }
+
+        return $(el);
+    },
+
+    createToolbar: function(){
+        /*
+        settingBtn = this.createEl('A')
+            .addClass('tool btn btn-sm btn-default pull-right')
+            .html('<i class="fa fa-gears"></i>');
+
+        listBtn =  this.createEl('A')
+            .addClass('tool btn btn-sm btn-default pull-right')
+            .html('<i class="fa fa-list"></i>');
+
+        gridBtn = this.createEl('A')
+            .addClass('tool btn btn-sm btn-default pull-right')
+            .html('<i class="fa fa-th"></i>');
+            */
+
+        uploadBtn =  this.create('A', {
+                href: '#',
+                'data-toggle': 'modal',
+                'data-target': '#upload-dialog'
+            }).addClass('upload-btn tool btn btn-sm btn-success pull-left')
+            .html('<i class="fa fa-upload"></i> Upload');
+
+        /*searchForm = this.createEl('FORM').addClass('form-inline');
+        searchInput = this.createEl('INPUT', {
+            type: 'text',
+            name: 'q',
+            placeholder: 'Type to search'
+        }).addClass('tool input-sm form-control pull-right')
+        
+        $(searchForm).append(searchInput);*/
+
+        toolBar = this.create('DIV').addClass('row toolBar');
+
+        $(toolBar)
+            .append(uploadBtn);
+            //.append(searchForm)
+
+        return toolBar;
+    },
+
+    createUploadDialog: function(uploadUrl){
+        
+        var html =[
+            '<form method="POST" enctype="multipart/form-data" class="form clearfix" id="upload-form" action="'+uploadUrl+'">',
+            '<input multiple type="file" name="files[]" style="margin-bottom:10px;">',
+            '<div class="uploaded"></div>',
+            '<input type="submit" class="btn btn-primary btn-sm pull-right" value="Submit">',
+            '<a href="javascript:;" class="btn btn-default btn-sm pull-right" data-dismiss="modal" style="margin-right:10px;">Cancel</a>',
+            '</form>'].join('');
+
+        return this.createModal('upload-dialog', html);
+    },
+
+    createNewFolderDialog: function(createFolderUrl){
+
+        var html =[ 
+            '<form method="GET" class="form clearfix" id="new-folder-form" action="'+createFolderUrl+'">',
+            '<label class="control-label">Folder Name</label>',
+            '<input type="text" name="folder-name" value="New Folder" class="form-control new-folder-input" style="margin-bottom:10px;"/>',
+            '<input type="submit" class="btn btn-sm btn-primary pull-right" value="Submit"/>',
+            '<a href="#" style="margin-right:10px;" class="btn btn-sm btn-default pull-right" data-dismiss="modal">Cancel</a>',
+            '</form>'].join('');
+
+        return this.createModal('new-folder-dialog', html, 'modal-sm');
+    },
+
+    createModal: function(id, html, size) {
+
+        var size = size || '';
+
+        var modal = this.create('DIV', {
+            id: id
+        }).addClass('modal fade');
+        
+        var body = this.create('DIV').addClass('modal-body');
+
+        var dialog = this.create('DIV').addClass('modal-dialog '+ size);
+        var content = this.create('DIV').addClass('modal-content');
+
+        $(body).html(html);
+        $(content).append(body);
+        $(dialog).append(content);
+        $(modal).append(dialog);
+
+        return modal;
+    },
+
+    createBroContext: function() {
+        return this.createContextMenu('bro-context-menu', {
+            'new-folder': 'New Folder',
+        });
+    },
+
+    // right click context menu
+    createItemContext: function() {
+        return this.createContextMenu('item-context-menu', {
+            //'rename': 'Rename',
+            'delete': 'Delete...',
+            //'copy': 'Copy...',
+            //'move': 'Move...',
+        });
+    },
+
+    createContextMenu: function(id, menu){
+
+        var dropUL = this.create('UL', {role: 'menu'}).addClass('dropdown-menu');
+
+        $.each(menu, $.proxy(function(key, value) {
+            li = this.createContextAction(key, value);
+            $(dropUL).append(li);
+        }, this));
+
+        var contextWrapper = this.create('DIV', {
+            id: id
+        }).append(dropUL);
+
+        return contextWrapper;
+    },
+
+    // context action
+    createContextAction: function(act, text) {
+        a = this.create('A', {href: '#'}).text(text);
+        li = this.create('LI', {'data-action': act}).append(a);
+
+        return li;
+    },
+
+    createNode: function(path, label) {
+
+        var icon = this.create('I').addClass('fa fa-folder-o');
+        
+        var a = this.create('A', {href: path})
+            .addClass('of-node')
+            .append(icon)
+            .append(' '+label);
+
+        var li = this.create('LI').append(a);
+
+        return li;
+    },
+
+    createFileItem: function(file) {
+        
+        var li = this.create('LI').addClass('of-item of-context-holder');
+         li.data('context-target', '#item-context-menu');
+
+        if(file.type == 'image') {
+             var icon = this.create('IMG',{
+                src: file.base64
+             })
+                .addClass('icon')
+
+            $(li).addClass('img-item');
+
+        } else {
+
+            if(file.type == 'file') {
+                faClass = 'fa fa-file-o';
+                $(li).addClass('file-item');
+            
+            } else if(file.type == 'dir') {
+                faClass = 'fa fa-folder-o';
+
+                $(li).addClass('folder-item');
+            } else {
+                faClass = null;
+            }
+
+            var icon = this.create('I')
+                .addClass('icon')
+                .addClass(faClass);
+        }
+
+        var a = this.create('A', {href: file.path})
+            .append(icon)
+            .append('<br/>'+file.label);
+        
+        $(li).append(a);
+
+        return li;
+    }
+}
+
+DT._caches = Array();
+
+;(function ($, window, document, DT) {
 
     // Create the defaults
     var pluginName = "finder",
@@ -237,15 +439,15 @@
         },
 
         updateBrowser: function (data){
-            ul = this.createEl('UL');
+            ul = DT.Element.create('UL');
 
             for(i=0; i<data.length; i++ ) {
                     
-                node = this.createFileItem(data[i]);
+                node = DT.Element.createFileItem(data[i]);
                 $(ul).append(node);
             }
 
-            $(this.ctn.bro).html(ul)
+            $(this.browserArea).html(ul)
         },
 
         toggleSlides: function(a){
@@ -276,10 +478,10 @@
                 data: data,
                 async: false
             }).done(function(res){
-                result = res;  
+                DT._caches['result'] = res;
             });
 
-            return result;
+            return DT._caches['result'];
         },
 
         refresh: function(path) {
@@ -303,29 +505,15 @@
             }
         },
 
-        createNode: function(path, label) {
-
-            var icon = this.createEl('I').addClass('fa fa-folder-o');
-            
-            var a = this.createEl('A', {href: path})
-                .addClass('of-node')
-                .append(icon)
-                .append(' '+label);
-
-            var li = this.createEl('LI').append(a);
-
-            return li;
-        },
-
         buildRoot: function (data){
             
             if(data.length > 0) {
-                var ul =  this.createEl('UL');
+                var ul =  DT.Element.create('UL');
                 
                 for(i=0; i<data.length; i++ ) {
                     
                     if(data[i].type === 'dir') {
-                        var node = this.createNode(data[i].path, data[i].label);
+                        var node = DT.Element.createNode(data[i].path, data[i].label);
                         $(ul).append(node);
                     }
                 }
@@ -336,70 +524,33 @@
 
         },
 
-        createFileItem: function(file) {
-            
-            var li = this.createEl('LI').addClass('of-item of-context-holder');
-             li.data('context-target', '#item-context-menu');
-
-            if(file.type == 'image') {
-                 var icon = this.createEl('IMG',{
-                    src: file.base64
-                 })
-                    .addClass('icon')
-
-                $(li).addClass('img-item');
-
-            } else {
-
-                if(file.type == 'file') {
-                    faClass = 'fa fa-file-o';
-                    $(li).addClass('file-item');
-                
-                } else if(file.type == 'dir') {
-                    faClass = 'fa fa-folder-o';
-
-                    $(li).addClass('folder-item');
-                } else {
-                    faClass = null;
-                }
-
-                var icon = this.createEl('I')
-                    .addClass('icon')
-                    .addClass(faClass);
-            }
-
-            var a = this.createEl('A', {href: file.path})
-                .append(icon)
-                .append('<br/>'+file.label);
-            
-            $(li).append(a);
-
-            return li;
-        },
 
         createContainer: function(el, options) {
 
-            this.ctn = {};
-
-            this.ctn.nav = this.createEl('DIV').addClass('ctn-nav ctn');
+            var nav = DT.Element.create('DIV').addClass('ctn-nav ctn');
             
-            this.ctn.bro = this.createEl('DIV').addClass('ctn-bro ctn of-context-holder');
+            this.browserArea = DT.Element.create('DIV').addClass('ctn-bro ctn of-context-holder');
 
-            $(this.ctn.bro).data('context-target', '#bro-context-menu');
+            $(this.browserArea).data('context-target', '#bro-context-menu');
             
-            var row = this.createEl('DIV').addClass('row');
+            var row = DT.Element.create('DIV').addClass('row');
 
-            var wrapper = this.createEl('DIV').addClass('wrapper container-fluid');
+            var wrapper = DT.Element.create('DIV').addClass('wrapper container-fluid');
 
-            var toolBar = this.createToolbar();
-            var uploadDialog = this.createUploadDialog();
-            var newFolderDialog = this.createNewFolderDialog();
-            var itemContext = this.createItemContext();      
-            var broContext = this.createBroContext();      
+            var toolBar = DT.Element.createToolbar();
+            
+            var uploadUrl = this.options.uploadUrl || this.options.url;
+            var uploadDialog = DT.Element.createUploadDialog(uploadUrl);
+
+            var createFolderUrl = this.options.createFolderUrl || this.options.url;
+            var newFolderDialog = DT.Element.createNewFolderDialog(createFolderUrl);
+
+            var itemContext = DT.Element.createItemContext();
+            var broContext = DT.Element.createBroContext();
 
             $(row)
-                .append(this.ctn.nav)
-                .append(this.ctn.bro)
+                .append(nav)
+                .append(this.browserArea)
 
             $(wrapper)
                 .append(toolBar)
@@ -419,156 +570,8 @@
                 type: 'dir'
             }]);
 
-            this.ctn.nav.append(roots);
+            nav.append(roots);
         },
-
-        createToolbar: function(){
-
-            /*
-            settingBtn = this.createEl('A')
-                .addClass('tool btn btn-sm btn-default pull-right')
-                .html('<i class="fa fa-gears"></i>');
-
-            listBtn =  this.createEl('A')
-                .addClass('tool btn btn-sm btn-default pull-right')
-                .html('<i class="fa fa-list"></i>');
-
-            gridBtn = this.createEl('A')
-                .addClass('tool btn btn-sm btn-default pull-right')
-                .html('<i class="fa fa-th"></i>');
-                */
-
-            uploadBtn =  this.createEl('A', {
-                    href: '#',
-                    'data-toggle': 'modal',
-                    'data-target': '#upload-dialog'
-                }).addClass('upload-btn tool btn btn-sm btn-success pull-left')
-                .html('<i class="fa fa-upload"></i> Upload');
-
-            /*searchForm = this.createEl('FORM').addClass('form-inline');
-            searchInput = this.createEl('INPUT', {
-                type: 'text',
-                name: 'q',
-                placeholder: 'Type to search'
-            }).addClass('tool input-sm form-control pull-right')
-            
-            $(searchForm).append(searchInput);*/
-
-            toolBar = this.createEl('DIV').addClass('row toolBar');
-
-            if(this.options.upload) {
-                $(toolBar)
-                    .append(uploadBtn);
-                    //.append(searchForm)
-            }
-
-            return toolBar;
-        },
-
-        createUploadDialog: function(){
-
-            var uploadUrl = this.options.uploadUrl || this.options.url;
-            
-            var html =[
-                '<form method="POST" enctype="multipart/form-data" class="form clearfix" id="upload-form" action="'+uploadUrl+'">',
-                '<input multiple type="file" name="files[]" style="margin-bottom:10px;">',
-                '<div class="uploaded"></div>',
-                '<input type="submit" class="btn btn-primary btn-sm pull-right" value="Submit">',
-                '<a href="javascript:;" class="btn btn-default btn-sm pull-right" data-dismiss="modal" style="margin-right:10px;">Cancel</a>',
-                '</form>'].join('');
-
-            return this.createModal('upload-dialog', html);
-        },
-
-        createNewFolderDialog: function(){
-
-            var createFolderUrl = this.options.createFolderUrl || this.options.url;
-
-            var html =[ 
-                '<form method="GET" class="form clearfix" id="new-folder-form" action="'+createFolderUrl+'">',
-                '<label class="control-label">Folder Name</label>',
-                '<input type="text" name="folder-name" value="New Folder" class="form-control new-folder-input" style="margin-bottom:10px;"/>',
-                '<input type="submit" class="btn btn-sm btn-primary pull-right" value="Submit"/>',
-                '<a href="#" style="margin-right:10px;" class="btn btn-sm btn-default pull-right" data-dismiss="modal">Cancel</a>',
-                '</form>'].join('');
-
-            return this.createModal('new-folder-dialog', html, 'modal-sm');
-        },
-
-        createModal: function(id, html, size) {
-
-            var size = size || '';
-
-            var modal = this.createEl('DIV', {
-                id: id
-            }).addClass('modal fade');
-            
-            var body = this.createEl('DIV').addClass('modal-body');
-
-            var dialog = this.createEl('DIV').addClass('modal-dialog '+ size);
-            var content = this.createEl('DIV').addClass('modal-content');
-
-            $(body).html(html);
-            $(content).append(body);
-            $(dialog).append(content);
-            $(modal).append(dialog);
-
-            return modal;
-        },
-
-        createBroContext: function() {
-            return this.createContextMenu('bro-context-menu', {
-                'new-folder': 'New Folder',
-            });
-        },
-
-        // right click context menu
-        createItemContext: function() {
-            return this.createContextMenu('item-context-menu', {
-                //'rename': 'Rename',
-                'delete': 'Delete...',
-                //'copy': 'Copy...',
-                //'move': 'Move...',
-            });
-        },
-
-        createContextMenu: function(id, menu){
-
-            var dropUL = this.createEl('UL', {role: 'menu'}).addClass('dropdown-menu');
-
-            $.each(menu, $.proxy(function(key, value) {
-                li = this.createContextAction(key, value);
-                $(dropUL).append(li);
-            }, this));
-
-            var contextWrapper = this.createEl('DIV', {
-                id: id
-            }).append(dropUL);
-
-            return contextWrapper;
-        },
-
-        // context action
-        createContextAction: function(act, text) {
-            a = this.createEl('A', {href: '#'}).text(text);
-            li = this.createEl('LI', {'data-action': act}).append(a);
-
-            return li;
-        },
-
-        
-        // Create element
-        createEl: function(name, attr) {
-            el = document.createElement(name);
-
-            if(typeof attr != 'undefined') {
-                $.each( attr, function( key, value ) {
-                    $(el).attr(key, value);
-                });
-            }
-
-            return $(el);
-        }
     };
 
     // A really lightweight plugin wrapper around the constructor,
@@ -582,4 +585,4 @@
         });
     };
 
-})(jQuery, window, document);
+})(jQuery, window, document, DT);
