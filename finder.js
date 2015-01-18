@@ -82,7 +82,7 @@ DT.Element = {
 
     createNewFolderDialog: function(createFolderUrl){
 
-        var html =[ 
+        var html =[
             '<form method="GET" class="form clearfix" id="new-folder-form" action="'+createFolderUrl+'">',
             '<label class="control-label">Folder Name</label>',
             '<input type="text" name="folder-name" value="New Folder" class="form-control new-folder-input" style="margin-bottom:10px;"/>',
@@ -91,6 +91,11 @@ DT.Element = {
             '</form>'].join('');
 
         return this.createModal('new-folder-dialog', html, 'modal-sm');
+    },
+
+    createSubBrowserDialog: function(){
+        var html = '';
+        return this.createModal('sub-browser-dialog', html, 'modal-sm');
     },
 
     createModal: function(id, html, size) {
@@ -123,7 +128,8 @@ DT.Element = {
     // right click context menu
     createItemContext: function() {
         return this.createContextMenu('item-context-menu', {
-            //'rename': 'Rename',
+            'rename': 'Rename',
+            'move': 'Move...',
             'delete': 'Delete...',
             //'copy': 'Copy...',
             //'move': 'Move...',
@@ -171,7 +177,7 @@ DT.Element = {
     createFileItem: function(file) {
         
         var li = this.create('LI').addClass('of-item of-context-holder');
-         li.data('context-target', '#item-context-menu');
+        li.data('context-target', '#item-context-menu');
 
         if(file.type == 'image') {
              var icon = this.create('IMG',{
@@ -202,8 +208,8 @@ DT.Element = {
 
         var a = this.create('A', {href: file.path})
             .append(icon)
-            .append('<br/>'+file.label);
-        
+            .append('<div style="overflow: hidden;text-overflow: ellipsis;" class="file-name">'+file.label+'</div>');
+
         $(li).append(a);
 
         return li;
@@ -262,6 +268,28 @@ DT._caches = Array();
         listen: function (el, options) {
 
             $(el).on('click', 'a.of-node', $.proxy(this.toggle, this));
+                
+            var parent = this;
+            $('#sub-browser-dialog').on('click', 'a.of-node', function(e){
+
+                e.preventDefault();
+                var a = e.currentTarget;
+                var path = $(a).attr('href');
+
+                $('#sub-browser-dialog').find('.selected').removeClass('selected');
+                $(a).addClass('selected');
+
+                // load from
+                var data = parent.request('ls', '/'+path);
+                //save data
+                
+                ul = parent.buildTree(data);
+                $(a).siblings('ul').remove(); // hide first to slide
+                $(ul).hide(); // hide first to slide
+                $(a).after(ul);                    
+
+                parent.toggleSlides(a);
+            });
 
             // context menu
             if(options.manage) {
@@ -270,6 +298,7 @@ DT._caches = Array();
 
             this.listenUpload(this._caches.currentPath);
             this.listenCreateFolder(this._caches.currentPath);
+            this.listenRename();
 
             // item click
             $(el).on('click', '.of-item a', function(e){
@@ -285,6 +314,40 @@ DT._caches = Array();
                 }
             });
 
+        },
+
+        listenRename: function(){
+            var parent = this;
+            $(document).on('keyup', '.rename-input', function(e){
+                if(e.keyCode == 13 || e.which == 13) {
+
+                    var data = $.extend({
+                        op: 'rename',
+                        path:$(this).data('path'),
+                        newName: $(this).val()
+                    }, parent.options.data);
+
+                    $.ajax({
+                        url: parent.options.url,
+                        type:'POST',
+                        data:data,
+                        async: false,
+                        success: function(res){
+                            
+                            if(!res.error) {
+                               $( e.target).parent()
+                                    .siblings('a')
+                                    .children('.file-name')
+                                    .text(res.newName).show();
+
+                               $( e.target).parent().remove();
+                            }
+
+                            parent.refresh();
+                        }
+                    });
+                }
+            });
         },
 
         listenContextMenu: function (el){
@@ -370,17 +433,18 @@ DT._caches = Array();
             var path = $(a).attr('href');
 
             // load from
-            if($.inArray(a, this._caches.loaded) === -1) {
+            if($.inArray(path, this._caches.loaded) === -1) {
 
                 var data = this.request('ls', '/'+path);
                 //save data
                 this._caches.data[path] = data;
                 
-                ul = this.buildRoot(data);
+                ul = this.buildTree(data);
+                $(a).siblings('ul').remove(); // remove esixting
                 $(ul).hide(); // hide first to slide
                 $(a).after(ul);
                 
-                this._caches.loaded.push(a);
+                this._caches.loaded.push(path);
             }
 
             this._caches.currentPath = path;
@@ -390,6 +454,7 @@ DT._caches = Array();
             this.listenCreateFolder(path);
 
             this.toggleSlides(a);
+            this.updateBrowser(this._caches.data[path]);
             this.handleHight();
         },
 
@@ -423,7 +488,18 @@ DT._caches = Array();
                         return false;
                     }
 
-                    break;
+                break;
+                
+                case 'rename':
+                    var fileNameDiv = $(holder).find('.file-name');
+                    var file = fileNameDiv.text();
+                    fileNameDiv.hide();
+                    
+                    $(holder).append('<div><input data-path="'+path+'" type="text" style="height:24px;" class="form-control input-sm rename-input" value="'+file+'"></div>');
+                    $(holder).find('.rename-input').select();
+                    
+                break;
+
                 case 'new-folder':
 
                     $('#new-folder-dialog').on('shown.bs.modal', function () {
@@ -433,9 +509,54 @@ DT._caches = Array();
                     $('#new-folder-dialog').modal('show');
                     return;
                 break;
+                
+                case 'move':
+                    
+                    var tree = this.buildTree([{
+                        path: '/',
+                        label: '/',
+                        type: 'dir'
+                    }]);
+                    
+                    $('#sub-browser-dialog').on('shown.bs.modal', function (e) {
+                        $(this).find('.modal-body').html(tree);
+                        $(this).find('.modal-body').append('<div><button class="btn btn-sm btn-primary folder-selector">Select</button></div>');
+                    });
+
+                    var parent = this;
+                    $('#sub-browser-dialog').on('click', '.folder-selector', function(){
+                        var href = $('#sub-browser-dialog').find('.selected').attr('href');
+
+                        parent.move(path, href);
+                        $('#sub-browser-dialog').modal('hide');
+                    });
+
+                    $('#sub-browser-dialog').modal('show');
+
+                break;
                 default:
-                    break;
+                break;
             }
+        },
+
+        move: function(path, dest){
+            var data = $.extend({
+                op: 'move',
+                path:path,
+                dest: dest
+            }, this.options.data);
+
+            var parent = this;
+
+            $.ajax({
+                url: this.options.url,
+                type:'POST',
+                data:data,
+                async: false,
+                success: function(res){
+                    parent.refresh();
+                }
+            });            
         },
 
         updateBrowser: function (data){
@@ -465,8 +586,6 @@ DT._caches = Array();
                 i.addClass('fa-folder-open-o');
                 $(a).siblings('ul').slideDown('fast');                
             }
-
-            this.updateBrowser(this._caches.data[path]);
         },
 
         request: function(op, path) {
@@ -494,18 +613,25 @@ DT._caches = Array();
             this._caches.data[path] = data;
             this.updateBrowser(data);
 
+            //remove path from loaded
+            
+            for(var i = this._caches.loaded.length-1; i--;){
+                if (this._caches.loaded[i].trim() == path.trim() ) this._caches.loaded.splice(i, 1);
+            }
+
             this._caches.loaded = [];
             
-            $('a[href="'+path+'"]').siblings('ul').remove();
+            var a = $('a[href="'+path+'"]');
 
+            a.siblings('ul').remove();
 
-            if($('a[href="'+path+'"] i').hasClass('fa-folder-open-o')) {
-                $('a[href="'+path+'"]').click();
-                $('a[href="'+path+'"]').click();
+            if(a.children('i').hasClass('fa-folder-open-o')) {
+                a.click();
+                a.click();
             }
         },
 
-        buildRoot: function (data){
+        buildTree: function (data){
             
             if(data.length > 0) {
                 var ul =  DT.Element.create('UL');
@@ -523,7 +649,6 @@ DT._caches = Array();
             return null;
 
         },
-
 
         createContainer: function(el, options) {
 
@@ -544,6 +669,7 @@ DT._caches = Array();
 
             var createFolderUrl = this.options.createFolderUrl || this.options.url;
             var newFolderDialog = DT.Element.createNewFolderDialog(createFolderUrl);
+            var subBrowserDialog = DT.Element.createSubBrowserDialog();
 
             var itemContext = DT.Element.createItemContext();
             var broContext = DT.Element.createBroContext();
@@ -562,9 +688,10 @@ DT._caches = Array();
                 .after(itemContext)
                 .after(broContext)
                 .after(uploadDialog)
-                .after(newFolderDialog);
+                .after(newFolderDialog)
+                .after(subBrowserDialog);
 
-            var roots = this.buildRoot([{
+            var roots = this.buildTree([{
                 path: '/',
                 label: '/',
                 type: 'dir'
