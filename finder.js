@@ -162,14 +162,21 @@ DT.Element = {
 
     createNode: function(path, label) {
 
-        var icon = this.create('I').addClass('fa fa-folder-o');
-        
-        var a = this.create('A', {href: path})
-            .addClass('of-node')
-            .append(icon)
-            .append(' '+label);
+        var toggler = this.create('I').addClass('fa fa-folder-o');
 
-        var li = this.create('LI').append(a);
+        path = path === '/' ? '' : path;
+        
+        var a = this.create('A', {href: '#/'+path})
+            .addClass('of-node')
+            .append(' '+label);
+        
+        var aToggler = this.create('A', {href: '#'})
+            .addClass('toggler')
+            .append(toggler);
+
+        var li = this.create('LI')
+            .append(aToggler)
+            .append(a);
 
         return li;
     },
@@ -218,6 +225,74 @@ DT.Element = {
 
 DT._caches = Array();
 
+DT.File = {
+
+    url: null,
+    data: {},
+
+    list: function(path){
+        var data = $.extend({op: 'ls', path: path }, this.data);
+
+        $.ajax({
+            url: this.url,
+            data: data,
+            async: false
+        }).done(function(res){
+            DT._caches['result'] = res;
+        });
+
+        return DT._caches['result'];
+    },
+
+    move: function(path, dest){
+        
+        var data = $.extend({
+            op: 'move',
+            path:path,
+            dest: dest
+        }, this.data);
+
+        var parent = this;
+
+        $.ajax({
+            url: this.url,
+            type:'POST',
+            data:data,
+            async: false,
+        });
+    },
+
+    rename: function(path, newName){
+
+        var data = $.extend({
+            op: 'rename',
+            path:path,
+            newName: newName
+        }, this.data);
+
+        $.ajax({
+            url: this.url,
+            type:'POST',
+            data:data,
+            async: false,
+        });
+    },
+
+    delete: function(path){
+        var data = $.extend({op: 'delete', path: path }, this.data);
+
+        $.ajax({
+            url: this.url,
+            data: data,
+            async: false
+        }).done(function(res){
+            DT._caches['result'] = res;
+        });
+
+        return DT._caches['result'];
+    }
+}
+
 ;(function ($, window, document, DT) {
 
     // Create the defaults
@@ -256,39 +331,84 @@ DT._caches = Array();
             this._caches.loaded = [];
             this._caches.data = [];
             
+            DT.File.url = this.options.url;
+            DT.File.data = this.options.data;
+
             this.createContainer(this.element, this.options);
 
+            var path = window.location.hash.substr(1);
             this.listen(this.element, this.options);
 
-            // init data
-            // this also make this._caches.currentPath = '/'
-            $('a[href="/"].of-node').click();
+            if(!path) {
+                path = '/';
+                window.location.hash = '/';
+
+                var a = $('a[href="#'+path+'"]');
+                this.expand(a);
+            } else {
+
+                var x = path.split('/');
+                var s = '';
+                var p = '/';
+                while(x.length !== 0) {
+                    s = s+x.shift()+'/';
+                    s.trim();
+                    
+                    if(s != '/') {
+                        p = s.substr(0,s.length-1);
+                    }
+
+                    var a = $('a[href="#'+p+'"]');
+                    this.expand(a);
+                }
+            }
+            
+            this.open(path);
         },
 
         listen: function (el, options) {
 
-            $(el).on('click', 'a.of-node', $.proxy(this.toggle, this));
-                
-            var parent = this;
-            $('#sub-browser-dialog').on('click', 'a.of-node', function(e){
+            //$(el).on('click', 'a.of-node', $.proxy(this.toggle, this));
+            //window.addEventListener("hashchange", $.proxy(this.toggle, this));
 
+            var parent = this;
+
+            $(el).on('click', 'a.toggler', function(e){
+                e.preventDefault();
+
+                var a = $(this).siblings('.of-node');
+                
+                if($(this).children('i').hasClass('fa-folder-open-o')) {
+                    parent.collapse(a);
+                } else {
+                    parent.expand(a);
+                }
+
+                parent.handleHight();
+            });
+            
+            window.onpopstate = function(e){
+                var path = window.location.hash.substr(1);
+                parent.open(path);
+            };
+
+            $('#sub-browser-dialog').on('click', 'a.toggler', function(e){
+                e.preventDefault();
+
+                var a = $(this).siblings('.of-node');
+                
+                if($(this).children('i').hasClass('fa-folder-open-o')) {
+                    parent.collapse(a);
+                } else {
+                    parent.expand(a);
+                }
+            });
+
+            $('#sub-browser-dialog').on('click', 'a.of-node', function(e){
                 e.preventDefault();
                 var a = e.currentTarget;
-                var path = $(a).attr('href');
-
                 $('#sub-browser-dialog').find('.selected').removeClass('selected');
                 $(a).addClass('selected');
-
-                // load from
-                var data = parent.request('ls', '/'+path);
-                //save data
-                
-                ul = parent.buildTree(data);
-                $(a).siblings('ul').remove(); // hide first to slide
-                $(ul).hide(); // hide first to slide
-                $(a).after(ul);                    
-
-                parent.toggleSlides(a);
             });
 
             // context menu
@@ -316,36 +436,45 @@ DT._caches = Array();
 
         },
 
+        open: function(path) {
+
+            this._caches.currentPath = path;
+
+            if($.inArray(path, this._caches.loaded) === -1) {
+
+                var data = DT.File.list(path);
+                //save data
+                this._caches.data[path] = data;
+
+                this._caches.loaded.push(path);
+            }
+            
+            //upload
+            this.listenUpload(path);
+            this.listenCreateFolder(path);
+
+            this.updateBrowser(this._caches.data[path]);
+            this.handleHight();
+        },
+
         listenRename: function(){
             var parent = this;
             $(document).on('keyup', '.rename-input', function(e){
                 if(e.keyCode == 13 || e.which == 13) {
 
-                    var data = $.extend({
-                        op: 'rename',
-                        path:$(this).data('path'),
-                        newName: $(this).val()
-                    }, parent.options.data);
+                    var path = $(this).data('path');
+                    var newName = $(this).val();
 
-                    $.ajax({
-                        url: parent.options.url,
-                        type:'POST',
-                        data:data,
-                        async: false,
-                        success: function(res){
-                            
-                            if(!res.error) {
-                               $( e.target).parent()
-                                    .siblings('a')
-                                    .children('.file-name')
-                                    .text(res.newName).show();
+                    DT.File.rename(path, newName);
 
-                               $( e.target).parent().remove();
-                            }
+                   $( e.target).parent()
+                        .siblings('a')
+                        .children('.file-name')
+                        .text(newName).show();
 
-                            parent.refresh();
-                        }
-                    });
+                   $( e.target).parent().remove();
+
+                    parent.refresh();
                 }
             });
         },
@@ -426,36 +555,40 @@ DT._caches = Array();
             });
         },
 
-        toggle: function(e) {
-
-            e.preventDefault();
-            var a = e.currentTarget;
-            var path = $(a).attr('href');
+        expand: function(a) {
 
             // load from
+            var path = a.attr('href').substr(1);
+            var i = $(a).siblings('.toggler').children('i');
+
             if($.inArray(path, this._caches.loaded) === -1) {
 
-                var data = this.request('ls', '/'+path);
+                var data = DT.File.list(path);
                 //save data
                 this._caches.data[path] = data;
-                
-                ul = this.buildTree(data);
-                $(a).siblings('ul').remove(); // remove esixting
-                $(ul).hide(); // hide first to slide
-                $(a).after(ul);
-                
+
                 this._caches.loaded.push(path);
             }
 
-            this._caches.currentPath = path;
-            
-            //upload
-            this.listenUpload(path);
-            this.listenCreateFolder(path);
+            ul = this.buildTree(this._caches.data[path]);
 
-            this.toggleSlides(a);
-            this.updateBrowser(this._caches.data[path]);
-            this.handleHight();
+            $(a).siblings('ul').remove(); // remove esixting
+            $(ul).hide(); // hide first to slide
+            $(a).after(ul);
+
+            i.removeClass('fa-folder-o');
+            i.addClass('fa-folder-open-o');
+            $(a).siblings('ul').slideDown('fast');
+        },
+
+        collapse: function(a) {
+
+            var i = $(a).siblings('.toggler').children('i');
+
+            i.removeClass('fa-folder-open-o');
+            i.addClass('fa-folder-o');
+
+            $(a).siblings('ul').slideUp('fast');            
         },
 
         handleHight: function() {
@@ -477,7 +610,7 @@ DT._caches = Array();
                 case 'delete':
 
                     if(confirm('Are you sure you want to delete '+path+' ?, this cannot be undone.')) {
-                        var res = this.request('delete', path);
+                        var res = DT.File.delete(path);
                         this.refresh();
                         if(res.status == 'error') {
                             res.status = 'danger';
@@ -525,9 +658,11 @@ DT._caches = Array();
 
                     var parent = this;
                     $('#sub-browser-dialog').on('click', '.folder-selector', function(){
-                        var href = $('#sub-browser-dialog').find('.selected').attr('href');
+                        var href = $('#sub-browser-dialog').find('.selected').attr('href').substr(1);
 
-                        parent.move(path, href);
+                        DT.File.move(path, href);
+                        parent.refresh();
+
                         $('#sub-browser-dialog').modal('hide');
                     });
 
@@ -537,26 +672,6 @@ DT._caches = Array();
                 default:
                 break;
             }
-        },
-
-        move: function(path, dest){
-            var data = $.extend({
-                op: 'move',
-                path:path,
-                dest: dest
-            }, this.options.data);
-
-            var parent = this;
-
-            $.ajax({
-                url: this.options.url,
-                type:'POST',
-                data:data,
-                async: false,
-                success: function(res){
-                    parent.refresh();
-                }
-            });            
         },
 
         updateBrowser: function (data){
@@ -571,45 +686,13 @@ DT._caches = Array();
             $(this.browserArea).html(ul)
         },
 
-        toggleSlides: function(a){
-            i = $(a).children('i');
-            path = $(a).attr('href');
-            
-            if(i.hasClass('fa-folder-open-o')) {
-                i.removeClass('fa-folder-open-o');
-                i.addClass('fa-folder-o');
-
-                $(a).siblings('ul').slideUp('fast');
-            } else {
-
-                i.removeClass('fa-folder-o');
-                i.addClass('fa-folder-open-o');
-                $(a).siblings('ul').slideDown('fast');                
-            }
-        },
-
-        request: function(op, path) {
-
-            var data = $.extend({op: op, path: path }, this.options.data);
-
-            $.ajax({
-                url: this.options.url,
-                data: data,
-                async: false
-            }).done(function(res){
-                DT._caches['result'] = res;
-            });
-
-            return DT._caches['result'];
-        },
-
         refresh: function(path) {
 
             if(typeof path == 'undefined') {
                 path = this._caches.currentPath;
             }
 
-            data = this.request('ls', '/'+path);
+            data = DT.File.list('/'+path);
             this._caches.data[path] = data;
             this.updateBrowser(data);
 
