@@ -164,6 +164,55 @@ class Finder {
         return $data;
     }
 
+    public function rename($path, $newName)
+    {
+        try {
+
+            $path = $this->preparePath($path);
+
+            $tmp = explode(DIRECTORY_SEPARATOR, $path);
+            array_pop($tmp);
+            array_push($tmp, $newName);
+
+            $newPath = implode(DIRECTORY_SEPARATOR, $tmp);
+
+            $this->fileSystem->rename($path, $newPath);
+
+            $data['status'] = 'success';            
+            $data['newName'] = $newName;
+            
+            return $data;
+
+        } catch (IOExceptionInterface $e) {
+            $data['message'] = $e->getMessage();
+            $data['status'] = 'error';
+        }
+    }
+
+    public function move($path, $dest)
+    {
+        try {
+
+            $path = $this->preparePath($path);
+            $dest = $this->preparePath($dest);
+
+            $tmp = explode(DIRECTORY_SEPARATOR, $path);
+            $fileName = array_pop($tmp);
+
+            $dest .= DIRECTORY_SEPARATOR.$fileName;
+
+            $this->fileSystem->rename($path, $dest);
+
+            $data['status'] = 'success';
+            
+            return $data;
+
+        } catch (IOExceptionInterface $e) {
+            $data['message'] = $e->getMessage();
+            $data['status'] = 'error';
+        }
+    }
+
     /**
      * Format data returned to client
      *
