@@ -10,290 +10,7 @@
  * Licensed under MIT
  * ========================================================= */
 
-DT = {};
-
-DT.Element = {
-
-    // Create element
-    create: function(name, attr) {
-        el = document.createElement(name);
-
-        if(typeof attr != 'undefined') {
-            $.each( attr, function( key, value ) {
-                $(el).attr(key, value);
-            });
-        }
-
-        return $(el);
-    },
-
-    createToolbar: function(){
-        /*
-        settingBtn = this.createEl('A')
-            .addClass('tool btn btn-sm btn-default pull-right')
-            .html('<i class="fa fa-gears"></i>');
-
-        listBtn =  this.createEl('A')
-            .addClass('tool btn btn-sm btn-default pull-right')
-            .html('<i class="fa fa-list"></i>');
-
-        gridBtn = this.createEl('A')
-            .addClass('tool btn btn-sm btn-default pull-right')
-            .html('<i class="fa fa-th"></i>');
-            */
-
-        uploadBtn =  this.create('A', {
-                href: '#',
-                'data-toggle': 'modal',
-                'data-target': '#upload-dialog'
-            }).addClass('upload-btn tool btn btn-sm btn-success pull-left')
-            .html('<i class="fa fa-upload"></i> Upload');
-
-        /*searchForm = this.createEl('FORM').addClass('form-inline');
-        searchInput = this.createEl('INPUT', {
-            type: 'text',
-            name: 'q',
-            placeholder: 'Type to search'
-        }).addClass('tool input-sm form-control pull-right')
-        
-        $(searchForm).append(searchInput);*/
-
-        toolBar = this.create('DIV').addClass('row toolBar');
-
-        $(toolBar)
-            .append(uploadBtn);
-            //.append(searchForm)
-
-        return toolBar;
-    },
-
-    createUploadDialog: function(uploadUrl){
-        
-        var html =[
-            '<form method="POST" enctype="multipart/form-data" class="form clearfix" id="upload-form" action="'+uploadUrl+'">',
-            '<input multiple type="file" name="files[]" style="margin-bottom:10px;">',
-            '<div class="uploaded"></div>',
-            '<input type="submit" class="btn btn-primary btn-sm pull-right" value="Submit">',
-            '<a href="javascript:;" class="btn btn-default btn-sm pull-right" data-dismiss="modal" style="margin-right:10px;">Cancel</a>',
-            '</form>'].join('');
-
-        return this.createModal('upload-dialog', html);
-    },
-
-    createNewFolderDialog: function(createFolderUrl){
-
-        var html =[
-            '<form method="GET" class="form clearfix" id="new-folder-form" action="'+createFolderUrl+'">',
-            '<label class="control-label">Folder Name</label>',
-            '<input type="text" name="folder-name" value="New Folder" class="form-control new-folder-input" style="margin-bottom:10px;"/>',
-            '<input type="submit" class="btn btn-sm btn-primary pull-right" value="Submit"/>',
-            '<a href="#" style="margin-right:10px;" class="btn btn-sm btn-default pull-right" data-dismiss="modal">Cancel</a>',
-            '</form>'].join('');
-
-        return this.createModal('new-folder-dialog', html, 'modal-sm');
-    },
-
-    createSubBrowserDialog: function(){
-        var html = '';
-        return this.createModal('sub-browser-dialog', html, 'modal-sm');
-    },
-
-    createModal: function(id, html, size) {
-
-        var size = size || '';
-
-        var modal = this.create('DIV', {
-            id: id
-        }).addClass('modal fade');
-        
-        var body = this.create('DIV').addClass('modal-body');
-
-        var dialog = this.create('DIV').addClass('modal-dialog '+ size);
-        var content = this.create('DIV').addClass('modal-content');
-
-        $(body).html(html);
-        $(content).append(body);
-        $(dialog).append(content);
-        $(modal).append(dialog);
-
-        return modal;
-    },
-
-    createBroContext: function() {
-        return this.createContextMenu('bro-context-menu', {
-            'new-folder': 'New Folder',
-        });
-    },
-
-    // right click context menu
-    createItemContext: function() {
-        return this.createContextMenu('item-context-menu', {
-            'rename': 'Rename',
-            'move': 'Move...',
-            'delete': 'Delete...',
-            //'copy': 'Copy...',
-            //'move': 'Move...',
-        });
-    },
-
-    createContextMenu: function(id, menu){
-
-        var dropUL = this.create('UL', {role: 'menu'}).addClass('dropdown-menu');
-
-        $.each(menu, $.proxy(function(key, value) {
-            li = this.createContextAction(key, value);
-            $(dropUL).append(li);
-        }, this));
-
-        var contextWrapper = this.create('DIV', {
-            id: id
-        }).append(dropUL);
-
-        return contextWrapper;
-    },
-
-    // context action
-    createContextAction: function(act, text) {
-        a = this.create('A', {href: '#'}).text(text);
-        li = this.create('LI', {'data-action': act}).append(a);
-
-        return li;
-    },
-
-    createNode: function(path, label) {
-
-        var toggler = this.create('I').addClass('fa fa-folder-o');
-
-        path = path === '/' ? '' : path;
-        
-        var a = this.create('A', {href: '#/'+path})
-            .addClass('of-node')
-            .append(' '+label);
-        
-        var aToggler = this.create('A', {href: '#'})
-            .addClass('toggler')
-            .append(toggler);
-
-        var li = this.create('LI')
-            .append(aToggler)
-            .append(a);
-
-        return li;
-    },
-
-    createFileItem: function(file) {
-        
-        var li = this.create('LI').addClass('of-item of-context-holder');
-        li.data('context-target', '#item-context-menu');
-
-        if(file.type == 'image') {
-             var icon = this.create('IMG',{
-                src: file.base64
-             })
-                .addClass('icon')
-
-            $(li).addClass('img-item');
-
-        } else {
-
-            if(file.type == 'file') {
-                faClass = 'fa fa-file-o';
-                $(li).addClass('file-item');
-            
-            } else if(file.type == 'dir') {
-                faClass = 'fa fa-folder-o';
-
-                $(li).addClass('folder-item');
-            } else {
-                faClass = null;
-            }
-
-            var icon = this.create('I')
-                .addClass('icon')
-                .addClass(faClass);
-        }
-
-        var a = this.create('A', {href: file.path})
-            .append(icon)
-            .append('<div style="overflow: hidden;text-overflow: ellipsis;" class="file-name">'+file.label+'</div>');
-
-        $(li).append(a);
-
-        return li;
-    }
-}
-
-DT._caches = Array();
-
-DT.File = {
-
-    url: null,
-    data: {},
-
-    list: function(path){
-        var data = $.extend({op: 'ls', path: path }, this.data);
-
-        $.ajax({
-            url: this.url,
-            data: data,
-            async: false
-        }).done(function(res){
-            DT._caches['result'] = res;
-        });
-
-        return DT._caches['result'];
-    },
-
-    move: function(path, dest){
-        
-        var data = $.extend({
-            op: 'move',
-            path:path,
-            dest: dest
-        }, this.data);
-
-        var parent = this;
-
-        $.ajax({
-            url: this.url,
-            type:'POST',
-            data:data,
-            async: false,
-        });
-    },
-
-    rename: function(path, newName){
-
-        var data = $.extend({
-            op: 'rename',
-            path:path,
-            newName: newName
-        }, this.data);
-
-        $.ajax({
-            url: this.url,
-            type:'POST',
-            data:data,
-            async: false,
-        });
-    },
-
-    delete: function(path){
-        var data = $.extend({op: 'delete', path: path }, this.data);
-
-        $.ajax({
-            url: this.url,
-            data: data,
-            async: false
-        }).done(function(res){
-            DT._caches['result'] = res;
-        });
-
-        return DT._caches['result'];
-    }
-}
-
-;(function ($, window, document, DT) {
+;(function ($, window, document, FINDER) {
 
     // Create the defaults
     var pluginName = "finder",
@@ -305,6 +22,15 @@ DT.File = {
             width: '100%',
             height: 600,
             onSelect: false,
+            classes: {
+                collapse: 'fa fa-folder-o',
+                expand: 'fa fa-folder-open-o'
+            },
+            permissions: {
+                create: true,
+                delete: true,
+                move: true
+            },
             data: {}
         };
 
@@ -315,7 +41,10 @@ DT.File = {
         // The first object is generally empty because we don't
         // want to alter the default options for future instances
         // of the plugin
-        this.options = $.extend( {}, defaults, options);
+        this.options = FINDER.config = $.extend( {}, defaults, options);
+        this.options.data = FINDER.config.data = $.extend( {}, defaults.data, options.data);
+        this.options.classes = FINDER.config.classes = $.extend( {}, defaults.classes, options.classes);
+        this.options.permissions = FINDER.config.permissions = $.extend( {}, defaults.permissions, options.permissions);
 
         this._defaults = defaults;
         this._name = pluginName;
@@ -331,8 +60,8 @@ DT.File = {
             this._caches.loaded = [];
             this._caches.data = [];
             
-            DT.File.url = this.options.url;
-            DT.File.data = this.options.data;
+            FINDER.File.url = this.options.url;
+            FINDER.File.data = this.options.data;
 
             this.createContainer(this.element, this.options);
 
@@ -368,9 +97,6 @@ DT.File = {
 
         listen: function (el, options) {
 
-            //$(el).on('click', 'a.of-node', $.proxy(this.toggle, this));
-            //window.addEventListener("hashchange", $.proxy(this.toggle, this));
-
             var parent = this;
 
             $(el).on('click', 'a.toggler', function(e){
@@ -378,7 +104,7 @@ DT.File = {
 
                 var a = $(this).siblings('.of-node');
                 
-                if($(this).children('i').hasClass('fa-folder-open-o')) {
+                if($(this).children('i').hasClass(parent.options.classes.expand)) {
                     parent.collapse(a);
                 } else {
                     parent.expand(a);
@@ -397,7 +123,7 @@ DT.File = {
 
                 var a = $(this).siblings('.of-node');
                 
-                if($(this).children('i').hasClass('fa-folder-open-o')) {
+                if($(this).children('i').hasClass(parent.options.classes.expand)) {
                     parent.collapse(a);
                 } else {
                     parent.expand(a);
@@ -442,7 +168,7 @@ DT.File = {
 
             if($.inArray(path, this._caches.loaded) === -1) {
 
-                var data = DT.File.list(path);
+                var data = FINDER.File.list(path);
                 //save data
                 this._caches.data[path] = data;
 
@@ -465,7 +191,7 @@ DT.File = {
                     var path = $(this).data('path');
                     var newName = $(this).val();
 
-                    DT.File.rename(path, newName);
+                    FINDER.File.rename(path, newName);
 
                    $( e.target).parent()
                         .siblings('a')
@@ -563,21 +289,21 @@ DT.File = {
 
             if($.inArray(path, this._caches.loaded) === -1) {
 
-                var data = DT.File.list(path);
+                var data = FINDER.File.list(path);
                 //save data
                 this._caches.data[path] = data;
 
                 this._caches.loaded.push(path);
             }
 
-            ul = this.buildTree(this._caches.data[path]);
+            ul = this.buildList(this._caches.data[path]);
 
             $(a).siblings('ul').remove(); // remove esixting
             $(ul).hide(); // hide first to slide
             $(a).after(ul);
 
-            i.removeClass('fa-folder-o');
-            i.addClass('fa-folder-open-o');
+            i.removeClass(this.options.classes.collapse);
+            i.addClass(this.options.classes.expand);
             $(a).siblings('ul').slideDown('fast');
         },
 
@@ -585,8 +311,8 @@ DT.File = {
 
             var i = $(a).siblings('.toggler').children('i');
 
-            i.removeClass('fa-folder-open-o');
-            i.addClass('fa-folder-o');
+            i.removeClass(this.options.classes.expand);
+            i.addClass(this.options.classes.collapse);
 
             $(a).siblings('ul').slideUp('fast');            
         },
@@ -610,7 +336,7 @@ DT.File = {
                 case 'delete':
 
                     if(confirm('Are you sure you want to delete '+path+' ?, this cannot be undone.')) {
-                        var res = DT.File.delete(path);
+                        var res = FINDER.File.delete(path);
                         this.refresh();
                         if(res.status == 'error') {
                             res.status = 'danger';
@@ -645,7 +371,7 @@ DT.File = {
                 
                 case 'move':
                     
-                    var tree = this.buildTree([{
+                    var tree = this.buildList([{
                         path: '/',
                         label: '/',
                         type: 'dir'
@@ -660,7 +386,7 @@ DT.File = {
                     $('#sub-browser-dialog').on('click', '.folder-selector', function(){
                         var href = $('#sub-browser-dialog').find('.selected').attr('href').substr(1);
 
-                        DT.File.move(path, href);
+                        FINDER.File.move(path, href);
                         parent.refresh();
 
                         $('#sub-browser-dialog').modal('hide');
@@ -675,11 +401,11 @@ DT.File = {
         },
 
         updateBrowser: function (data){
-            ul = DT.Element.create('UL');
+            ul = FINDER.Element.create('UL');
 
             for(i=0; i<data.length; i++ ) {
                     
-                node = DT.Element.createFileItem(data[i]);
+                node = FINDER.Element.createFileItem(data[i]);
                 $(ul).append(node);
             }
 
@@ -692,7 +418,7 @@ DT.File = {
                 path = this._caches.currentPath;
             }
 
-            data = DT.File.list('/'+path);
+            data = FINDER.File.list('/'+path);
             this._caches.data[path] = data;
             this.updateBrowser(data);
 
@@ -708,21 +434,21 @@ DT.File = {
 
             a.siblings('ul').remove();
 
-            if(a.children('i').hasClass('fa-folder-open-o')) {
+            if(a.children('i').hasClass(this.options.classes.expand)) {
                 a.click();
                 a.click();
             }
         },
 
-        buildTree: function (data){
+        buildList: function (data){
             
             if(data.length > 0) {
-                var ul =  DT.Element.create('UL');
+                var ul =  FINDER.Element.create('UL');
                 
                 for(i=0; i<data.length; i++ ) {
                     
                     if(data[i].type === 'dir') {
-                        var node = DT.Element.createNode(data[i].path, data[i].label);
+                        var node = FINDER.Element.createNode(data[i].path, data[i].label);
                         $(ul).append(node);
                     }
                 }
@@ -735,27 +461,27 @@ DT.File = {
 
         createContainer: function(el, options) {
 
-            var nav = DT.Element.create('DIV').addClass('ctn-nav ctn');
+            var nav = FINDER.Element.create('DIV').addClass('ctn-nav ctn');
             
-            this.browserArea = DT.Element.create('DIV').addClass('ctn-bro ctn of-context-holder');
+            this.browserArea = FINDER.Element.create('DIV').addClass('ctn-bro ctn of-context-holder');
 
             $(this.browserArea).data('context-target', '#bro-context-menu');
             
-            var row = DT.Element.create('DIV').addClass('row');
+            var row = FINDER.Element.create('DIV').addClass('row');
 
-            var wrapper = DT.Element.create('DIV').addClass('wrapper container-fluid');
+            var wrapper = FINDER.Element.create('DIV').addClass('wrapper container-fluid');
 
-            var toolBar = DT.Element.createToolbar();
+            var toolBar = FINDER.Element.createToolbar();
             
             var uploadUrl = this.options.uploadUrl || this.options.url;
-            var uploadDialog = DT.Element.createUploadDialog(uploadUrl);
+            var uploadDialog = FINDER.Element.createUploadDialog(uploadUrl);
 
             var createFolderUrl = this.options.createFolderUrl || this.options.url;
-            var newFolderDialog = DT.Element.createNewFolderDialog(createFolderUrl);
-            var subBrowserDialog = DT.Element.createSubBrowserDialog();
+            var newFolderDialog = FINDER.Element.createNewFolderDialog(createFolderUrl);
+            var subBrowserDialog = FINDER.Element.createSubBrowserDialog();
 
-            var itemContext = DT.Element.createItemContext();
-            var broContext = DT.Element.createBroContext();
+            var itemContext = FINDER.Element.createItemContext();
+            var broContext = FINDER.Element.createBrowserContext();
 
             $(row)
                 .append(nav)
@@ -774,7 +500,7 @@ DT.File = {
                 .after(newFolderDialog)
                 .after(subBrowserDialog);
 
-            var roots = this.buildTree([{
+            var roots = this.buildList([{
                 path: '/',
                 label: '/',
                 type: 'dir'
@@ -795,4 +521,4 @@ DT.File = {
         });
     };
 
-})(jQuery, window, document, DT);
+})(jQuery, window, document, FINDER);

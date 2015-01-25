@@ -31,13 +31,22 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 <script src="https://raw.githubusercontent.com/sydcanem/bootstrap-contextmenu/master/bootstrap-contextmenu.js"></script>
-<script src="/../finder.js"></script>
+<script src="/../dist/finder.min.js"></script>
 <script type="text/javascript">
 	(function($){
 
 		$('#finder').finder({
 			url: 'demo/server.php',
-			width: '1000px'
+			width: '1000px',
+			permissions: {
+				create: 1,
+				move: 1,
+				delete: 1,
+			},
+			classes: {
+				collapse: 'fa fa-minus-square-o',
+				expand: 'fa fa-plus-square-o'
+			}
 		});
 
 	})(jQuery);
