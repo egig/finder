@@ -44,8 +44,8 @@
 				delete: 1,
 			},
 			classes: {
-				collapse: 'fa fa-minus-square-o',
-				expand: 'fa fa-plus-square-o'
+				collapse: 'fa fa-plus-square-o',
+				expand: 'fa fa-minus-square-o'
 			}
 		});
 

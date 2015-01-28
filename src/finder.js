@@ -272,11 +272,7 @@
                success: $.proxy(function(data){
                     this.refresh(p);
                     $('#new-folder-dialog').modal('hide');
-                    
-                    if(data.status == 'error') {
-                            data.status = 'danger';
-                    }
-                    $.notify(data.message, data.status);
+                    console.log(data);
                }, this)
             });
         },
@@ -338,11 +334,7 @@
                     if(confirm('Are you sure you want to delete '+path+' ?, this cannot be undone.')) {
                         var res = FINDER.File.delete(path);
                         this.refresh();
-                        if(res.status == 'error') {
-                            res.status = 'danger';
-                        }
-                        $.notify(res.message, res.status);
-
+                        console.log(res);
                     } else {
                         return false;
                     }
