@@ -396,7 +396,7 @@
                             '<tr><td class="property-label" valign="top" width="70px;">Name</td><td>'+file.Name+'</td></tr>',
                             '<tr><td class="property-label" valign="top" width="70px;">Type</td><td>'+file.Type+'</td></tr>',
                             '<tr><td class="property-label" valign="top" width="70px;">Size</td><td>'+file.Size+'</td></tr>',
-                            '<tr><td class="property-label" valign="top" width="70px;">Location</td><td>/'+file.Location+'</td></tr>',
+                            '<tr><td class="property-label" valign="top" width="70px;">Location</td><td>'+file.Location+'</td></tr>',
                         '</table>'
                     ].join('');
 
