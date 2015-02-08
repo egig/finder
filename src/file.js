@@ -53,15 +53,30 @@ FINDER.File = {
 
     delete: function(path){
         var data = $.extend({op: 'delete', path: path }, this.data);
+        var r;
 
         $.ajax({
             url: this.url,
             data: data,
             async: false
         }).done(function(res){
-            FINDER._caches['result'] = res;
+            r = res;
         });
 
-        return FINDER._caches['result'];
-    }
+        return r;
+    },
+
+    properties: function(path) {
+        var data = $.extend({op: 'properties', path: path }, this.data);
+        var r;
+        $.ajax({
+            url: this.url,
+            data: data,
+            async: false
+        }).done(function(res){
+            r = res;
+        });
+
+        return r;
+    },
 }

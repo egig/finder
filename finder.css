@@ -71,3 +71,7 @@
 #sub-browser-dialog .selected {
     background: #e5e5e5;
 }
+
+.property-label {
+    font-weight: bold;
+}

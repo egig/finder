@@ -31,7 +31,16 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 <script src="https://raw.githubusercontent.com/sydcanem/bootstrap-contextmenu/master/bootstrap-contextmenu.js"></script>
-<script src="/../dist/finder.min.js"></script>
+
+<!-- this demo also used for developement purpose, so we will just use the src instead of dist -->
+<script src="/../src/element.js"></script>
+<script src="/../src/file.js"></script>
+<script src="/../src/finder.js"></script>
+
+<!-- but if you in production mode, it's recomended to use minified version -->
+<!-- <script src="/../dis/finder.min.js"></script> -->
+
+
 <script type="text/javascript">
 	(function($){
 

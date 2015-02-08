@@ -95,13 +95,18 @@ FINDER.Element = {
         return this.createModal('sub-browser-dialog', html, 'modal-sm');
     },
 
+    createPropertiesDialog: function(){
+        var html = '';
+        return this.createModal('properties-dialog', html, 'modal-sm');
+    },
+
     createModal: function(id, html, size) {
 
         var size = size || '';
 
         var modal = this.create('DIV', {
             id: id
-        }).addClass('modal fade');
+        }).addClass('modal');
         
         var body = this.create('DIV').addClass('modal-body');
 
@@ -142,7 +147,7 @@ FINDER.Element = {
             context.delete = 'Delete\u2026'
         }
 
-        context.property = 'Properties';
+        context.properties = 'Properties';
         return this.createContextMenu('item-context-menu', context);
     },
 

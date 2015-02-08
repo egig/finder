@@ -385,8 +385,29 @@
                     });
 
                     $('#sub-browser-dialog').modal('show');
+                break;
+
+                case 'properties':
+
+                    var file = FINDER.File.properties(path);
+
+                    var html = [
+                        '<table>',
+                            '<tr><td class="property-label" valign="top" width="70px;">Name</td><td>'+file.Name+'</td></tr>',
+                            '<tr><td class="property-label" valign="top" width="70px;">Type</td><td>'+file.Type+'</td></tr>',
+                            '<tr><td class="property-label" valign="top" width="70px;">Size</td><td>'+file.Size+'</td></tr>',
+                            '<tr><td class="property-label" valign="top" width="70px;">Location</td><td>/'+file.Location+'</td></tr>',
+                        '</table>'
+                    ].join('');
+
+                    $('#properties-dialog').on('shown.bs.modal', function (e) {
+                        $(this).find('.modal-body').html(html);
+                    });
+
+                    $('#properties-dialog').modal('show');
 
                 break;
+
                 default:
                 break;
             }
@@ -471,6 +492,7 @@
             var createFolderUrl = this.options.createFolderUrl || this.options.url;
             var newFolderDialog = FINDER.Element.createNewFolderDialog(createFolderUrl);
             var subBrowserDialog = FINDER.Element.createSubBrowserDialog();
+            var propertiesDialog = FINDER.Element.createPropertiesDialog();
 
             var itemContext = FINDER.Element.createItemContext();
             var broContext = FINDER.Element.createBrowserContext();
@@ -490,7 +512,8 @@
                 .after(broContext)
                 .after(uploadDialog)
                 .after(newFolderDialog)
-                .after(subBrowserDialog);
+                .after(subBrowserDialog)
+                .after(propertiesDialog);
 
             var roots = this.buildList([{
                 path: '/',

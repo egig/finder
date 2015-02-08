@@ -20,7 +20,7 @@ switch($op) {
                 'thumbnail' => 'false',
                 'base64' => 'false',
                 'type' => $type,
-                'path' => make_path_relative($file->getRealpath(), $root),
+                'path' => make_path_relative($file->getRealpath()),
                 'label' => $file->getFilename()
             );
         }
@@ -65,10 +65,21 @@ switch($op) {
         rename($path, $dest);
 
     break;
+
+    case 'properties':
+        $path = prepare_path($path);
+        $file = new SplFileInfo($path);
+
+        $data['Name'] = $file->getFileName();
+        $data['Type'] = $file->getType();
+        $data['Size'] = $file->getSize() .' b';
+        $data['Location'] = make_path_relative($file->getRealpath());
+    break;
 }
 
-function make_path_relative($full, $base) {
-    $base = realpath($base);
+function make_path_relative($full) {
+    global $root;
+    $base = realpath($root);
     $full = realpath($full);
     return trim(str_replace($base, '', $full), '/');
 }
