@@ -503,9 +503,20 @@ FINDER.Element = {
         },
 
         listenRename: function(){
+            var KEYCODE_ENTER = 13;
+            var KEYCODE_ESC = 27;
             var parent = this;
-            $(document).on('keyup', '.rename-input', function(e){
-                if(e.keyCode == 13 || e.which == 13) {
+            $(document).on('keyup', '.dt-rename-input', function(e){
+                if(e.keyCode == KEYCODE_ESC || e.which == KEYCODE_ESC) {
+                    $( e.target).parent()
+                    .siblings('a')
+                    .children('.file-name')
+                    .show();
+
+                    $( e.target).parent().remove();
+                }
+                
+                if(e.keyCode == KEYCODE_ENTER || e.which == KEYCODE_ENTER) {
 
                     var path = $(this).data('path');
                     var newName = $(this).val();
@@ -521,6 +532,15 @@ FINDER.Element = {
 
                     parent.refresh();
                 }
+            });
+
+            $(document).on('blur', '.dt-rename-input', function(e){
+                $( e.target).parent()
+                    .siblings('a')
+                    .children('.file-name')
+                    .show();
+
+                $( e.target).parent().remove();
             });
         },
 
@@ -665,8 +685,8 @@ FINDER.Element = {
                     var file = fileNameDiv.text();
                     fileNameDiv.hide();
                     
-                    $(holder).append('<div><input data-path="'+path+'" type="text" style="height:24px;" class="form-control input-sm rename-input" value="'+file+'"></div>');
-                    $(holder).find('.rename-input').select();
+                    $(holder).append('<div><input data-path="'+path+'" type="text" style="height:18px;" class="form-control input-sm dt-rename-input" value="'+file+'"></div>');
+                    $(holder).find('.dt-rename-input').select();
                     
                 break;
 
