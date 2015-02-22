@@ -129,7 +129,7 @@ FINDER.Element = {
             context['new-folder'] = 'New Folder\u2026'
         }
 
-        context.property = 'Properties';
+        context.properties = 'Properties';
         return this.createContextMenu('bro-context-menu', context);
     },
 

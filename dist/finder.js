@@ -129,7 +129,7 @@ FINDER.Element = {
             context['new-folder'] = 'New Folder\u2026'
         }
 
-        context.property = 'Properties';
+        context.properties = 'Properties';
         return this.createContextMenu('bro-context-menu', context);
     },
 
@@ -707,6 +707,11 @@ FINDER.Element = {
                 break;
 
                 case 'properties':
+
+                    // if no path, we just well use current path
+                    if(!path) {
+                        path = this._caches.currentPath;
+                    }
 
                     var file = FINDER.File.properties(path);
 

@@ -389,6 +389,11 @@
 
                 case 'properties':
 
+                    // if no path, we just well use current path
+                    if(!path) {
+                        path = this._caches.currentPath;
+                    }
+
                     var file = FINDER.File.properties(path);
 
                     var html = [
