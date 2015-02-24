@@ -145,6 +145,7 @@
             this.listenUpload(this._caches.currentPath);
             this.listenCreateFolder(this._caches.currentPath);
             this.listenRename();
+            this.listenSearch();
 
             // item click
             $(el).on('click', '.of-item a', function(e){
@@ -181,6 +182,20 @@
 
             this.updateBrowser(this._caches.data[path]);
             this.handleHight();
+        },
+
+        listenSearch: function(){
+            var _this = this;
+            $(document).on('keyup', '.dt-search-input', function(){
+                var q = $(this).val();
+                if(q.length > 1) {
+                    var path = _this._caches.currentPath;
+                    var data = FINDER.File.search(q, path);
+
+                    //update browser
+                    _this.updateBrowser(data);
+                }
+            });
         },
 
         listenRename: function(){

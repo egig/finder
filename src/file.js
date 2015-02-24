@@ -79,4 +79,18 @@ FINDER.File = {
 
         return r;
     },
+
+    search: function(q, path) {
+        var data = $.extend({op: 'search', path: path, q:q}, this.data);
+        var r;
+        $.ajax({
+            url: this.url,
+            data: data,
+            async: false
+        }).done(function(res){
+            r = res;
+        });
+
+        return r;
+    }
 }

@@ -48,17 +48,16 @@ FINDER.Element = {
             $(toolBar).append(uploadBtn);
         }
 
-        /*searchForm = this.createEl('FORM').addClass('form-inline');
-        searchInput = this.createEl('INPUT', {
+        searchForm = this.create('FORM').addClass('form-inline');
+        searchInput = this.create('INPUT', {
             type: 'text',
             name: 'q',
             placeholder: 'Type to search'
-        }).addClass('tool input-sm form-control pull-right')
-        
-        $(searchForm).append(searchInput);*/
+        }).addClass('input-sm form-control pull-right dt-search-input')
 
-            $(toolBar)
-                //.append(searchForm)
+        $(searchForm).append(searchInput);
+
+        $(toolBar).append(searchForm)
 
 
         return toolBar;

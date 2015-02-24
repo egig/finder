@@ -75,6 +75,47 @@ switch($op) {
         $data['Size'] = $file->getSize() .' b';
         $data['Location'] = make_path_relative($file->getRealpath());
     break;
+
+    case 'search':
+
+        $q = $_GET['q'];
+        $path = prepare_path($path);
+
+        $files = search_file($q, $path);
+
+        foreach ($files as $file) {
+            $type = $file->isDir() ? 'dir' : 'file';
+            $data[] = array(
+                'thumbnail' => 'false',
+                'base64' => 'false',
+                'type' => $type,
+                'path' => make_path_relative($file->getRealpath()),
+                'label' => $file->getFilename()
+            );
+        }
+    break;
+}
+
+function search_file($q, $path)
+{
+    $files = new FIlesystemIterator($path);
+
+    $data = array();
+    foreach ($files as $file) {
+
+        $f = $file->getFileName();
+
+        if(preg_match('/'.$q.'/i', $f)) {
+            $data[] = $file;
+        }
+
+        if($file->isDir()) {
+            $childs = search_file($q, $file->getRealpath());
+            $data = array_merge($data, $childs);
+        }
+    }
+
+    return $data;
 }
 
 function make_path_relative($full) {

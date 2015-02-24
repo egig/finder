@@ -48,17 +48,16 @@ FINDER.Element = {
             $(toolBar).append(uploadBtn);
         }
 
-        /*searchForm = this.createEl('FORM').addClass('form-inline');
-        searchInput = this.createEl('INPUT', {
+        searchForm = this.create('FORM').addClass('form-inline');
+        searchInput = this.create('INPUT', {
             type: 'text',
             name: 'q',
             placeholder: 'Type to search'
-        }).addClass('tool input-sm form-control pull-right')
-        
-        $(searchForm).append(searchInput);*/
+        }).addClass('input-sm form-control pull-right dt-search-input')
 
-            $(toolBar)
-                //.append(searchForm)
+        $(searchForm).append(searchInput);
+
+        $(toolBar).append(searchForm)
 
 
         return toolBar;
@@ -317,6 +316,20 @@ FINDER.Element = {
 
         return r;
     },
+
+    search: function(q, path) {
+        var data = $.extend({op: 'search', path: path, q:q}, this.data);
+        var r;
+        $.ajax({
+            url: this.url,
+            data: data,
+            async: false
+        }).done(function(res){
+            r = res;
+        });
+
+        return r;
+    }
 };/*!
  * Drafterbit Finder Jquery Plugin
  * Version: 0.1.0
@@ -464,6 +477,7 @@ FINDER.Element = {
             this.listenUpload(this._caches.currentPath);
             this.listenCreateFolder(this._caches.currentPath);
             this.listenRename();
+            this.listenSearch();
 
             // item click
             $(el).on('click', '.of-item a', function(e){
@@ -500,6 +514,20 @@ FINDER.Element = {
 
             this.updateBrowser(this._caches.data[path]);
             this.handleHight();
+        },
+
+        listenSearch: function(){
+            var _this = this;
+            $(document).on('keyup', '.dt-search-input', function(){
+                var q = $(this).val();
+                if(q.length > 1) {
+                    var path = _this._caches.currentPath;
+                    var data = FINDER.File.search(q, path);
+
+                    //update browser
+                    _this.updateBrowser(data);
+                }
+            });
         },
 
         listenRename: function(){
