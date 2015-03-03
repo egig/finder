@@ -43,7 +43,7 @@ DTFINDER.DOM = {
         var searchInput = this.create('INPUT', {
             type: 'text',
             name: 'q',
-            placeholder: 'Type to search'
+            placeholder: 'Search'
         }).addClass('input-sm form-control pull-right dt-search-input')
 
         $(searchForm).append(searchInput);

@@ -13,7 +13,7 @@
 ;(function ($, window, document, DTFINDER) {
 
     // Create the defaults
-    var pluginName = "finder",
+    var pluginName = "dtfinder",
         defaults = {
             url: null,
             manage: true,

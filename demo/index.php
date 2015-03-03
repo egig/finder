@@ -40,11 +40,10 @@
 <!-- but if you in production mode, it's recomended to use minified version -->
 <!-- <script src="/../dis/finder.min.js"></script> -->
 
-
 <script type="text/javascript">
 	(function($){
 
-		$('#finder').finder({
+		$('#finder').dtfinder({
 			url: 'demo/server.php',
 			width: '1000px',
 			permissions: {

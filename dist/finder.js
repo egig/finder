@@ -43,7 +43,7 @@ DTFINDER.DOM = {
         var searchInput = this.create('INPUT', {
             type: 'text',
             name: 'q',
-            placeholder: 'Type to search'
+            placeholder: 'Search'
         }).addClass('input-sm form-control pull-right dt-search-input')
 
         $(searchForm).append(searchInput);
@@ -337,7 +337,7 @@ DTFINDER.DOM = {
 ;(function ($, window, document, DTFINDER) {
 
     // Create the defaults
-    var pluginName = "finder",
+    var pluginName = "dtfinder",
         defaults = {
             url: null,
             manage: true,
