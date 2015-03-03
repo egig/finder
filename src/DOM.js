@@ -1,11 +1,11 @@
-FINDER = {};
-FINDER.config = {};
-FINDER.config.data = {};
-FINDER.config.classes = {};
-FINDER.config.permissions = {};
-FINDER._caches = [];
+DTFINDER = {};
+DTFINDER.config = {
+    data: {},
+    classes: {},
+    permissions: {}
+};
 
-FINDER.Element = {
+DTFINDER.DOM = {
 
     // Create element
     create: function(name, attr) {
@@ -21,24 +21,15 @@ FINDER.Element = {
     },
 
     createToolbar: function(){
-        toolBar = this.create('DIV').addClass('row toolBar');
-        
-        /*
-        settingBtn = this.createEl('A')
-            .addClass('tool btn btn-sm btn-default pull-right')
-            .html('<i class="fa fa-gears"></i>');
+        var toolBar = this.create('DIV').addClass('row dtf-toolbar');
 
-        listBtn =  this.createEl('A')
+        /* coming soon
+        var settingBtn = this.create('A')
             .addClass('tool btn btn-sm btn-default pull-right')
-            .html('<i class="fa fa-list"></i>');
+            .html('<i class="fa fa-gear"></i>');*/
 
-        gridBtn = this.createEl('A')
-            .addClass('tool btn btn-sm btn-default pull-right')
-            .html('<i class="fa fa-th"></i>');
-            */
-
-        if(FINDER.config.permissions.create) {
-            uploadBtn =  this.create('A', {
+        if(DTFINDER.config.permissions.create) {
+            var uploadBtn =  this.create('A', {
                     href: '#',
                     'data-toggle': 'modal',
                     'data-target': '#upload-dialog'
@@ -48,8 +39,8 @@ FINDER.Element = {
             $(toolBar).append(uploadBtn);
         }
 
-        searchForm = this.create('FORM').addClass('form-inline');
-        searchInput = this.create('INPUT', {
+        var searchForm = this.create('FORM').addClass('form-inline');
+        var searchInput = this.create('INPUT', {
             type: 'text',
             name: 'q',
             placeholder: 'Type to search'
@@ -57,8 +48,9 @@ FINDER.Element = {
 
         $(searchForm).append(searchInput);
 
-        $(toolBar).append(searchForm)
-
+        $(toolBar)
+            .append(searchForm)
+            //.append(settingBtn)
 
         return toolBar;
     },
@@ -124,7 +116,7 @@ FINDER.Element = {
         
         var context = {};
 
-        if(FINDER.config.permissions.create) {
+        if(DTFINDER.config.permissions.create) {
             context['new-folder'] = 'New Folder\u2026'
         }
 
@@ -137,12 +129,12 @@ FINDER.Element = {
         
         var context = {};
  
-        if(FINDER.config.permissions.move) {
+        if(DTFINDER.config.permissions.move) {
             context.rename = 'Rename',
             context.move = 'Move\u2026'
         }
 
-        if(FINDER.config.permissions.delete) {
+        if(DTFINDER.config.permissions.delete) {
             context.delete = 'Delete\u2026'
         }
 
@@ -176,12 +168,12 @@ FINDER.Element = {
 
     createNode: function(path, label) {
 
-        var toggler = this.create('I').addClass(FINDER.config.classes.collapse);
+        var toggler = this.create('I').addClass(DTFINDER.config.classes.collapse);
 
         path = path === '/' ? '' : path;
         
         var a = this.create('A', {href: '#/'+path})
-            .addClass('of-node')
+            .addClass('dtf-tree-node')
             .append(' '+label);
         
         var aToggler = this.create('A', {href: '#'})
@@ -197,7 +189,7 @@ FINDER.Element = {
 
     createFileItem: function(file) {
         
-        var li = this.create('LI').addClass('of-item of-context-holder');
+        var li = this.create('LI').addClass('dtf-file-item dtf-context-holder');
         li.data('context-target', '#item-context-menu');
 
         if(file.type == 'image') {
@@ -211,15 +203,15 @@ FINDER.Element = {
         } else {
 
             if(file.type == 'file') {
-                faClass = 'fa fa-file-o';
+                var faClass = 'fa fa-file-o';
                 $(li).addClass('file-item');
             
             } else if(file.type == 'dir') {
-                faClass = 'fa fa-folder-o';
+                var faClass = 'fa fa-folder-o';
 
                 $(li).addClass('folder-item');
             } else {
-                faClass = null;
+                var faClass = null;
             }
 
             var icon = this.create('I')

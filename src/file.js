@@ -1,24 +1,24 @@
-FINDER.File = {
+DTFINDER.File = {
 
     url: null,
     data: {},
 
     list: function(path){
         var data = $.extend({op: 'ls', path: path }, this.data);
-
+        var r;
         $.ajax({
             url: this.url,
             data: data,
             async: false
         }).done(function(res){
-            FINDER._caches['result'] = res;
+            r = res;
         });
 
-        return FINDER._caches['result'];
+        return r;
     },
 
-    move: function(path, dest){
-        
+    move: function(path, dest) {
+
         var data = $.extend({
             op: 'move',
             path:path,

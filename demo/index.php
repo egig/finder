@@ -33,7 +33,7 @@
 <script src="https://raw.githubusercontent.com/sydcanem/bootstrap-contextmenu/master/bootstrap-contextmenu.js"></script>
 
 <!-- this demo also used for developement purpose, so we will just use the src instead of dist -->
-<script src="/../src/element.js"></script>
+<script src="/../src/DOM.js"></script>
 <script src="/../src/file.js"></script>
 <script src="/../src/finder.js"></script>
 

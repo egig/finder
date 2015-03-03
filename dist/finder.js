@@ -1,11 +1,11 @@
-FINDER = {};
-FINDER.config = {};
-FINDER.config.data = {};
-FINDER.config.classes = {};
-FINDER.config.permissions = {};
-FINDER._caches = [];
+DTFINDER = {};
+DTFINDER.config = {
+    data: {},
+    classes: {},
+    permissions: {}
+};
 
-FINDER.Element = {
+DTFINDER.DOM = {
 
     // Create element
     create: function(name, attr) {
@@ -21,24 +21,15 @@ FINDER.Element = {
     },
 
     createToolbar: function(){
-        toolBar = this.create('DIV').addClass('row toolBar');
-        
-        /*
-        settingBtn = this.createEl('A')
-            .addClass('tool btn btn-sm btn-default pull-right')
-            .html('<i class="fa fa-gears"></i>');
+        var toolBar = this.create('DIV').addClass('row dtf-toolbar');
 
-        listBtn =  this.createEl('A')
+        /* coming soon
+        var settingBtn = this.create('A')
             .addClass('tool btn btn-sm btn-default pull-right')
-            .html('<i class="fa fa-list"></i>');
+            .html('<i class="fa fa-gear"></i>');*/
 
-        gridBtn = this.createEl('A')
-            .addClass('tool btn btn-sm btn-default pull-right')
-            .html('<i class="fa fa-th"></i>');
-            */
-
-        if(FINDER.config.permissions.create) {
-            uploadBtn =  this.create('A', {
+        if(DTFINDER.config.permissions.create) {
+            var uploadBtn =  this.create('A', {
                     href: '#',
                     'data-toggle': 'modal',
                     'data-target': '#upload-dialog'
@@ -48,8 +39,8 @@ FINDER.Element = {
             $(toolBar).append(uploadBtn);
         }
 
-        searchForm = this.create('FORM').addClass('form-inline');
-        searchInput = this.create('INPUT', {
+        var searchForm = this.create('FORM').addClass('form-inline');
+        var searchInput = this.create('INPUT', {
             type: 'text',
             name: 'q',
             placeholder: 'Type to search'
@@ -57,8 +48,9 @@ FINDER.Element = {
 
         $(searchForm).append(searchInput);
 
-        $(toolBar).append(searchForm)
-
+        $(toolBar)
+            .append(searchForm)
+            //.append(settingBtn)
 
         return toolBar;
     },
@@ -124,7 +116,7 @@ FINDER.Element = {
         
         var context = {};
 
-        if(FINDER.config.permissions.create) {
+        if(DTFINDER.config.permissions.create) {
             context['new-folder'] = 'New Folder\u2026'
         }
 
@@ -137,12 +129,12 @@ FINDER.Element = {
         
         var context = {};
  
-        if(FINDER.config.permissions.move) {
+        if(DTFINDER.config.permissions.move) {
             context.rename = 'Rename',
             context.move = 'Move\u2026'
         }
 
-        if(FINDER.config.permissions.delete) {
+        if(DTFINDER.config.permissions.delete) {
             context.delete = 'Delete\u2026'
         }
 
@@ -176,12 +168,12 @@ FINDER.Element = {
 
     createNode: function(path, label) {
 
-        var toggler = this.create('I').addClass(FINDER.config.classes.collapse);
+        var toggler = this.create('I').addClass(DTFINDER.config.classes.collapse);
 
         path = path === '/' ? '' : path;
         
         var a = this.create('A', {href: '#/'+path})
-            .addClass('of-node')
+            .addClass('dtf-tree-node')
             .append(' '+label);
         
         var aToggler = this.create('A', {href: '#'})
@@ -197,7 +189,7 @@ FINDER.Element = {
 
     createFileItem: function(file) {
         
-        var li = this.create('LI').addClass('of-item of-context-holder');
+        var li = this.create('LI').addClass('dtf-file-item dtf-context-holder');
         li.data('context-target', '#item-context-menu');
 
         if(file.type == 'image') {
@@ -211,15 +203,15 @@ FINDER.Element = {
         } else {
 
             if(file.type == 'file') {
-                faClass = 'fa fa-file-o';
+                var faClass = 'fa fa-file-o';
                 $(li).addClass('file-item');
             
             } else if(file.type == 'dir') {
-                faClass = 'fa fa-folder-o';
+                var faClass = 'fa fa-folder-o';
 
                 $(li).addClass('folder-item');
             } else {
-                faClass = null;
+                var faClass = null;
             }
 
             var icon = this.create('I')
@@ -235,27 +227,27 @@ FINDER.Element = {
 
         return li;
     }
-};FINDER.File = {
+};DTFINDER.File = {
 
     url: null,
     data: {},
 
     list: function(path){
         var data = $.extend({op: 'ls', path: path }, this.data);
-
+        var r;
         $.ajax({
             url: this.url,
             data: data,
             async: false
         }).done(function(res){
-            FINDER._caches['result'] = res;
+            r = res;
         });
 
-        return FINDER._caches['result'];
+        return r;
     },
 
-    move: function(path, dest){
-        
+    move: function(path, dest) {
+
         var data = $.extend({
             op: 'move',
             path:path,
@@ -342,7 +334,7 @@ FINDER.Element = {
  * Licensed under MIT
  * ========================================================= */
 
-;(function ($, window, document, FINDER) {
+;(function ($, window, document, DTFINDER) {
 
     // Create the defaults
     var pluginName = "finder",
@@ -366,17 +358,16 @@ FINDER.Element = {
             data: {}
         };
 
-    // The actual plugin constructor
     function Plugin( element, options ) {
         this.element = element;
 
         // The first object is generally empty because we don't
         // want to alter the default options for future instances
         // of the plugin
-        this.options = FINDER.config = $.extend( {}, defaults, options);
-        this.options.data = FINDER.config.data = $.extend( {}, defaults.data, options.data);
-        this.options.classes = FINDER.config.classes = $.extend( {}, defaults.classes, options.classes);
-        this.options.permissions = FINDER.config.permissions = $.extend( {}, defaults.permissions, options.permissions);
+        this.options = DTFINDER.config = $.extend( {}, defaults, options);
+        this.options.data = DTFINDER.config.data = $.extend( {}, defaults.data, options.data);
+        this.options.classes = DTFINDER.config.classes = $.extend( {}, defaults.classes, options.classes);
+        this.options.permissions = DTFINDER.config.permissions = $.extend( {}, defaults.permissions, options.permissions);
 
         this._defaults = defaults;
         this._name = pluginName;
@@ -392,14 +383,45 @@ FINDER.Element = {
             this._caches.loaded = [];
             this._caches.data = [];
             
-            FINDER.File.url = this.options.url;
-            FINDER.File.data = this.options.data;
+            DTFINDER.File.url = this.options.url;
+            DTFINDER.File.data = this.options.data;
 
-            this.createContainer(this.element, this.options);
+            this.createElements(this.element, this.options);
+            this.initTree();
 
-            var path = window.location.hash.substr(1);
             this.listen(this.element, this.options);
 
+            this.openRoot();
+        },
+
+        initTree: function() {
+            var data = [{path: '/', label: '/', type: 'dir'}]
+            var roots = this.buildList(data);
+
+            this.nav.append(roots);
+
+            // listening...
+            var _this = this;
+            $(this.nav).on('click', 'a.toggler', function(e){
+                e.preventDefault();
+
+                var a = $(this).siblings('.dtf-tree-node');
+                
+                if($(this).children('i').hasClass(_this.options.classes.expand)) {
+                    _this.collapse(a);
+                } else {
+                    _this.expand(a);
+                }
+
+                _this.handleHight();
+            });
+        },
+
+        /*
+         * Open first created root
+         */
+        openRoot: function(){
+            var path = window.location.hash.substr(1);
             if(!path) {
                 path = '/';
                 window.location.hash = '/';
@@ -430,20 +452,6 @@ FINDER.Element = {
         listen: function (el, options) {
 
             var parent = this;
-
-            $(el).on('click', 'a.toggler', function(e){
-                e.preventDefault();
-
-                var a = $(this).siblings('.of-node');
-                
-                if($(this).children('i').hasClass(parent.options.classes.expand)) {
-                    parent.collapse(a);
-                } else {
-                    parent.expand(a);
-                }
-
-                parent.handleHight();
-            });
             
             window.onpopstate = function(e){
                 var path = window.location.hash.substr(1);
@@ -453,7 +461,7 @@ FINDER.Element = {
             $('#sub-browser-dialog').on('click', 'a.toggler', function(e){
                 e.preventDefault();
 
-                var a = $(this).siblings('.of-node');
+                var a = $(this).siblings('.dtf-tree-node');
                 
                 if($(this).children('i').hasClass(parent.options.classes.expand)) {
                     parent.collapse(a);
@@ -462,7 +470,7 @@ FINDER.Element = {
                 }
             });
 
-            $('#sub-browser-dialog').on('click', 'a.of-node', function(e){
+            $('#sub-browser-dialog').on('click', 'a.dtf-tree-node', function(e){
                 e.preventDefault();
                 var a = e.currentTarget;
                 $('#sub-browser-dialog').find('.selected').removeClass('selected');
@@ -480,7 +488,7 @@ FINDER.Element = {
             this.listenSearch();
 
             // item click
-            $(el).on('click', '.of-item a', function(e){
+            $(el).on('click', '.dtf-file-item a', function(e){
                 e.preventDefault();
             });
 
@@ -501,7 +509,7 @@ FINDER.Element = {
 
             if($.inArray(path, this._caches.loaded) === -1) {
 
-                var data = FINDER.File.list(path);
+                var data = DTFINDER.File.list(path);
                 //save data
                 this._caches.data[path] = data;
 
@@ -522,7 +530,7 @@ FINDER.Element = {
                 var q = $(this).val();
                 if(q.length > 1) {
                     var path = _this._caches.currentPath;
-                    var data = FINDER.File.search(q, path);
+                    var data = DTFINDER.File.search(q, path);
 
                     //update browser
                     _this.updateBrowser(data);
@@ -549,7 +557,7 @@ FINDER.Element = {
                     var path = $(this).data('path');
                     var newName = $(this).val();
 
-                    FINDER.File.rename(path, newName);
+                    DTFINDER.File.rename(path, newName);
 
                    $( e.target).parent()
                         .siblings('a')
@@ -573,13 +581,14 @@ FINDER.Element = {
         },
 
         listenContextMenu: function (el){
-             $(el).contextmenu({
+            
+            $(el).contextmenu({
               onItem: $.proxy(this.handleContext, this),
               before: function (e, element, target) {
 
                     var contextTarget = null;
 
-                    if($(e.target).hasClass('of-context-holder')) {
+                    if($(e.target).hasClass('dtf-context-holder')) {
 
                         $(el).data('context-holder', e.target);
                         contextTarget = $(e.target).data('context-target');
@@ -588,7 +597,7 @@ FINDER.Element = {
                         var containers = $(e.target).parents();
                         
                         $.each(containers, function(key, value){
-                            if($(value).hasClass('of-context-holder')) {
+                            if($(value).hasClass('dtf-context-holder')) {
 
                                 $(el).data('context-holder', value);
                                 contextTarget = $(value).data('context-target');
@@ -646,20 +655,26 @@ FINDER.Element = {
 
         expand: function(a) {
 
-            // load from
+            /*
+                [{"thumbnail":"false",
+                  "base64":"false",
+                  "type":"file",
+                  "path":".gitignore",
+                  "label":".gitignore"}]
+            */
             var path = a.attr('href').substr(1);
             var i = $(a).siblings('.toggler').children('i');
 
             if($.inArray(path, this._caches.loaded) === -1) {
 
-                var data = FINDER.File.list(path);
+                var data = DTFINDER.File.list(path);
                 //save data
                 this._caches.data[path] = data;
 
                 this._caches.loaded.push(path);
             }
 
-            ul = this.buildList(this._caches.data[path]);
+            var ul = this.buildList(this._caches.data[path]);
 
             $(a).siblings('ul').remove(); // remove esixting
             $(ul).hide(); // hide first to slide
@@ -681,8 +696,8 @@ FINDER.Element = {
         },
 
         handleHight: function() {
-            var h = $('.ctn-bro').height();
-            $('.ctn-nav').height(h);
+            var h = $('.dtf-area').height();
+            $('.dtf-nav').height(h);
         },
 
         handleContext: function(context, e) {
@@ -699,7 +714,7 @@ FINDER.Element = {
                 case 'delete':
 
                     if(confirm('Are you sure you want to delete '+path+' ?, this cannot be undone.')) {
-                        var res = FINDER.File.delete(path);
+                        var res = DTFINDER.File.delete(path);
                         this.refresh();
                         console.log(res);
                     } else {
@@ -745,7 +760,7 @@ FINDER.Element = {
                     $('#sub-browser-dialog').on('click', '.folder-selector', function(){
                         var href = $('#sub-browser-dialog').find('.selected').attr('href').substr(1);
 
-                        FINDER.File.move(path, href);
+                        DTFINDER.File.move(path, href);
                         parent.refresh();
 
                         $('#sub-browser-dialog').modal('hide');
@@ -761,7 +776,7 @@ FINDER.Element = {
                         path = this._caches.currentPath;
                     }
 
-                    var file = FINDER.File.properties(path);
+                    var file = DTFINDER.File.properties(path);
 
                     var html = [
                         '<table>',
@@ -786,11 +801,11 @@ FINDER.Element = {
         },
 
         updateBrowser: function (data){
-            ul = FINDER.Element.create('UL');
+            ul = DTFINDER.DOM.create('UL');
 
             for(i=0; i<data.length; i++ ) {
                     
-                node = FINDER.Element.createFileItem(data[i]);
+                var node = DTFINDER.DOM.createFileItem(data[i]);
                 $(ul).append(node);
             }
 
@@ -803,7 +818,7 @@ FINDER.Element = {
                 path = this._caches.currentPath;
             }
 
-            data = FINDER.File.list('/'+path);
+            data = DTFINDER.File.list('/'+path);
             this._caches.data[path] = data;
             this.updateBrowser(data);
 
@@ -828,12 +843,12 @@ FINDER.Element = {
         buildList: function (data){
             
             if(data.length > 0) {
-                var ul =  FINDER.Element.create('UL');
+                var ul =  DTFINDER.DOM.create('UL');
                 
                 for(i=0; i<data.length; i++ ) {
                     
                     if(data[i].type === 'dir') {
-                        var node = FINDER.Element.createNode(data[i].path, data[i].label);
+                        var node = DTFINDER.DOM.createNode(data[i].path, data[i].label);
                         $(ul).append(node);
                     }
                 }
@@ -844,33 +859,36 @@ FINDER.Element = {
 
         },
 
-        createContainer: function(el, options) {
+        /*
+         * Create browser elements, called in init
+         */
+        createElements: function(el, options) {
 
-            var nav = FINDER.Element.create('DIV').addClass('ctn-nav ctn');
-            
-            this.browserArea = FINDER.Element.create('DIV').addClass('ctn-bro ctn of-context-holder');
+            this.nav = DTFINDER.DOM.create('DIV').addClass('dtf-nav ctn');
+
+            this.browserArea = DTFINDER.DOM.create('DIV').addClass('dtf-area ctn dtf-context-holder');
 
             $(this.browserArea).data('context-target', '#bro-context-menu');
-            
-            var row = FINDER.Element.create('DIV').addClass('row');
 
-            var wrapper = FINDER.Element.create('DIV').addClass('wrapper container-fluid');
+            var row = DTFINDER.DOM.create('DIV').addClass('row');
 
-            var toolBar = FINDER.Element.createToolbar();
-            
+            var wrapper = DTFINDER.DOM.create('DIV').addClass('wrapper container-fluid');
+
+            var toolBar = DTFINDER.DOM.createToolbar();
+
             var uploadUrl = this.options.uploadUrl || this.options.url;
-            var uploadDialog = FINDER.Element.createUploadDialog(uploadUrl);
+            var uploadDialog = DTFINDER.DOM.createUploadDialog(uploadUrl);
 
             var createFolderUrl = this.options.createFolderUrl || this.options.url;
-            var newFolderDialog = FINDER.Element.createNewFolderDialog(createFolderUrl);
-            var subBrowserDialog = FINDER.Element.createSubBrowserDialog();
-            var propertiesDialog = FINDER.Element.createPropertiesDialog();
+            var newFolderDialog = DTFINDER.DOM.createNewFolderDialog(createFolderUrl);
+            var subBrowserDialog = DTFINDER.DOM.createSubBrowserDialog();
+            var propertiesDialog = DTFINDER.DOM.createPropertiesDialog();
 
-            var itemContext = FINDER.Element.createItemContext();
-            var broContext = FINDER.Element.createBrowserContext();
+            var itemContext = DTFINDER.DOM.createItemContext();
+            var broContext = DTFINDER.DOM.createBrowserContext();
 
             $(row)
-                .append(nav)
+                .append(this.nav)
                 .append(this.browserArea)
 
             $(wrapper)
@@ -886,14 +904,6 @@ FINDER.Element = {
                 .after(newFolderDialog)
                 .after(subBrowserDialog)
                 .after(propertiesDialog);
-
-            var roots = this.buildList([{
-                path: '/',
-                label: '/',
-                type: 'dir'
-            }]);
-
-            nav.append(roots);
         },
     };
 
@@ -908,4 +918,4 @@ FINDER.Element = {
         });
     };
 
-})(jQuery, window, document, FINDER);
+})(jQuery, window, document, DTFINDER);
