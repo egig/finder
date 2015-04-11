@@ -82,7 +82,7 @@ DTFINDER.DOM = {
     },
 
     createSubBrowserDialog: function(){
-        var html = '';
+        var html = '<div><button class="btn btn-xs pull-right btn-primary folder-selector">Select</button></div>';
         return this.createModal('sub-browser-dialog', html, 'modal-sm');
     },
 

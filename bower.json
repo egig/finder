@@ -19,7 +19,6 @@
     "bootstrap": "latest",
     "jquery-form": "latest",
     "bootstrap-contextmenu": "latest",
-    "fontawesome": "latest",
-    "egig-notify": "latest"
+    "fontawesome": "latest"
   }
 }

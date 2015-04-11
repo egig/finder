@@ -72,24 +72,25 @@
 
         initTree: function() {
             var data = [{path: '/', label: '/', type: 'dir'}]
-            var roots = this.buildList(data);
-
-            this.nav.append(roots);
-
-            // listening...
+            //var roots = this.buildList(data);
             var _this = this;
-            $(this.nav).on('click', 'a.toggler', function(e){
-                e.preventDefault();
+            this.nav.dttree({
+                initData: data,
+                onBeforeExpand: function(path, dttree) {
 
-                var a = $(this).siblings('.dtf-tree-node');
-                
-                if($(this).children('i').hasClass(_this.options.classes.expand)) {
-                    _this.collapse(a);
-                } else {
-                    _this.expand(a);
+                    path = path.substr(1);
+                    if($.inArray(path, _this._caches.loaded) === -1) {
+
+                        var data = DTFINDER.File.list(path);
+                        //save data
+                        _this._caches.data[path] = data;
+
+                        _this._caches.loaded.push(path);
+                    }
+
+                    dttree.setChildren(_this._caches.data[path], path);
+                    _this.handleHight();
                 }
-
-                _this.handleHight();
             });
         },
 
@@ -103,7 +104,8 @@
                 window.location.hash = '/';
 
                 var a = $('a[href="#'+path+'"]');
-                this.expand(a);
+                this.nav.dttree('expand', path);
+                
             } else {
 
                 var x = path.split('/');
@@ -117,8 +119,7 @@
                         p = s.substr(0,s.length-1);
                     }
 
-                    var a = $('a[href="#'+p+'"]');
-                    this.expand(a);
+                    this.nav.dttree('expand', '#'+p);
                 }
             }
             
@@ -134,19 +135,7 @@
                 parent.open(path);
             };
 
-            $('#sub-browser-dialog').on('click', 'a.toggler', function(e){
-                e.preventDefault();
-
-                var a = $(this).siblings('.dtf-tree-node');
-                
-                if($(this).children('i').hasClass(parent.options.classes.expand)) {
-                    parent.collapse(a);
-                } else {
-                    parent.expand(a);
-                }
-            });
-
-            $('#sub-browser-dialog').on('click', 'a.dtf-tree-node', function(e){
+            $('#sub-browser-dialog').on('click', 'a.dttree-node', function(e){
                 e.preventDefault();
                 var a = e.currentTarget;
                 $('#sub-browser-dialog').find('.selected').removeClass('selected');
@@ -324,51 +313,8 @@
                success: $.proxy(function(data){
                     this.refresh(p);
                     $('#new-folder-dialog').modal('hide');
-                    console.log(data);
                }, this)
             });
-        },
-
-        expand: function(a) {
-
-            /*
-                [{"thumbnail":"false",
-                  "base64":"false",
-                  "type":"file",
-                  "path":".gitignore",
-                  "label":".gitignore"}]
-            */
-            var path = a.attr('href').substr(1);
-            var i = $(a).siblings('.toggler').children('i');
-
-            if($.inArray(path, this._caches.loaded) === -1) {
-
-                var data = DTFINDER.File.list(path);
-                //save data
-                this._caches.data[path] = data;
-
-                this._caches.loaded.push(path);
-            }
-
-            var ul = this.buildList(this._caches.data[path]);
-
-            $(a).siblings('ul').remove(); // remove esixting
-            $(ul).hide(); // hide first to slide
-            $(a).after(ul);
-
-            i.removeClass(this.options.classes.collapse);
-            i.addClass(this.options.classes.expand);
-            $(a).siblings('ul').slideDown('fast');
-        },
-
-        collapse: function(a) {
-
-            var i = $(a).siblings('.toggler').children('i');
-
-            i.removeClass(this.options.classes.expand);
-            i.addClass(this.options.classes.collapse);
-
-            $(a).siblings('ul').slideUp('fast');            
         },
 
         handleHight: function() {
@@ -392,7 +338,6 @@
                     if(confirm('Are you sure you want to delete '+path+' ?, this cannot be undone.')) {
                         var res = DTFINDER.File.delete(path);
                         this.refresh();
-                        console.log(res);
                     } else {
                         return false;
                     }
@@ -420,16 +365,19 @@
                 break;
                 
                 case 'move':
-                    
-                    var tree = this.buildList([{
-                        path: '/',
-                        label: '/',
-                        type: 'dir'
-                    }]);
-                    
-                    $('#sub-browser-dialog').on('shown.bs.modal', function (e) {
-                        $(this).find('.modal-body').html(tree);
-                        $(this).find('.modal-body').append('<div><button class="btn btn-sm btn-primary folder-selector">Select</button></div>');
+
+                    $('#sub-browser-dialog .modal-body').dttree({
+                        initData: [{
+                            path: '/',
+                            label: '/',
+                            type: 'dir'
+                        }],
+                        onBeforeExpand: function(path, dttree) {
+
+                            path = path.substr(1);
+                            var data = DTFINDER.File.list(path);
+                            dttree.setChildren(data, path);
+                        }
                     });
 
                     var parent = this;
@@ -515,26 +463,6 @@
                 a.click();
             }
         },
-
-        buildList: function (data){
-            
-            if(data.length > 0) {
-                var ul =  DTFINDER.DOM.create('UL');
-                
-                for(i=0; i<data.length; i++ ) {
-                    
-                    if(data[i].type === 'dir') {
-                        var node = DTFINDER.DOM.createNode(data[i].path, data[i].label);
-                        $(ul).append(node);
-                    }
-                }
-                return ul;
-            }
-
-            return null;
-
-        },
-
         /*
          * Create browser elements, called in init
          */

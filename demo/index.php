@@ -7,8 +7,8 @@
 <meta name="description" content="">
 <meta name="author" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
-<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="demo/lib/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link href="demo/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
 
 <link href="/../finder.css" rel="stylesheet">
 <link rel="stylesheet" href="">
@@ -27,13 +27,14 @@
 
 <div id="finder"></div>
 
-<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-<script src="https://raw.githubusercontent.com/sydcanem/bootstrap-contextmenu/master/bootstrap-contextmenu.js"></script>
+<script type="text/javascript" src="/demo/lib/jquery.min.js"></script>
+<script type="text/javascript" src="/demo/lib/jquery.form.min.js"></script>
+<script type="text/javascript" src="/demo/lib/bootstrap/bootstrap.min.js"></script>
+<script type="text/javascript" src="/demo/lib/bootstrap-contextmenu.js"></script>
 
 <!-- this demo also used for developement purpose, so we will just use the src instead of dist -->
 <script src="/../src/DOM.js"></script>
+<script src="/../src/tree.js"></script>
 <script src="/../src/file.js"></script>
 <script src="/../src/finder.js"></script>
 
@@ -51,10 +52,6 @@
 				move: 1,
 				delete: 1,
 			},
-			classes: {
-				collapse: 'fa fa-plus-square-o',
-				expand: 'fa fa-minus-square-o'
-			}
 		});
 
 	})(jQuery);
