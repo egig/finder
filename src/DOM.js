@@ -9,7 +9,7 @@ DTFINDER.DOM = {
 
     // Create element
     create: function(name, attr) {
-        el = document.createElement(name);
+        var el = document.createElement(name);
 
         if(typeof attr != 'undefined') {
             $.each( attr, function( key, value ) {
@@ -147,7 +147,7 @@ DTFINDER.DOM = {
         var dropUL = this.create('UL', {role: 'menu'}).addClass('dropdown-menu');
 
         $.each(menu, $.proxy(function(key, value) {
-            li = this.createContextAction(key, value);
+            var li = this.createContextAction(key, value);
             $(dropUL).append(li);
         }, this));
 
@@ -160,29 +160,8 @@ DTFINDER.DOM = {
 
     // context action
     createContextAction: function(act, text) {
-        a = this.create('A', {href: '#'}).text(text);
-        li = this.create('LI', {'data-action': act}).append(a);
-
-        return li;
-    },
-
-    createNode: function(path, label) {
-
-        var toggler = this.create('I').addClass(DTFINDER.config.classes.collapse);
-
-        path = path === '/' ? '' : path;
-        
-        var a = this.create('A', {href: '#/'+path})
-            .addClass('dtf-tree-node')
-            .append(' '+label);
-        
-        var aToggler = this.create('A', {href: '#'})
-            .addClass('toggler')
-            .append(toggler);
-
-        var li = this.create('LI')
-            .append(aToggler)
-            .append(a);
+        var a = this.create('A', {href: '#'}).text(text);
+        var li = this.create('LI', {'data-action': act}).append(a);
 
         return li;
     },

@@ -294,7 +294,7 @@
                success: $.proxy(function(data){
                     this.refresh(p);
 
-                    for(i=0;i<data.length;i++) {
+                    for(var i=0;i<data.length;i++) {
                         $('.uploaded').append('<p> New file: '+data[i].uploaded+'</p>');
                     }
 
@@ -426,9 +426,9 @@
         },
 
         updateBrowser: function (data){
-            ul = DTFINDER.DOM.create('UL');
+            var ul = DTFINDER.DOM.create('UL');
 
-            for(i=0; i<data.length; i++ ) {
+            for(var i=0; i<data.length; i++ ) {
                     
                 var node = DTFINDER.DOM.createFileItem(data[i]);
                 $(ul).append(node);
