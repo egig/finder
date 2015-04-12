@@ -4,93 +4,64 @@ DTFINDER.File = {
     data: {},
 
     list: function(path){
-        var data = $.extend({op: 'ls', path: path }, this.data);
-        var r;
-        $.ajax({
-            url: this.url,
-            data: data,
-            async: false
-        }).done(function(res){
-            r = res;
-        });
-
-        return r;
+        var data = {op: 'ls', path: path }
+        return this._sendRequest('GET', data, true)
     },
 
     move: function(path, dest) {
 
-        var data = $.extend({
+        var data = {
             op: 'move',
             path:path,
             dest: dest
-        }, this.data);
-
-        var parent = this;
-
-        $.ajax({
-            url: this.url,
-            type:'POST',
-            data:data,
-            async: false,
-        });
+        }
+        return this._sendRequest('POST', data)
     },
 
     rename: function(path, newName){
 
-        var data = $.extend({
+        var data = {
             op: 'rename',
             path:path,
             newName: newName
-        }, this.data);
+        }
 
-        $.ajax({
-            url: this.url,
-            type:'POST',
-            data:data,
-            async: false,
-        });
+        return this._sendRequest('POST', data)
     },
 
     delete: function(path){
-        var data = $.extend({op: 'delete', path: path }, this.data);
-        var r;
-
-        $.ajax({
-            url: this.url,
-            data: data,
-            async: false
-        }).done(function(res){
-            r = res;
-        });
-
-        return r;
+        var data = {op: 'delete', path: path }
+        return this._sendRequest('POST', data, true)
     },
 
     properties: function(path) {
-        var data = $.extend({op: 'properties', path: path }, this.data);
-        var r;
-        $.ajax({
-            url: this.url,
-            data: data,
-            async: false
-        }).done(function(res){
-            r = res;
-        });
-
-        return r;
+        var data = {op: 'properties', path: path }
+        return this._sendRequest('GET', data, true)
     },
 
     search: function(q, path) {
-        var data = $.extend({op: 'search', path: path, q:q}, this.data);
-        var r;
-        $.ajax({
+        var data = {op: 'search', path: path, q:q}
+        return this._sendRequest('GET', data, true)
+    },
+
+    _sendRequest: function(type, data, ret) {
+
+        data = $.extend(data, this.data);
+
+        var ajax = $.ajax({
             url: this.url,
             data: data,
+            type: type,
             async: false
-        }).done(function(res){
-            r = res;
-        });
+        })
 
-        return r;
+        if(typeof ret !== 'undefined' && ret === true) {
+            var r;
+            ajax.done(function(res){
+                r = res;
+            });
+
+            return r;
+        }
     }
 }

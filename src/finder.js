@@ -74,6 +74,7 @@
             var data = [{path: '/', label: '/', type: 'dir'}]
             //var roots = this.buildList(data);
             var _this = this;
+
             this.nav.dttree({
                 initData: data,
                 onBeforeExpand: function(path, dttree) {

@@ -33,6 +33,7 @@
 <script type="text/javascript" src="/demo/lib/bootstrap-contextmenu.js"></script>
 
 <!-- this demo also used for developement purpose, so we will just use the src instead of dist -->
+<script src="/../src/plugin-boilerplate.js"></script>
 <script src="/../src/DOM.js"></script>
 <script src="/../src/tree.js"></script>
 <script src="/../src/file.js"></script>
