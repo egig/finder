@@ -440,15 +440,14 @@
          */
         createElements: function(el, options) {
 
-            this.nav = DTFINDER.DOM.create('DIV').addClass('dtf-nav ctn');
+            this.nav = $('<div/>').addClass('dtf-nav ctn');
+            this.browserArea = $('<div/>').
+              addClass('dtf-area ctn dtf-context-holder').
+              data('context-target', '#bro-context-menu') ;
 
-            this.browserArea = DTFINDER.DOM.create('DIV').addClass('dtf-area ctn dtf-context-holder');
+            var row = $('<div/>').addClass('row');
 
-            $(this.browserArea).data('context-target', '#bro-context-menu');
-
-            var row = DTFINDER.DOM.create('DIV').addClass('row');
-
-            var wrapper = DTFINDER.DOM.create('DIV').addClass('wrapper container-fluid');
+            var wrapper = $('<div/>').addClass('wrapper container-fluid');
 
             var toolBar = DTFINDER.DOM.createToolbar();
 
