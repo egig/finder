@@ -29,7 +29,7 @@
     },
 
    _listen: function() {
-        // listening...
+          // listening...
           var _this = this;
           $(this.el).on('click', 'a.dttree-node-toggler', function(e){
               e.preventDefault();

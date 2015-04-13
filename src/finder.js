@@ -1,76 +1,55 @@
-/*!
- * Drafterbit Finder Jquery Plugin
- * Version: 0.1.0
- * Author: egig <egigundari@gmail.com>
- * https://github.com/drafterbit/finder
- *
- * Free file finder for web
- * make use of twbs and fontawesome.
- *
- * Licensed under MIT
- * ========================================================= */
+(function($, win, doc, undefined) {
 
-;(function ($, window, document, DTFINDER) {
+  var pluginName, defaults, methods, global;
 
-    // Create the defaults
-    var pluginName = "dtfinder",
-        defaults = {
-            url: null,
-            manage: true,
-            upload: true,
-            uploadUrl: null,
-            width: '100%',
-            height: 600,
-            onSelect: false,
-            classes: {
-                collapse: 'fa fa-folder-o',
-                expand: 'fa fa-folder-open-o'
-            },
-            permissions: {
-                create: true,
-                delete: true,
-                move: true
-            },
-            data: {}
-        };
+  // The name of your plugin
+  pluginName = 'dtfinder';
 
-    function Plugin( element, options ) {
-        this.element = element;
+  // Default options
+  defaults = {
+      url: null,
+      manage: true,
+      upload: true,
+      uploadUrl: null,
+      width: '100%',
+      height: 600,
+      onSelect: false,
+      permissions: {
+          create: true,
+          delete: true,
+          move: true
+      },
+      data: {}
+  };
 
-        // The first object is generally empty because we don't
-        // want to alter the default options for future instances
-        // of the plugin
-        this.options = DTFINDER.config = $.extend( {}, defaults, options);
-        this.options.data = DTFINDER.config.data = $.extend( {}, defaults.data, options.data);
-        this.options.classes = DTFINDER.config.classes = $.extend( {}, defaults.classes, options.classes);
-        this.options.permissions = DTFINDER.config.permissions = $.extend( {}, defaults.permissions, options.permissions);
+  // Public methods
+  methods = {
 
-        this._defaults = defaults;
-        this._name = pluginName;
+    // Gets called when creating a new instance
+    // this.el is the element on which the plugin was called
+    // this.opts contains the options passed to the plugin
+    _init: function() {
 
-        this.init();
-    }
+        DTFINDER.config = this.opts
+        DTFINDER.config.data = $.extend( {}, defaults.data, this.opts.data);
+        DTFINDER.config.permissions = $.extend( {}, defaults.permissions, this.opts.permissions);
 
-    Plugin.prototype = {
+        this._caches = {};
+        this._caches.loaded = [];
+        this._caches.data = [];
+        
+        DTFINDER.File.url = this.opts.url;
+        DTFINDER.File.data = this.opts.data;
 
-        init: function() {
+        this.createElements(this.el, this.opts);
+        this.initTree();
 
-            this._caches = {};
-            this._caches.loaded = [];
-            this._caches.data = [];
-            
-            DTFINDER.File.url = this.options.url;
-            DTFINDER.File.data = this.options.data;
+        this.listen(this.el, this.opts);
 
-            this.createElements(this.element, this.options);
-            this.initTree();
+        this.openRoot();
+    },
 
-            this.listen(this.element, this.options);
-
-            this.openRoot();
-        },
-
-        initTree: function() {
+    initTree: function() {
             var data = [{path: '/', label: '/', type: 'dir'}]
             //var roots = this.buildList(data);
             var _this = this;
@@ -93,9 +72,8 @@
                     _this.handleHight();
                 }
             });
-        },
-
-        /*
+    },
+    /*
          * Open first created root
          */
         openRoot: function(){
@@ -120,7 +98,7 @@
                         p = s.substr(0,s.length-1);
                     }
 
-                    this.nav.dttree('expand', '#'+p);
+                    this.nav.dttree('expand', p);
                 }
             }
             
@@ -287,7 +265,7 @@
             var data = $.extend({
                     path: p,
                     op: 'upload'
-               }, this.options.data);
+               }, this.opts.data);
 
             $('#upload-form').ajaxForm({
                data: data,
@@ -307,7 +285,7 @@
             var data = $.extend({
                     path: p,
                     op: 'mkdir'
-               },  this.options.data);
+               },  this.opts.data);
 
             $('#new-folder-form').ajaxForm({
                data: data,
@@ -454,15 +432,8 @@
             }
 
             this._caches.loaded = [];
-            
-            var a = $('a[href="'+path+'"]');
 
-            a.siblings('ul').remove();
-
-            if(a.children('i').hasClass(this.options.classes.expand)) {
-                a.click();
-                a.click();
-            }
+            this.nav.dttree('expand', path);
         },
         /*
          * Create browser elements, called in init
@@ -481,10 +452,10 @@
 
             var toolBar = DTFINDER.DOM.createToolbar();
 
-            var uploadUrl = this.options.uploadUrl || this.options.url;
+            var uploadUrl = this.opts.uploadUrl || this.opts.url;
             var uploadDialog = DTFINDER.DOM.createUploadDialog(uploadUrl);
 
-            var createFolderUrl = this.options.createFolderUrl || this.options.url;
+            var createFolderUrl = this.opts.createFolderUrl || this.opts.url;
             var newFolderDialog = DTFINDER.DOM.createNewFolderDialog(createFolderUrl);
             var subBrowserDialog = DTFINDER.DOM.createSubBrowserDialog();
             var propertiesDialog = DTFINDER.DOM.createPropertiesDialog();
@@ -510,17 +481,15 @@
                 .after(subBrowserDialog)
                 .after(propertiesDialog);
         },
-    };
+  };
 
-    // A really lightweight plugin wrapper around the constructor,
-    // preventing against multiple instantiations
-    $.fn[pluginName] = function ( options ) {
-        return this.each(function () {
-            if (!$.data(this, "plugin_" + pluginName)) {
-                $.data(this, "plugin_" + pluginName,
-                new Plugin( this, options ));
-            }
-        });
-    };
+  // Global properties and methods get attached to `$`
+  // as opposed to `$.fn` so they can be extended from the outside
+  global = {
 
-})(jQuery, window, document, DTFINDER);
+  };
+
+  // Add the plugin to the jQuery namespace and set-up the boilerplate base
+  $.newPlugin(pluginName, defaults, methods, global);
+
+}(jQuery, window, document));
