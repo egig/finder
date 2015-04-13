@@ -1,4 +1,63 @@
-DTFINDER = {};
+/**!
+ * Advanced jQuery Plugin Boilerplate
+ * @author: Cedric Ruiz
+ * https://github.com/elclanrs/advanced-jquery-boilerplate
+ */
+(function($) {
+
+  var AP = Array.prototype;
+
+  $.newPlugin = function(pluginName, defaults, methods, global) {
+
+    function Plugin(element, options) {
+
+      this.opts = $.extend({}, defaults, options);
+      this.el = element;
+
+      this._name = pluginName;
+
+      this._init();
+    }
+
+    Plugin.prototype._init = $.noop;
+
+    Plugin.prototype[pluginName] = function(method) {
+      if (!method) return this;
+      try { return this[method].apply(this, AP.slice.call(arguments, 1)); }
+      catch(e) {}
+    };
+
+    $.extend(Plugin.prototype, methods);
+
+    if (global) $[pluginName] = global;
+
+    $.fn[pluginName] = function() {
+
+      var args = AP.slice.call(arguments)
+        , method = typeof args[0] == 'string' && args[0].split(':')
+        , opts = typeof args[0] == 'object' && args[0]
+        , params = args.slice(1)
+        , isGet = method[0] == 'get'
+        , ret;
+
+      this.each(function() {
+
+        var instance = $.data(this, pluginName);
+
+        // Method
+        if (instance) {
+          return ret = instance[pluginName].apply(instance, [method[+isGet]].concat(params));
+        }
+
+        // Init
+        return $.data(this, pluginName, new Plugin(this, opts));
+      });
+
+      return isGet ? ret : this;
+    };
+  };
+
+}(jQuery));;DTFINDER = {};
 DTFINDER.config = {
     data: {},
     classes: {},
@@ -9,7 +68,7 @@ DTFINDER.DOM = {
 
     // Create element
     create: function(name, attr) {
-        el = document.createElement(name);
+        var el = document.createElement(name);
 
         if(typeof attr != 'undefined') {
             $.each( attr, function( key, value ) {
@@ -147,7 +206,7 @@ DTFINDER.DOM = {
         var dropUL = this.create('UL', {role: 'menu'}).addClass('dropdown-menu');
 
         $.each(menu, $.proxy(function(key, value) {
-            li = this.createContextAction(key, value);
+            var li = this.createContextAction(key, value);
             $(dropUL).append(li);
         }, this));
 
@@ -160,29 +219,8 @@ DTFINDER.DOM = {
 
     // context action
     createContextAction: function(act, text) {
-        a = this.create('A', {href: '#'}).text(text);
-        li = this.create('LI', {'data-action': act}).append(a);
-
-        return li;
-    },
-
-    createNode: function(path, label) {
-
-        var toggler = this.create('I').addClass(DTFINDER.config.classes.collapse);
-
-        path = path === '/' ? '' : path;
-        
-        var a = this.create('A', {href: '#/'+path})
-            .addClass('dtf-tree-node')
-            .append(' '+label);
-        
-        var aToggler = this.create('A', {href: '#'})
-            .addClass('toggler')
-            .append(toggler);
-
-        var li = this.create('LI')
-            .append(aToggler)
-            .append(a);
+        var a = this.create('A', {href: '#'}).text(text);
+        var li = this.create('LI', {'data-action': act}).append(a);
 
         return li;
     },
@@ -227,69 +265,7 @@ DTFINDER.DOM = {
 
         return li;
     }
-};/**!
- * Advanced jQuery Plugin Boilerplate
- * @author: Cedric Ruiz
- * https://github.com/elclanrs/advanced-jquery-boilerplate
- */
-(function($) {
-
-  var AP = Array.prototype;
-
-  $.newPlugin = function(pluginName, defaults, methods, global) {
-
-    function Plugin(element, options) {
-
-      this.opts = $.extend({}, defaults, options);
-      this.el = element;
-
-      this._name = pluginName;
-
-      this._init();
-    }
-
-    Plugin.prototype._init = $.noop;
-
-    Plugin.prototype[pluginName] = function(method) {
-      if (!method) return this;
-      try { return this[method].apply(this, AP.slice.call(arguments, 1)); }
-      catch(e) {}
-    };
-
-    $.extend(Plugin.prototype, methods);
-
-    if (global) $[pluginName] = global;
-
-    $.fn[pluginName] = function() {
-
-      var args = AP.slice.call(arguments)
-        , method = typeof args[0] == 'string' && args[0].split(':')
-        , opts = typeof args[0] == 'object' && args[0]
-        , params = args.slice(1)
-        , isGet = method[0] == 'get'
-        , ret;
-
-      this.each(function() {
-
-        var instance = $.data(this, pluginName);
-
-        // Method
-        if (instance) {
-          return ret = instance[pluginName].apply(instance, [method[+isGet]].concat(params));
-        }
-
-        // Init
-        return $.data(this, pluginName, new Plugin(this, opts));
-      });
-
-      return isGet ? ret : this;
-    };
-  };
-
-}(jQuery));
-
-
-(function($, win, doc, undefined) {
+};(function($, win, doc, undefined) {
 
   var pluginName, defaults, methods, global;
 
@@ -320,7 +296,7 @@ DTFINDER.DOM = {
     },
 
    _listen: function() {
-        // listening...
+          // listening...
           var _this = this;
           $(this.el).on('click', 'a.dttree-node-toggler', function(e){
               e.preventDefault();
@@ -458,171 +434,122 @@ DTFINDER.DOM = {
     data: {},
 
     list: function(path){
-        var data = $.extend({op: 'ls', path: path }, this.data);
-        var r;
-        $.ajax({
-            url: this.url,
-            data: data,
-            async: false
-        }).done(function(res){
-            r = res;
-        });
-
-        return r;
+        var data = {op: 'ls', path: path }
+        return this._sendRequest('GET', data, true)
     },
 
     move: function(path, dest) {
 
-        var data = $.extend({
+        var data = {
             op: 'move',
             path:path,
             dest: dest
-        }, this.data);
-
-        var parent = this;
-
-        $.ajax({
-            url: this.url,
-            type:'POST',
-            data:data,
-            async: false,
-        });
+        }
+        return this._sendRequest('POST', data)
     },
 
     rename: function(path, newName){
 
-        var data = $.extend({
+        var data = {
             op: 'rename',
             path:path,
             newName: newName
-        }, this.data);
+        }
 
-        $.ajax({
-            url: this.url,
-            type:'POST',
-            data:data,
-            async: false,
-        });
+        return this._sendRequest('POST', data)
     },
 
     delete: function(path){
-        var data = $.extend({op: 'delete', path: path }, this.data);
-        var r;
-
-        $.ajax({
-            url: this.url,
-            data: data,
-            async: false
-        }).done(function(res){
-            r = res;
-        });
-
-        return r;
+        var data = {op: 'delete', path: path }
+        return this._sendRequest('POST', data, true)
     },
 
     properties: function(path) {
-        var data = $.extend({op: 'properties', path: path }, this.data);
-        var r;
-        $.ajax({
-            url: this.url,
-            data: data,
-            async: false
-        }).done(function(res){
-            r = res;
-        });
-
-        return r;
+        var data = {op: 'properties', path: path }
+        return this._sendRequest('GET', data, true)
     },
 
     search: function(q, path) {
-        var data = $.extend({op: 'search', path: path, q:q}, this.data);
-        var r;
-        $.ajax({
+        var data = {op: 'search', path: path, q:q}
+        return this._sendRequest('GET', data, true)
+    },
+
+    _sendRequest: function(type, data, ret) {
+
+        data = $.extend(data, this.data);
+
+        var ajax = $.ajax({
             url: this.url,
             data: data,
+            type: type,
             async: false
-        }).done(function(res){
-            r = res;
-        });
+        })
 
-        return r;
+        if(typeof ret !== 'undefined' && ret === true) {
+            var r;
+            ajax.done(function(res){
+                r = res;
+            });
+
+            return r;
+        }
     }
-};/*!
- * Drafterbit Finder Jquery Plugin
- * Version: 0.1.0
- * Author: egig <egigundari@gmail.com>
- * https://github.com/drafterbit/finder
- *
- * Free file finder for web
- * make use of twbs and fontawesome.
- *
- * Licensed under MIT
- * ========================================================= */
+};(function($, win, doc, undefined) {
 
-;(function ($, window, document, DTFINDER) {
+  var pluginName, defaults, methods, global;
 
-    // Create the defaults
-    var pluginName = "dtfinder",
-        defaults = {
-            url: null,
-            manage: true,
-            upload: true,
-            uploadUrl: null,
-            width: '100%',
-            height: 600,
-            onSelect: false,
-            classes: {
-                collapse: 'fa fa-folder-o',
-                expand: 'fa fa-folder-open-o'
-            },
-            permissions: {
-                create: true,
-                delete: true,
-                move: true
-            },
-            data: {}
-        };
+  // The name of your plugin
+  pluginName = 'dtfinder';
 
-    function Plugin( element, options ) {
-        this.element = element;
+  // Default options
+  defaults = {
+      url: null,
+      manage: true,
+      upload: true,
+      uploadUrl: null,
+      width: '100%',
+      height: 600,
+      onSelect: false,
+      permissions: {
+          create: true,
+          delete: true,
+          move: true
+      },
+      data: {}
+  };
 
-        // The first object is generally empty because we don't
-        // want to alter the default options for future instances
-        // of the plugin
-        this.options = DTFINDER.config = $.extend( {}, defaults, options);
-        this.options.data = DTFINDER.config.data = $.extend( {}, defaults.data, options.data);
-        this.options.classes = DTFINDER.config.classes = $.extend( {}, defaults.classes, options.classes);
-        this.options.permissions = DTFINDER.config.permissions = $.extend( {}, defaults.permissions, options.permissions);
+  // Public methods
+  methods = {
 
-        this._defaults = defaults;
-        this._name = pluginName;
+    // Gets called when creating a new instance
+    // this.el is the element on which the plugin was called
+    // this.opts contains the options passed to the plugin
+    _init: function() {
 
-        this.init();
-    }
+        DTFINDER.config = this.opts
+        DTFINDER.config.data = $.extend( {}, defaults.data, this.opts.data);
+        DTFINDER.config.permissions = $.extend( {}, defaults.permissions, this.opts.permissions);
 
-    Plugin.prototype = {
+        this._caches = {};
+        this._caches.loaded = [];
+        this._caches.data = [];
+        
+        DTFINDER.File.url = this.opts.url;
+        DTFINDER.File.data = this.opts.data;
 
-        init: function() {
+        this.createElements(this.el, this.opts);
+        this.initTree();
 
-            this._caches = {};
-            this._caches.loaded = [];
-            this._caches.data = [];
-            
-            DTFINDER.File.url = this.options.url;
-            DTFINDER.File.data = this.options.data;
+        this.listen(this.el, this.opts);
 
-            this.createElements(this.element, this.options);
-            this.initTree();
+        this.openRoot();
+    },
 
-            this.listen(this.element, this.options);
-
-            this.openRoot();
-        },
-
-        initTree: function() {
+    initTree: function() {
             var data = [{path: '/', label: '/', type: 'dir'}]
             //var roots = this.buildList(data);
             var _this = this;
+
             this.nav.dttree({
                 initData: data,
                 onBeforeExpand: function(path, dttree) {
@@ -641,9 +568,8 @@ DTFINDER.DOM = {
                     _this.handleHight();
                 }
             });
-        },
-
-        /*
+    },
+    /*
          * Open first created root
          */
         openRoot: function(){
@@ -668,7 +594,7 @@ DTFINDER.DOM = {
                         p = s.substr(0,s.length-1);
                     }
 
-                    this.nav.dttree('expand', '#'+p);
+                    this.nav.dttree('expand', p);
                 }
             }
             
@@ -835,14 +761,14 @@ DTFINDER.DOM = {
             var data = $.extend({
                     path: p,
                     op: 'upload'
-               }, this.options.data);
+               }, this.opts.data);
 
             $('#upload-form').ajaxForm({
                data: data,
                success: $.proxy(function(data){
                     this.refresh(p);
 
-                    for(i=0;i<data.length;i++) {
+                    for(var i=0;i<data.length;i++) {
                         $('.uploaded').append('<p> New file: '+data[i].uploaded+'</p>');
                     }
 
@@ -855,7 +781,7 @@ DTFINDER.DOM = {
             var data = $.extend({
                     path: p,
                     op: 'mkdir'
-               },  this.options.data);
+               },  this.opts.data);
 
             $('#new-folder-form').ajaxForm({
                data: data,
@@ -974,9 +900,9 @@ DTFINDER.DOM = {
         },
 
         updateBrowser: function (data){
-            ul = DTFINDER.DOM.create('UL');
+            var ul = DTFINDER.DOM.create('UL');
 
-            for(i=0; i<data.length; i++ ) {
+            for(var i=0; i<data.length; i++ ) {
                     
                 var node = DTFINDER.DOM.createFileItem(data[i]);
                 $(ul).append(node);
@@ -1002,37 +928,29 @@ DTFINDER.DOM = {
             }
 
             this._caches.loaded = [];
-            
-            var a = $('a[href="'+path+'"]');
 
-            a.siblings('ul').remove();
-
-            if(a.children('i').hasClass(this.options.classes.expand)) {
-                a.click();
-                a.click();
-            }
+            this.nav.dttree('expand', path);
         },
         /*
          * Create browser elements, called in init
          */
         createElements: function(el, options) {
 
-            this.nav = DTFINDER.DOM.create('DIV').addClass('dtf-nav ctn');
+            this.nav = $('<div/>').addClass('dtf-nav ctn');
+            this.browserArea = $('<div/>').
+              addClass('dtf-area ctn dtf-context-holder').
+              data('context-target', '#bro-context-menu') ;
 
-            this.browserArea = DTFINDER.DOM.create('DIV').addClass('dtf-area ctn dtf-context-holder');
+            var row = $('<div/>').addClass('row');
 
-            $(this.browserArea).data('context-target', '#bro-context-menu');
-
-            var row = DTFINDER.DOM.create('DIV').addClass('row');
-
-            var wrapper = DTFINDER.DOM.create('DIV').addClass('wrapper container-fluid');
+            var wrapper = $('<div/>').addClass('wrapper container-fluid');
 
             var toolBar = DTFINDER.DOM.createToolbar();
 
-            var uploadUrl = this.options.uploadUrl || this.options.url;
+            var uploadUrl = this.opts.uploadUrl || this.opts.url;
             var uploadDialog = DTFINDER.DOM.createUploadDialog(uploadUrl);
 
-            var createFolderUrl = this.options.createFolderUrl || this.options.url;
+            var createFolderUrl = this.opts.createFolderUrl || this.opts.url;
             var newFolderDialog = DTFINDER.DOM.createNewFolderDialog(createFolderUrl);
             var subBrowserDialog = DTFINDER.DOM.createSubBrowserDialog();
             var propertiesDialog = DTFINDER.DOM.createPropertiesDialog();
@@ -1058,17 +976,15 @@ DTFINDER.DOM = {
                 .after(subBrowserDialog)
                 .after(propertiesDialog);
         },
-    };
+  };
 
-    // A really lightweight plugin wrapper around the constructor,
-    // preventing against multiple instantiations
-    $.fn[pluginName] = function ( options ) {
-        return this.each(function () {
-            if (!$.data(this, "plugin_" + pluginName)) {
-                $.data(this, "plugin_" + pluginName,
-                new Plugin( this, options ));
-            }
-        });
-    };
+  // Global properties and methods get attached to `$`
+  // as opposed to `$.fn` so they can be extended from the outside
+  global = {
 
-})(jQuery, window, document, DTFINDER);
+  };
+
+  // Add the plugin to the jQuery namespace and set-up the boilerplate base
+  $.newPlugin(pluginName, defaults, methods, global);
+
+}(jQuery, window, document));
