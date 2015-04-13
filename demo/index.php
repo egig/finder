@@ -7,8 +7,8 @@
 <meta name="description" content="">
 <meta name="author" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link href="demo/lib/bootstrap/bootstrap.min.css" rel="stylesheet">
-<link href="demo/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+<link href="/demo/deps/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="/demo/deps/fontawesome/css/font-awesome.min.css" rel="stylesheet">
 
 <link href="/../finder.css" rel="stylesheet">
 <link rel="stylesheet" href="">
@@ -27,10 +27,10 @@
 
 <div id="finder"></div>
 
-<script type="text/javascript" src="/demo/lib/jquery.min.js"></script>
-<script type="text/javascript" src="/demo/lib/jquery.form.min.js"></script>
-<script type="text/javascript" src="/demo/lib/bootstrap/bootstrap.min.js"></script>
-<script type="text/javascript" src="/demo/lib/bootstrap-contextmenu.js"></script>
+<script type="text/javascript" src="/demo/deps/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="/demo/deps/jquery-form/jquery.form.js"></script>
+<script type="text/javascript" src="/demo/deps/bootstrap/dist/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/demo/deps/bootstrap-contextmenu/bootstrap-contextmenu.js"></script>
 
 <!-- this demo also used for developement purpose, so we will just use the src instead of dist -->
 <script src="/../src/plugin-boilerplate.js"></script>
