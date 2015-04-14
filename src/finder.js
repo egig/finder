@@ -30,6 +30,8 @@
     // this.opts contains the options passed to the plugin
     _init: function() {
 
+        this._currentPath = '/';
+
         DTFINDER.config = this.opts
         DTFINDER.config.data = $.extend( {}, defaults.data, this.opts.data);
         DTFINDER.config.permissions = $.extend( {}, defaults.permissions, this.opts.permissions);
@@ -126,8 +128,8 @@
                this.listenContextMenu(el);
             }
 
-            this.listenUpload(this._caches.currentPath);
-            this.listenCreateFolder(this._caches.currentPath);
+            this.listenUpload(this._currentPath);
+            this.listenCreateFolder(this._currentPath);
             this.listenRename();
             this.listenSearch();
 
@@ -149,7 +151,7 @@
 
         open: function(path) {
 
-            this._caches.currentPath = path;
+            this._currentPath = path;
 
             if($.inArray(path, this._caches.loaded) === -1) {
 
@@ -172,12 +174,13 @@
             var _this = this;
             $(document).on('keyup', '.dt-search-input', function(){
                 var q = $(this).val();
-                if(q.length > 1) {
-                    var path = _this._caches.currentPath;
-                    var data = DTFINDER.File.search(q, path);
+                if(q.length > 0) {
+                    var data = DTFINDER.File.search(q, _this._currentPath);
 
                     //update browser
                     _this.updateBrowser(data);
+                } else {
+                    _this.open(_this._currentPath);
                 }
             });
         },
@@ -376,7 +379,7 @@
 
                     // if no path, we just well use current path
                     if(!path) {
-                        path = this._caches.currentPath;
+                        path = this._currentPath;
                     }
 
                     var file = DTFINDER.File.properties(path);
@@ -418,7 +421,7 @@
         refresh: function(path) {
 
             if(typeof path == 'undefined') {
-                path = this._caches.currentPath;
+                path = this._currentPath;
             }
 
             data = DTFINDER.File.list('/'+path);
