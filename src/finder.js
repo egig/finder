@@ -31,14 +31,13 @@
     _init: function() {
 
         this._currentPath = '/';
+        this._loadedPaths = [];
+        this._cache = [];
 
         DTFINDER.config = this.opts
         DTFINDER.config.data = $.extend( {}, defaults.data, this.opts.data);
         DTFINDER.config.permissions = $.extend( {}, defaults.permissions, this.opts.permissions);
 
-        this._caches = {};
-        this._caches.loaded = [];
-        this._caches.data = [];
         
         DTFINDER.File.url = this.opts.url;
         DTFINDER.File.data = this.opts.data;
@@ -61,16 +60,16 @@
                 onBeforeExpand: function(path, dttree) {
 
                     path = path.substr(1);
-                    if($.inArray(path, _this._caches.loaded) === -1) {
+                    if($.inArray(path, _this._loadedPaths) === -1) {
 
                         var data = DTFINDER.File.list(path);
                         //save data
-                        _this._caches.data[path] = data;
+                        _this._cache[path] = data;
 
-                        _this._caches.loaded.push(path);
+                        _this._loadedPaths.push(path);
                     }
 
-                    dttree.setChildren(_this._caches.data[path], path);
+                    dttree.setChildren(_this._cache[path], path);
                     _this.handleHight();
                 }
             });
@@ -153,20 +152,20 @@
 
             this._currentPath = path;
 
-            if($.inArray(path, this._caches.loaded) === -1) {
+            if($.inArray(path, this._loadedPaths) === -1) {
 
                 var data = DTFINDER.File.list(path);
                 //save data
-                this._caches.data[path] = data;
+                this._cache[path] = data;
 
-                this._caches.loaded.push(path);
+                this._loadedPaths.push(path);
             }
             
             //upload
             this.listenUpload(path);
             this.listenCreateFolder(path);
 
-            this.updateBrowser(this._caches.data[path]);
+            this.updateBrowser(this._cache[path]);
             this.handleHight();
         },
 
@@ -407,7 +406,7 @@
         },
 
         updateBrowser: function (data){
-            var ul = DTFINDER.DOM.create('UL');
+            var ul = $('<ul/>');
 
             for(var i=0; i<data.length; i++ ) {
                     
@@ -425,16 +424,16 @@
             }
 
             data = DTFINDER.File.list('/'+path);
-            this._caches.data[path] = data;
+            this._cache[path] = data;
             this.updateBrowser(data);
 
             //remove path from loaded
             
-            for(var i = this._caches.loaded.length-1; i--;){
-                if (this._caches.loaded[i].trim() == path.trim() ) this._caches.loaded.splice(i, 1);
+            for(var i = this._loadedPaths.length-1; i--;){
+                if (this._loadedPaths[i].trim() == path.trim() ) this._loadedPaths.splice(i, 1);
             }
 
-            this._caches.loaded = [];
+            this._loadedPaths = [];
 
             this.nav.dttree('expand', path);
         },
