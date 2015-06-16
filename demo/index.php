@@ -39,7 +39,7 @@
 <script src="/../src/file.js"></script>
 <script src="/../src/finder.js"></script>
 
-<!-- but if you in production mode, it's recomended to use minified version -->
+<!-- if you in production mode, it's recomended to use minified version -->
 <!-- <script src="/../dis/finder.min.js"></script> -->
 
 <script type="text/javascript">

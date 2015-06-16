@@ -62,7 +62,6 @@ DTFINDER.DOM = {
             '<input multiple type="file" name="files[]" style="margin-bottom:10px;">',
             '<div class="uploaded"></div>',
             '<input type="submit" class="btn btn-primary btn-sm pull-right" value="Submit">',
-            '<a href="javascript:;" class="btn btn-default btn-sm pull-right" data-dismiss="modal" style="margin-right:10px;">Cancel</a>',
             '</form>'].join('');
 
         return this.createModal('upload-dialog', html);
@@ -75,7 +74,7 @@ DTFINDER.DOM = {
             '<label class="control-label">Folder Name</label>',
             '<input type="text" name="folder-name" value="New Folder" class="form-control new-folder-input" style="margin-bottom:10px;"/>',
             '<input type="submit" class="btn btn-sm btn-primary pull-right" value="Submit"/>',
-            '<a href="#" style="margin-right:10px;" class="btn btn-sm btn-default pull-right" data-dismiss="modal">Cancel</a>',
+            '<a href="javascript:;" class="btn btn-default btn-sm pull-right" data-dismiss="modal" style="margin-right:10px;">Cancel</a>',
             '</form>'].join('');
 
         return this.createModal('new-folder-dialog', html, 'modal-sm');
@@ -102,10 +101,14 @@ DTFINDER.DOM = {
         var body = this.create('DIV').addClass('modal-body');
 
         var dialog = this.create('DIV').addClass('modal-dialog '+ size);
+
+        var header = this.create('DIV').addClass('modal-header');
         var content = this.create('DIV').addClass('modal-content');
 
-        $(body).html(html);
-        $(content).append(body);
+        $(body).append(html)
+        $(content)
+            .append('<div class="clearfix"><button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin:5px 15px;"><span aria-hidden="true">&times;</span></button></div>')
+            .append(body);
         $(dialog).append(content);
         $(modal).append(dialog);
 

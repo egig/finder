@@ -121,7 +121,6 @@ DTFINDER.DOM = {
             '<input multiple type="file" name="files[]" style="margin-bottom:10px;">',
             '<div class="uploaded"></div>',
             '<input type="submit" class="btn btn-primary btn-sm pull-right" value="Submit">',
-            '<a href="javascript:;" class="btn btn-default btn-sm pull-right" data-dismiss="modal" style="margin-right:10px;">Cancel</a>',
             '</form>'].join('');
 
         return this.createModal('upload-dialog', html);
@@ -134,7 +133,7 @@ DTFINDER.DOM = {
             '<label class="control-label">Folder Name</label>',
             '<input type="text" name="folder-name" value="New Folder" class="form-control new-folder-input" style="margin-bottom:10px;"/>',
             '<input type="submit" class="btn btn-sm btn-primary pull-right" value="Submit"/>',
-            '<a href="#" style="margin-right:10px;" class="btn btn-sm btn-default pull-right" data-dismiss="modal">Cancel</a>',
+            '<a href="javascript:;" class="btn btn-default btn-sm pull-right" data-dismiss="modal" style="margin-right:10px;">Cancel</a>',
             '</form>'].join('');
 
         return this.createModal('new-folder-dialog', html, 'modal-sm');
@@ -161,10 +160,14 @@ DTFINDER.DOM = {
         var body = this.create('DIV').addClass('modal-body');
 
         var dialog = this.create('DIV').addClass('modal-dialog '+ size);
+
+        var header = this.create('DIV').addClass('modal-header');
         var content = this.create('DIV').addClass('modal-content');
 
-        $(body).html(html);
-        $(content).append(body);
+        $(body).append(html)
+        $(content)
+            .append('<div class="clearfix"><button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin:5px 15px;"><span aria-hidden="true">&times;</span></button></div>')
+            .append(body);
         $(dialog).append(content);
         $(modal).append(dialog);
 
@@ -526,13 +529,14 @@ DTFINDER.DOM = {
     // this.opts contains the options passed to the plugin
     _init: function() {
 
+        this._currentPath = '/';
+        this._loadedPaths = [];
+        this._cache = [];
+
         DTFINDER.config = this.opts
         DTFINDER.config.data = $.extend( {}, defaults.data, this.opts.data);
         DTFINDER.config.permissions = $.extend( {}, defaults.permissions, this.opts.permissions);
 
-        this._caches = {};
-        this._caches.loaded = [];
-        this._caches.data = [];
         
         DTFINDER.File.url = this.opts.url;
         DTFINDER.File.data = this.opts.data;
@@ -555,16 +559,16 @@ DTFINDER.DOM = {
                 onBeforeExpand: function(path, dttree) {
 
                     path = path.substr(1);
-                    if($.inArray(path, _this._caches.loaded) === -1) {
+                    if($.inArray(path, _this._loadedPaths) === -1) {
 
                         var data = DTFINDER.File.list(path);
                         //save data
-                        _this._caches.data[path] = data;
+                        _this._cache[path] = data;
 
-                        _this._caches.loaded.push(path);
+                        _this._loadedPaths.push(path);
                     }
 
-                    dttree.setChildren(_this._caches.data[path], path);
+                    dttree.setChildren(_this._cache[path], path);
                     _this.handleHight();
                 }
             });
@@ -622,8 +626,8 @@ DTFINDER.DOM = {
                this.listenContextMenu(el);
             }
 
-            this.listenUpload(this._caches.currentPath);
-            this.listenCreateFolder(this._caches.currentPath);
+            this.listenUpload(this._currentPath);
+            this.listenCreateFolder(this._currentPath);
             this.listenRename();
             this.listenSearch();
 
@@ -645,22 +649,22 @@ DTFINDER.DOM = {
 
         open: function(path) {
 
-            this._caches.currentPath = path;
+            this._currentPath = path;
 
-            if($.inArray(path, this._caches.loaded) === -1) {
+            if($.inArray(path, this._loadedPaths) === -1) {
 
                 var data = DTFINDER.File.list(path);
                 //save data
-                this._caches.data[path] = data;
+                this._cache[path] = data;
 
-                this._caches.loaded.push(path);
+                this._loadedPaths.push(path);
             }
             
             //upload
             this.listenUpload(path);
             this.listenCreateFolder(path);
 
-            this.updateBrowser(this._caches.data[path]);
+            this.updateBrowser(this._cache[path]);
             this.handleHight();
         },
 
@@ -668,12 +672,13 @@ DTFINDER.DOM = {
             var _this = this;
             $(document).on('keyup', '.dt-search-input', function(){
                 var q = $(this).val();
-                if(q.length > 1) {
-                    var path = _this._caches.currentPath;
-                    var data = DTFINDER.File.search(q, path);
+                if(q.length > 0) {
+                    var data = DTFINDER.File.search(q, _this._currentPath);
 
                     //update browser
                     _this.updateBrowser(data);
+                } else {
+                    _this.open(_this._currentPath);
                 }
             });
         },
@@ -872,7 +877,7 @@ DTFINDER.DOM = {
 
                     // if no path, we just well use current path
                     if(!path) {
-                        path = this._caches.currentPath;
+                        path = this._currentPath;
                     }
 
                     var file = DTFINDER.File.properties(path);
@@ -900,7 +905,7 @@ DTFINDER.DOM = {
         },
 
         updateBrowser: function (data){
-            var ul = DTFINDER.DOM.create('UL');
+            var ul = $('<ul/>');
 
             for(var i=0; i<data.length; i++ ) {
                     
@@ -914,20 +919,20 @@ DTFINDER.DOM = {
         refresh: function(path) {
 
             if(typeof path == 'undefined') {
-                path = this._caches.currentPath;
+                path = this._currentPath;
             }
 
             data = DTFINDER.File.list('/'+path);
-            this._caches.data[path] = data;
+            this._cache[path] = data;
             this.updateBrowser(data);
 
             //remove path from loaded
             
-            for(var i = this._caches.loaded.length-1; i--;){
-                if (this._caches.loaded[i].trim() == path.trim() ) this._caches.loaded.splice(i, 1);
+            for(var i = this._loadedPaths.length-1; i--;){
+                if (this._loadedPaths[i].trim() == path.trim() ) this._loadedPaths.splice(i, 1);
             }
 
-            this._caches.loaded = [];
+            this._loadedPaths = [];
 
             this.nav.dttree('expand', path);
         },
