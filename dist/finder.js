@@ -63,6 +63,7 @@ DTFINDER.config = {
     classes: {},
     permissions: {}
 };
+DTFINDER.lang = [];
 
 DTFINDER.DOM = {
 
@@ -93,7 +94,7 @@ DTFINDER.DOM = {
                     'data-toggle': 'modal',
                     'data-target': '#upload-dialog'
                 }).addClass('upload-btn tool btn btn-sm btn-success pull-left')
-                .html('<i class="fa fa-upload"></i> Upload');
+                .html('<i class="fa fa-upload"></i> '+ DTFINDER.Locale.localize('Upload'));
             
             $(toolBar).append(uploadBtn);
         }
@@ -102,7 +103,7 @@ DTFINDER.DOM = {
         var searchInput = this.create('INPUT', {
             type: 'text',
             name: 'q',
-            placeholder: 'Search'
+            placeholder: DTFINDER.Locale.localize('Search')
         }).addClass('input-sm form-control pull-right dt-search-input')
 
         $(searchForm).append(searchInput);
@@ -120,7 +121,7 @@ DTFINDER.DOM = {
             '<form method="POST" enctype="multipart/form-data" class="form clearfix" id="upload-form" action="'+uploadUrl+'">',
             '<input multiple type="file" name="files[]" style="margin-bottom:10px;">',
             '<div class="uploaded"></div>',
-            '<input type="submit" class="btn btn-primary btn-sm pull-right" value="Submit">',
+            '<input type="submit" class="btn btn-primary btn-sm pull-right" value="'+DTFINDER.Locale.localize('Submit')+'">',
             '</form>'].join('');
 
         return this.createModal('upload-dialog', html);
@@ -130,17 +131,17 @@ DTFINDER.DOM = {
 
         var html =[
             '<form method="GET" class="form clearfix" id="new-folder-form" action="'+createFolderUrl+'">',
-            '<label class="control-label">Folder Name</label>',
+            '<label class="control-label">'+DTFINDER.Locale.localize('Folder Name')+'</label>',
             '<input type="text" name="folder-name" value="New Folder" class="form-control new-folder-input" style="margin-bottom:10px;"/>',
-            '<input type="submit" class="btn btn-sm btn-primary pull-right" value="Submit"/>',
-            '<a href="javascript:;" class="btn btn-default btn-sm pull-right" data-dismiss="modal" style="margin-right:10px;">Cancel</a>',
+            '<input type="submit" class="btn btn-sm btn-primary pull-right" value="'+DTFINDER.Locale.localize('Submit')+'"/>',
+            '<a href="javascript:;" class="btn btn-default btn-sm pull-right" data-dismiss="modal" style="margin-right:10px;">'+DTFINDER.Locale.localize('Cancel')+'</a>',
             '</form>'].join('');
 
         return this.createModal('new-folder-dialog', html, 'modal-sm');
     },
 
     createSubBrowserDialog: function(){
-        var html = '<div><button class="btn btn-xs pull-right btn-primary folder-selector">Select</button></div>';
+        var html = '<div><button class="btn btn-xs pull-right btn-primary folder-selector">'+DTFINDER.Locale.localize('Select')+'</button></div>';
         return this.createModal('sub-browser-dialog', html, 'modal-sm');
     },
 
@@ -179,10 +180,10 @@ DTFINDER.DOM = {
         var context = {};
 
         if(DTFINDER.config.permissions.create) {
-            context['new-folder'] = 'New Folder\u2026'
+            context['new-folder'] = DTFINDER.Locale.localize('New Folder')+'\u2026'
         }
 
-        context.properties = 'Properties';
+        context.properties = DTFINDER.Locale.localize('Properties');
         return this.createContextMenu('bro-context-menu', context);
     },
 
@@ -192,15 +193,15 @@ DTFINDER.DOM = {
         var context = {};
  
         if(DTFINDER.config.permissions.move) {
-            context.rename = 'Rename',
-            context.move = 'Move\u2026'
+            context.rename =  DTFINDER.Locale.localize('Rename')
+            context.move = DTFINDER.Locale.localize('Move')+'\u2026'
         }
 
         if(DTFINDER.config.permissions.delete) {
-            context.delete = 'Delete\u2026'
+            context.delete = DTFINDER.Locale.localize('Delete')+'\u2026'
         }
 
-        context.properties = 'Properties';
+        context.properties = DTFINDER.Locale.localize('Properties');
         return this.createContextMenu('item-context-menu', context);
     },
 
@@ -497,6 +498,17 @@ DTFINDER.DOM = {
             return r;
         }
     }
+};DTFINDER.Locale = {
+
+	locale: null,
+
+	localize: function(string) {
+		if(typeof DTFINDER.lang[this.locale][string] == 'undefined' ) {
+			return string;
+		} else {
+			return DTFINDER.lang[this.locale][string];
+		}
+	}
 };(function($, win, doc, undefined) {
 
   var pluginName, defaults, methods, global;
@@ -507,6 +519,7 @@ DTFINDER.DOM = {
   // Default options
   defaults = {
       url: null,
+      locale: 'en',
       manage: true,
       upload: true,
       uploadUrl: null,
@@ -540,6 +553,7 @@ DTFINDER.DOM = {
         
         DTFINDER.File.url = this.opts.url;
         DTFINDER.File.data = this.opts.data;
+        DTFINDER.Locale.locale = this.opts.locale;
 
         this.createElements(this.el, this.opts);
         this.initTree();
@@ -884,10 +898,10 @@ DTFINDER.DOM = {
 
                     var html = [
                         '<table>',
-                            '<tr><td class="property-label" valign="top" width="70px;">Name</td><td>'+file.Name+'</td></tr>',
-                            '<tr><td class="property-label" valign="top" width="70px;">Type</td><td>'+file.Type+'</td></tr>',
-                            '<tr><td class="property-label" valign="top" width="70px;">Size</td><td>'+file.Size+'</td></tr>',
-                            '<tr><td class="property-label" valign="top" width="70px;">Location</td><td>'+file.Location+'</td></tr>',
+                            '<tr><td class="property-label" valign="top" width="70px;">'+DTFINDER.Locale.localize('Name')+'</td><td>'+file.Name+'</td></tr>',
+                            '<tr><td class="property-label" valign="top" width="70px;">'+DTFINDER.Locale.localize('Type')+'</td><td>'+file.Type+'</td></tr>',
+                            '<tr><td class="property-label" valign="top" width="70px;">'+DTFINDER.Locale.localize('Size')+'</td><td>'+file.Size+'</td></tr>',
+                            '<tr><td class="property-label" valign="top" width="70px;">'+DTFINDER.Locale.localize('Location')+'</td><td>'+file.Location+'</td></tr>',
                         '</table>'
                     ].join('');
 

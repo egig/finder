@@ -7,7 +7,7 @@ module.exports = function(grunt) {
         separator: ';',
       },
       dist: {
-        src: ['src/plugin-boilerplate.js', 'src/DOM.js', 'src/tree.js', 'src/file.js', 'src/finder.js'],
+        src: ['src/plugin-boilerplate.js', 'src/DOM.js', 'src/tree.js', 'src/file.js', 'src/locale.js', 'src/finder.js'],
         dest: 'dist/finder.js',
       }
     },

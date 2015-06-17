@@ -8,6 +8,7 @@
   // Default options
   defaults = {
       url: null,
+      locale: 'en',
       manage: true,
       upload: true,
       uploadUrl: null,
@@ -41,6 +42,7 @@
         
         DTFINDER.File.url = this.opts.url;
         DTFINDER.File.data = this.opts.data;
+        DTFINDER.Locale.locale = this.opts.locale;
 
         this.createElements(this.el, this.opts);
         this.initTree();
@@ -385,10 +387,10 @@
 
                     var html = [
                         '<table>',
-                            '<tr><td class="property-label" valign="top" width="70px;">Name</td><td>'+file.Name+'</td></tr>',
-                            '<tr><td class="property-label" valign="top" width="70px;">Type</td><td>'+file.Type+'</td></tr>',
-                            '<tr><td class="property-label" valign="top" width="70px;">Size</td><td>'+file.Size+'</td></tr>',
-                            '<tr><td class="property-label" valign="top" width="70px;">Location</td><td>'+file.Location+'</td></tr>',
+                            '<tr><td class="property-label" valign="top" width="70px;">'+DTFINDER.Locale.localize('Name')+'</td><td>'+file.Name+'</td></tr>',
+                            '<tr><td class="property-label" valign="top" width="70px;">'+DTFINDER.Locale.localize('Type')+'</td><td>'+file.Type+'</td></tr>',
+                            '<tr><td class="property-label" valign="top" width="70px;">'+DTFINDER.Locale.localize('Size')+'</td><td>'+file.Size+'</td></tr>',
+                            '<tr><td class="property-label" valign="top" width="70px;">'+DTFINDER.Locale.localize('Location')+'</td><td>'+file.Location+'</td></tr>',
                         '</table>'
                     ].join('');
 

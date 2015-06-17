@@ -37,10 +37,11 @@
 <script src="/../src/DOM.js"></script>
 <script src="/../src/tree.js"></script>
 <script src="/../src/file.js"></script>
+<script src="/../src/locale.js"></script>
 <script src="/../src/finder.js"></script>
-
 <!-- if you in production mode, it's recomended to use minified version -->
 <!-- <script src="/../dis/finder.min.js"></script> -->
+<script src="/../src/l10n/id.js"></script>
 
 <script type="text/javascript">
 	(function($){
@@ -53,6 +54,7 @@
 				move: 1,
 				delete: 1,
 			},
+			locale: 'id'
 		});
 
 	})(jQuery);
