@@ -15,7 +15,7 @@ DTFINDER.Locale = {
 
 				return string;
 			}
-			
+
 			return DTFINDER.lang[this.locale][string];
 		}
 	}

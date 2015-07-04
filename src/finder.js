@@ -39,7 +39,7 @@
         DTFINDER.config.data = $.extend( {}, defaults.data, this.opts.data);
         DTFINDER.config.permissions = $.extend( {}, defaults.permissions, this.opts.permissions);
 
-        
+
         DTFINDER.File.url = this.opts.url;
         DTFINDER.File.data = this.opts.data;
         DTFINDER.Locale.locale = this.opts.locale;
@@ -50,6 +50,9 @@
         this.listen(this.el, this.opts);
 
         this.openRoot();
+
+        DTFINDER.Layout.handleScreenSize();
+        DTFINDER.Layout.listenWindowResize();
     },
 
     initTree: function() {
@@ -87,7 +90,7 @@
 
                 var a = $('a[href="#'+path+'"]');
                 this.nav.dttree('expand', path);
-                
+
             } else {
 
                 var x = path.split('/');
@@ -96,7 +99,7 @@
                 while(x.length !== 0) {
                     s = s+x.shift()+'/';
                     s.trim();
-                    
+
                     if(s != '/') {
                         p = s.substr(0,s.length-1);
                     }
@@ -104,14 +107,15 @@
                     this.nav.dttree('expand', p);
                 }
             }
-            
+
             this.open(path);
         },
+
 
         listen: function (el, options) {
 
             var parent = this;
-            
+
             window.onpopstate = function(e){
                 var path = window.location.hash.substr(1);
                 parent.open(path);
@@ -134,7 +138,7 @@
             this.listenRename();
             this.listenSearch();
 
-            // item click
+            // file (not directory) click
             $(el).on('click', '.dtf-file-item a', function(e){
                 e.preventDefault();
             });
@@ -162,13 +166,38 @@
 
                 this._loadedPaths.push(path);
             }
-            
+
             //upload
             this.listenUpload(path);
             this.listenCreateFolder(path);
 
             this.updateBrowser(this._cache[path]);
             this.handleHight();
+
+            var parent = this.getParent(path)
+            path = this.createBreadcrumb(path);
+
+            $('#dtf-parent-folder').attr('href','#'+parent);
+            $('#dtf-breadcrumb').html(path);
+        },
+
+        createBreadcrumb: function(path) {
+            var tmp = path.substr(1).split('/');
+
+            var bc = '#';
+            var bcs = ''
+            for(var i=0; i<tmp.length; i++) {
+                bc += '/'+tmp[i];
+                bcs += '/<a href="'+bc+'">'+tmp[i]+'</a>';
+            }
+
+            return bcs;
+        },
+
+        getParent: function(path) {
+            var tmp = path.split('/');
+            tmp.pop();
+            return tmp.join('/') ? tmp.join('/') : '/';
         },
 
         listenSearch: function(){
@@ -199,7 +228,7 @@
 
                     $( e.target).parent().remove();
                 }
-                
+
                 if(e.keyCode == KEYCODE_ENTER || e.which == KEYCODE_ENTER) {
 
                     var path = $(this).data('path');
@@ -229,7 +258,7 @@
         },
 
         listenContextMenu: function (el){
-            
+
             $(el).contextmenu({
               onItem: $.proxy(this.handleContext, this),
               before: function (e, element, target) {
@@ -241,9 +270,9 @@
                         $(el).data('context-holder', e.target);
                         contextTarget = $(e.target).data('context-target');
                     } else {
-                                        
+
                         var containers = $(e.target).parents();
-                        
+
                         $.each(containers, function(key, value){
                             if($(value).hasClass('dtf-context-holder')) {
 
@@ -257,7 +286,7 @@
                     if(null === contextTarget) {
                         return false;
                     }
-                    
+
                     $(el).data('target', contextTarget);
                     return true;
                   }
@@ -326,15 +355,15 @@
                     }
 
                 break;
-                
+
                 case 'rename':
                     var fileNameDiv = $(holder).find('.file-name');
                     var file = fileNameDiv.text();
                     fileNameDiv.hide();
-                    
+
                     $(holder).append('<div><input data-path="'+path+'" type="text" style="height:18px;" class="form-control input-sm dt-rename-input" value="'+file+'"></div>');
                     $(holder).find('.dt-rename-input').select();
-                    
+
                 break;
 
                 case 'new-folder':
@@ -342,11 +371,11 @@
                     $('#new-folder-dialog').on('shown.bs.modal', function () {
                         $('.new-folder-input').select();
                     });
-                    
+
                     $('#new-folder-dialog').modal('show');
                     return;
                 break;
-                
+
                 case 'move':
 
                     $('#sub-browser-dialog .modal-body').dttree({
@@ -411,7 +440,7 @@
             var ul = $('<ul/>');
 
             for(var i=0; i<data.length; i++ ) {
-                    
+
                 var node = DTFINDER.DOM.createFileItem(data[i]);
                 $(ul).append(node);
             }
@@ -430,7 +459,7 @@
             this.updateBrowser(data);
 
             //remove path from loaded
-            
+
             for(var i = this._loadedPaths.length-1; i--;){
                 if (this._loadedPaths[i].trim() == path.trim() ) this._loadedPaths.splice(i, 1);
             }
@@ -444,10 +473,20 @@
          */
         createElements: function(el, options) {
 
-            this.nav = $('<div/>').addClass('dtf-nav ctn');
+            this.nav = $('<div/>').addClass('dtf-nav');
             this.browserArea = $('<div/>').
-              addClass('dtf-area ctn dtf-context-holder').
+              addClass('dtf-area ctn dtf-context-holder col-md-9').
               data('context-target', '#bro-context-menu') ;
+
+            this.navMobile = ''
+                +'<div class="row">'
+                    +'<div class="col-md-12">'
+                        +'<a id="dtf-parent-folder" href="#">'
+                            +'<span class="fa-stack fa-lg"> <i class="fa fa-folder-o fa-stack-1x"></i> <i class="fa fa-mail-reply"></i> </span>'
+                        +'</a>'
+                        +'<span id="dtf-breadcrumb"></span>'
+                    +'</div>'
+                +'</div>';
 
             var row = $('<div/>').addClass('row');
 
@@ -472,10 +511,11 @@
 
             $(wrapper)
                 .append(toolBar)
+                .append(this.navMobile)
                 .append(row)
 
             $(el)
-                .width(options.width)
+                //.width(options.width)
                 .append(wrapper)
                 .after(itemContext)
                 .after(broContext)
