@@ -25,6 +25,10 @@ DTFINDER.DOM = {
         return $(el);
     },
 
+    createBreadcrumb:function(){
+        return this._render(DTFINDER.Template.breadcrumb());
+    },
+
     createToolbar: function(){
         return this._render(DTFINDER.Template.toolbar());
     },
@@ -148,9 +152,12 @@ DTFINDER.DOM = {
 
         var a = this.create('A', {href: '#/'+file.path})
             .append(icon)
-            .append('<div style="overflow: hidden;text-overflow: ellipsis;" class="file-name">'+file.label+'</div>');
+            .append('<span style="overflow: hidden;text-overflow: ellipsis;" class="file-name">'+file.label+'</span>');
 
-        $(li).append(a);
+        var mobileContextMenu = this._render(DTFINDER.Template.mobileContextMenu());
+        $(li)
+            .append(a)
+            .append(mobileContextMenu);
 
         return li;
     }

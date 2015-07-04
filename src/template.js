@@ -6,8 +6,20 @@ DTFINDER.Template = function(){
 
     return {
 
+        breadcrumb: function(){
+                return ''
+                +'<div class="">'
+                    +'<div class="col-md-12">'
+                        +'<a id="dtf-parent-folder" href="#">'
+                            +'<span class="fa-stack fa-lg"> <i class="fa fa-folder-o fa-stack-1x"></i> <i class="fa fa-mail-reply"></i> </span>'
+                        +'</a>'
+                        +'<span id="dtf-breadcrumb"></span>'
+                    +'</div>'
+                +'</div>';
+        },
+
         toolbar: function() {
-            return '<div class="row dtf-toolbar" style="margin-bottom:5px">'
+            return '<div class="dtf-toolbar" style="margin-bottom:5px">'
                     +'<div class="toolbar clearfix col-md-6">'
                         +'<a href="#" data-toggle="modal" data-target="#upload-dialog" class="upload-btn tool btn btn-sm btn-success pull-left"><i class="fa fa-upload"></i> Unggah</a>'
                     + '</div>'
@@ -52,6 +64,17 @@ DTFINDER.Template = function(){
 
         moveBrowser: function() {
             return '<div><button class="btn btn-xs pull-right btn-primary folder-selector">'+_('Select')+'</button></div>'
+        },
+
+        mobileContextMenu: function(){
+            return ''
+                +'<span class="mobile-context-menu pull-right dropdown"><a data-toggle="dropdown" href="#" style="font-size:1.4em"><i class="fa fa-angle-down"></i></a>'
+                + '<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">'
+                +'<li><a href="#">'+_('Rename')+'</a></li>'
+                +'<li><a href="#">'+_('Move')+'</a></li>'
+                +'<li><a href="#">'+_('Delete')+'</a></li>'
+                +'<li><a href="#">'+_('Properties')+'</a></li>'
+                +'</ul></span>'
         }
 
     }

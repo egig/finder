@@ -1,22 +1,27 @@
     #sub-browser-dialog ul,
     .dtf-nav ul {
         list-style: none;
-        padding-left: 20px;
+        padding-left: 15px;
         width: auto;
         white-space: nowrap;
+    }
+
+    .dtf-browser-container {
+        clear: both;
     }
 
     .dtf-nav {
         background-color: #F5F5F5;
         width:250px;
         float: left;
-        padding: 10px;
+        padding-top: 10px;
     }
 
-.dtf-area {
-    min-height: 300px;
-    max-height: 500px;
-}
+    .dtf-area {
+        float: left;
+        min-height: 300px;
+        max-height: 500px;
+    }
 
     .dtf-area ul {
         list-style: none;
@@ -26,20 +31,6 @@
 
     .dtf-area li a {
         color: #888888;
-    }
-
-    .dtf-area li.dtf-item {
-        text-align: center;
-        display: block;
-        float: left;
-        margin: 10px 5px 20px;
-        width: 100px;
-        height: 80px;
-        white-space: pre;
-    }
-
-    .dtf-area li .icon {
-        font-size: 4em;
     }
 
 /* General style */
@@ -66,4 +57,44 @@
     font-size: 14px;
     border: none;
     box-shadow: none;
+}
+
+@media (max-width: 767px) {
+
+    .dtf-area > ul {
+        padding: 0 15px;
+    }
+
+    .dtf-area li.dtf-item {
+        border-bottom: 1px solid #e1e1e1;
+    }
+    .dtf-area li .icon {
+        display: inline-block;
+        line-height: 2em;
+        margin: 2px 5px;
+    }
+}
+
+@media (min-width: 767px) {
+
+    .mobile-context-menu {
+        display: none;
+    }
+    .dtf-area li.dtf-item {
+        text-align: center;
+        display: block;
+        float: left;
+        margin: 10px 5px 20px;
+        width: 100px;
+        height: 80px;
+        white-space: pre;
+    }
+
+    .dtf-area li .file-name {
+        display: block;
+    }
+
+    .dtf-area li .icon {
+        font-size: 3.6em;
+    }
 }

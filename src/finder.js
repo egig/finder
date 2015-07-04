@@ -475,22 +475,14 @@
 
             this.nav = $('<div/>').addClass('dtf-nav');
             this.browserArea = $('<div/>').
-              addClass('dtf-area ctn dtf-context-holder col-md-9').
-              data('context-target', '#bro-context-menu') ;
+              addClass('dtf-area ctn dtf-context-holder').
+              data('context-target', '#bro-context-menu');
 
-            this.navMobile = ''
-                +'<div class="row">'
-                    +'<div class="col-md-12">'
-                        +'<a id="dtf-parent-folder" href="#">'
-                            +'<span class="fa-stack fa-lg"> <i class="fa fa-folder-o fa-stack-1x"></i> <i class="fa fa-mail-reply"></i> </span>'
-                        +'</a>'
-                        +'<span id="dtf-breadcrumb"></span>'
-                    +'</div>'
-                +'</div>';
+            this.navMobile = DTFINDER.DOM.createBreadcrumb();
 
-            var row = $('<div/>').addClass('row');
+            var row = $('<div/>').addClass('dtf-browser-container').css({width:'100%'});
 
-            var wrapper = $('<div/>').addClass('wrapper container-fluid');
+            var wrapper = $('<div/>').addClass('dtf-contianer clearfix');
 
             var toolBar = DTFINDER.DOM.createToolbar();
 
