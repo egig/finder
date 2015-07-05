@@ -131,6 +131,7 @@
             // context menu
             if(options.manage) {
                this.listenContextMenu(el);
+               this.listenMobileContextMenu();
             }
 
             this.listenUpload(this._currentPath);
@@ -255,6 +256,100 @@
 
                 $( e.target).parent().remove();
             });
+        },
+
+        listenMobileContextMenu: function(el) {
+            var _this = this;
+            $(document).on("click", '.dtf-mobile-context-action', function(e) {
+                e.preventDefault();
+                var path = $(this).data('path');
+                var op = $(this).data('op');
+
+                _this.handleMobileContexAction(op, path, $(this))
+            })
+        },
+
+        handleMobileContexAction: function(op, path, a) {
+
+            var item = a.closest('.dtf-item');
+
+            switch (op) {
+                case 'rename':
+                    var fileNameDiv = $(item).find('.file-name');
+                    var file = fileNameDiv.text();
+                    fileNameDiv.hide();
+
+                    $(item).append('<div><input data-path="'+path+'" type="text" style="height:18px;" class="form-control input-sm dt-rename-input" value="'+file+'"></div>');
+                    $(item).find('.dt-rename-input').select();
+
+                break;
+
+                case 'delete':
+
+                    if(confirm('Are you sure you want to delete '+path+' ?, this cannot be undone.')) {
+                        var res = DTFINDER.File.delete(path);
+                        this.refresh();
+                    } else {
+                        return false;
+                    }
+
+                break;
+
+                case 'move':
+
+                    $('#sub-browser-dialog .modal-body').dttree({
+                        initData: [{
+                            path: '/',
+                            label: '/',
+                            type: 'dir'
+                        }],
+                        onBeforeExpand: function(path, dttree) {
+
+                            path = path.substr(1);
+                            var data = DTFINDER.File.list(path);
+                            dttree.setChildren(data, path);
+                        }
+                    });
+
+                    var parent = this;
+                    $('#sub-browser-dialog').on('click', '.folder-selector', function(){
+                        var href = $('#sub-browser-dialog').find('.selected').attr('href').substr(1);
+
+                        DTFINDER.File.move(path, href);
+                        parent.refresh();
+
+                        $('#sub-browser-dialog').modal('hide');
+                    });
+
+                    $('#sub-browser-dialog').modal('show');
+                break;
+                case 'properties':
+
+                    // if no path, we just well use current path
+                    if(!path) {
+                        path = this._currentPath;
+                    }
+
+                    var file = DTFINDER.File.properties(path);
+
+                    var html = [
+                        '<table>',
+                            '<tr><td class="property-label" valign="top" width="70px;">'+DTFINDER.Locale.localize('Name')+'</td><td>'+file.Name+'</td></tr>',
+                            '<tr><td class="property-label" valign="top" width="70px;">'+DTFINDER.Locale.localize('Type')+'</td><td>'+file.Type+'</td></tr>',
+                            '<tr><td class="property-label" valign="top" width="70px;">'+DTFINDER.Locale.localize('Size')+'</td><td>'+file.Size+'</td></tr>',
+                            '<tr><td class="property-label" valign="top" width="70px;">'+DTFINDER.Locale.localize('Location')+'</td><td>'+file.Location+'</td></tr>',
+                        '</table>'
+                    ].join('');
+
+                    $('#properties-dialog').on('shown.bs.modal', function (e) {
+                        $(this).find('.modal-body').html(html);
+                    });
+
+                    $('#properties-dialog').modal('show');
+                break;
+                default:
+
+            }
         },
 
         listenContextMenu: function (el){

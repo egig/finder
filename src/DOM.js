@@ -154,7 +154,7 @@ DTFINDER.DOM = {
             .append(icon)
             .append('<span style="overflow: hidden;text-overflow: ellipsis;" class="file-name">'+file.label+'</span>');
 
-        var mobileContextMenu = this._render(DTFINDER.Template.mobileContextMenu());
+        var mobileContextMenu = this._render(DTFINDER.Template.mobileContextMenu(), {path: file.path});
         $(li)
             .append(a)
             .append(mobileContextMenu);

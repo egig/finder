@@ -67,13 +67,14 @@ DTFINDER.Template = function(){
         },
 
         mobileContextMenu: function(){
+            // @todo handle permission here
             return ''
                 +'<span class="mobile-context-menu pull-right dropdown"><a data-toggle="dropdown" href="#" style="font-size:1.4em"><i class="fa fa-angle-down"></i></a>'
                 + '<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">'
-                +'<li><a href="#">'+_('Rename')+'</a></li>'
-                +'<li><a href="#">'+_('Move')+'</a></li>'
-                +'<li><a href="#">'+_('Delete')+'</a></li>'
-                +'<li><a href="#">'+_('Properties')+'</a></li>'
+                +'<li><a data-path="{{ path }}" data-op="rename" class="dtf-mobile-context-action" href="#">'+_('Rename')+'</a></li>'
+                +'<li><a data-path="{{ path }}" data-op="move" class="dtf-mobile-context-action" href="#">'+_('Move')+'</a></li>'
+                +'<li><a data-path="{{ path }}" data-op="delete" class="dtf-mobile-context-action" href="#">'+_('Delete')+'</a></li>'
+                +'<li><a data-path="{{ path }}" data-op="properties" class="dtf-mobile-context-action" href="#">'+_('Properties')+'</a></li>'
                 +'</ul></span>'
         }
 
