@@ -39,7 +39,7 @@
         DTFINDER.config.data = $.extend( {}, defaults.data, this.opts.data);
         DTFINDER.config.permissions = $.extend( {}, defaults.permissions, this.opts.permissions);
 
-        
+
         DTFINDER.File.url = this.opts.url;
         DTFINDER.File.data = this.opts.data;
         DTFINDER.Locale.locale = this.opts.locale;
@@ -50,6 +50,9 @@
         this.listen(this.el, this.opts);
 
         this.openRoot();
+
+        DTFINDER.Layout.handleScreenSize();
+        DTFINDER.Layout.listenWindowResize();
     },
 
     initTree: function() {
@@ -87,7 +90,7 @@
 
                 var a = $('a[href="#'+path+'"]');
                 this.nav.dttree('expand', path);
-                
+
             } else {
 
                 var x = path.split('/');
@@ -96,7 +99,7 @@
                 while(x.length !== 0) {
                     s = s+x.shift()+'/';
                     s.trim();
-                    
+
                     if(s != '/') {
                         p = s.substr(0,s.length-1);
                     }
@@ -104,14 +107,15 @@
                     this.nav.dttree('expand', p);
                 }
             }
-            
+
             this.open(path);
         },
+
 
         listen: function (el, options) {
 
             var parent = this;
-            
+
             window.onpopstate = function(e){
                 var path = window.location.hash.substr(1);
                 parent.open(path);
@@ -127,6 +131,7 @@
             // context menu
             if(options.manage) {
                this.listenContextMenu(el);
+               this.listenMobileContextMenu();
             }
 
             this.listenUpload(this._currentPath);
@@ -134,7 +139,7 @@
             this.listenRename();
             this.listenSearch();
 
-            // item click
+            // file (not directory) click
             $(el).on('click', '.dtf-file-item a', function(e){
                 e.preventDefault();
             });
@@ -162,13 +167,38 @@
 
                 this._loadedPaths.push(path);
             }
-            
+
             //upload
             this.listenUpload(path);
             this.listenCreateFolder(path);
 
             this.updateBrowser(this._cache[path]);
             this.handleHight();
+
+            var parent = this.getParent(path)
+            path = this.createBreadcrumb(path);
+
+            $('#dtf-parent-folder').attr('href','#'+parent);
+            $('#dtf-breadcrumb').html(path);
+        },
+
+        createBreadcrumb: function(path) {
+            var tmp = path.substr(1).split('/');
+
+            var bc = '#';
+            var bcs = ''
+            for(var i=0; i<tmp.length; i++) {
+                bc += '/'+tmp[i];
+                bcs += '/<a href="'+bc+'">'+tmp[i]+'</a>';
+            }
+
+            return bcs;
+        },
+
+        getParent: function(path) {
+            var tmp = path.split('/');
+            tmp.pop();
+            return tmp.join('/') ? tmp.join('/') : '/';
         },
 
         listenSearch: function(){
@@ -199,7 +229,7 @@
 
                     $( e.target).parent().remove();
                 }
-                
+
                 if(e.keyCode == KEYCODE_ENTER || e.which == KEYCODE_ENTER) {
 
                     var path = $(this).data('path');
@@ -228,8 +258,102 @@
             });
         },
 
+        listenMobileContextMenu: function(el) {
+            var _this = this;
+            $(document).on("click", '.dtf-mobile-context-action', function(e) {
+                e.preventDefault();
+                var path = $(this).data('path');
+                var op = $(this).data('op');
+
+                _this.handleMobileContexAction(op, path, $(this))
+            })
+        },
+
+        handleMobileContexAction: function(op, path, a) {
+
+            var item = a.closest('.dtf-item');
+
+            switch (op) {
+                case 'rename':
+                    var fileNameDiv = $(item).find('.file-name');
+                    var file = fileNameDiv.text();
+                    fileNameDiv.hide();
+
+                    $(item).append('<div><input data-path="'+path+'" type="text" style="height:18px;" class="form-control input-sm dt-rename-input" value="'+file+'"></div>');
+                    $(item).find('.dt-rename-input').select();
+
+                break;
+
+                case 'delete':
+
+                    if(confirm('Are you sure you want to delete '+path+' ?, this cannot be undone.')) {
+                        var res = DTFINDER.File.delete(path);
+                        this.refresh();
+                    } else {
+                        return false;
+                    }
+
+                break;
+
+                case 'move':
+
+                    $('#sub-browser-dialog .modal-body').dttree({
+                        initData: [{
+                            path: '/',
+                            label: '/',
+                            type: 'dir'
+                        }],
+                        onBeforeExpand: function(path, dttree) {
+
+                            path = path.substr(1);
+                            var data = DTFINDER.File.list(path);
+                            dttree.setChildren(data, path);
+                        }
+                    });
+
+                    var parent = this;
+                    $('#sub-browser-dialog').on('click', '.folder-selector', function(){
+                        var href = $('#sub-browser-dialog').find('.selected').attr('href').substr(1);
+
+                        DTFINDER.File.move(path, href);
+                        parent.refresh();
+
+                        $('#sub-browser-dialog').modal('hide');
+                    });
+
+                    $('#sub-browser-dialog').modal('show');
+                break;
+                case 'properties':
+
+                    // if no path, we just well use current path
+                    if(!path) {
+                        path = this._currentPath;
+                    }
+
+                    var file = DTFINDER.File.properties(path);
+
+                    var html = [
+                        '<table>',
+                            '<tr><td class="property-label" valign="top" width="70px;">'+DTFINDER.Locale.localize('Name')+'</td><td>'+file.Name+'</td></tr>',
+                            '<tr><td class="property-label" valign="top" width="70px;">'+DTFINDER.Locale.localize('Type')+'</td><td>'+file.Type+'</td></tr>',
+                            '<tr><td class="property-label" valign="top" width="70px;">'+DTFINDER.Locale.localize('Size')+'</td><td>'+file.Size+'</td></tr>',
+                            '<tr><td class="property-label" valign="top" width="70px;">'+DTFINDER.Locale.localize('Location')+'</td><td>'+file.Location+'</td></tr>',
+                        '</table>'
+                    ].join('');
+
+                    $('#properties-dialog').on('shown.bs.modal', function (e) {
+                        $(this).find('.modal-body').html(html);
+                    });
+
+                    $('#properties-dialog').modal('show');
+                break;
+                default:
+
+            }
+        },
+
         listenContextMenu: function (el){
-            
+
             $(el).contextmenu({
               onItem: $.proxy(this.handleContext, this),
               before: function (e, element, target) {
@@ -241,9 +365,9 @@
                         $(el).data('context-holder', e.target);
                         contextTarget = $(e.target).data('context-target');
                     } else {
-                                        
+
                         var containers = $(e.target).parents();
-                        
+
                         $.each(containers, function(key, value){
                             if($(value).hasClass('dtf-context-holder')) {
 
@@ -257,7 +381,7 @@
                     if(null === contextTarget) {
                         return false;
                     }
-                    
+
                     $(el).data('target', contextTarget);
                     return true;
                   }
@@ -326,15 +450,15 @@
                     }
 
                 break;
-                
+
                 case 'rename':
                     var fileNameDiv = $(holder).find('.file-name');
                     var file = fileNameDiv.text();
                     fileNameDiv.hide();
-                    
+
                     $(holder).append('<div><input data-path="'+path+'" type="text" style="height:18px;" class="form-control input-sm dt-rename-input" value="'+file+'"></div>');
                     $(holder).find('.dt-rename-input').select();
-                    
+
                 break;
 
                 case 'new-folder':
@@ -342,11 +466,11 @@
                     $('#new-folder-dialog').on('shown.bs.modal', function () {
                         $('.new-folder-input').select();
                     });
-                    
+
                     $('#new-folder-dialog').modal('show');
                     return;
                 break;
-                
+
                 case 'move':
 
                     $('#sub-browser-dialog .modal-body').dttree({
@@ -411,7 +535,7 @@
             var ul = $('<ul/>');
 
             for(var i=0; i<data.length; i++ ) {
-                    
+
                 var node = DTFINDER.DOM.createFileItem(data[i]);
                 $(ul).append(node);
             }
@@ -430,7 +554,7 @@
             this.updateBrowser(data);
 
             //remove path from loaded
-            
+
             for(var i = this._loadedPaths.length-1; i--;){
                 if (this._loadedPaths[i].trim() == path.trim() ) this._loadedPaths.splice(i, 1);
             }
@@ -444,14 +568,16 @@
          */
         createElements: function(el, options) {
 
-            this.nav = $('<div/>').addClass('dtf-nav ctn');
+            this.nav = $('<div/>').addClass('dtf-nav');
             this.browserArea = $('<div/>').
               addClass('dtf-area ctn dtf-context-holder').
-              data('context-target', '#bro-context-menu') ;
+              data('context-target', '#bro-context-menu');
 
-            var row = $('<div/>').addClass('row');
+            this.navMobile = DTFINDER.DOM.createBreadcrumb();
 
-            var wrapper = $('<div/>').addClass('wrapper container-fluid');
+            var row = $('<div/>').addClass('dtf-browser-container').css({width:'100%'});
+
+            var wrapper = $('<div/>').addClass('dtf-contianer clearfix');
 
             var toolBar = DTFINDER.DOM.createToolbar();
 
@@ -472,10 +598,11 @@
 
             $(wrapper)
                 .append(toolBar)
+                .append(this.navMobile)
                 .append(row)
 
             $(el)
-                .width(options.width)
+                //.width(options.width)
                 .append(wrapper)
                 .after(itemContext)
                 .after(broContext)

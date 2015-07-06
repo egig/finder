@@ -1,12 +1,16 @@
-DTFINDER = {};
 DTFINDER.config = {
     data: {},
     classes: {},
     permissions: {}
 };
-DTFINDER.lang = [];
 
 DTFINDER.DOM = {
+
+
+    _render: function(templateString, param) {
+        var template = Handlebars.compile(templateString, param)
+        return template(param);
+    },
 
     // Create element
     create: function(name, attr) {
@@ -21,103 +25,47 @@ DTFINDER.DOM = {
         return $(el);
     },
 
+    createBreadcrumb:function(){
+        return this._render(DTFINDER.Template.breadcrumb());
+    },
+
     createToolbar: function(){
-        var toolBar = this.create('DIV').addClass('row dtf-toolbar');
-
-        /* coming soon
-        var settingBtn = this.create('A')
-            .addClass('tool btn btn-sm btn-default pull-right')
-            .html('<i class="fa fa-gear"></i>');*/
-
-        if(DTFINDER.config.permissions.create) {
-            var uploadBtn =  this.create('A', {
-                    href: '#',
-                    'data-toggle': 'modal',
-                    'data-target': '#upload-dialog'
-                }).addClass('upload-btn tool btn btn-sm btn-success pull-left')
-                .html('<i class="fa fa-upload"></i> '+ DTFINDER.Locale.localize('Upload'));
-            
-            $(toolBar).append(uploadBtn);
-        }
-
-        var searchForm = this.create('FORM').addClass('form-inline');
-        var searchInput = this.create('INPUT', {
-            type: 'text',
-            name: 'q',
-            placeholder: DTFINDER.Locale.localize('Search')
-        }).addClass('input-sm form-control pull-right dt-search-input')
-
-        $(searchForm).append(searchInput);
-
-        $(toolBar)
-            .append(searchForm)
-            //.append(settingBtn)
-
-        return toolBar;
+        return this._render(DTFINDER.Template.toolbar());
     },
 
     createUploadDialog: function(uploadUrl){
-        
-        var html =[
-            '<form method="POST" enctype="multipart/form-data" class="form clearfix" id="upload-form" action="'+uploadUrl+'">',
-            '<input multiple type="file" name="files[]" style="margin-bottom:10px;">',
-            '<div class="uploaded"></div>',
-            '<input type="submit" class="btn btn-primary btn-sm pull-right" value="'+DTFINDER.Locale.localize('Submit')+'">',
-            '</form>'].join('');
 
-        return this.createModal('upload-dialog', html);
+        var content = this._render(DTFINDER.Template.uploadForm(), {uploadUrl:uploadUrl});
+        return this.createModal('upload-dialog', content);
     },
 
     createNewFolderDialog: function(createFolderUrl){
 
-        var html =[
-            '<form method="GET" class="form clearfix" id="new-folder-form" action="'+createFolderUrl+'">',
-            '<label class="control-label">'+DTFINDER.Locale.localize('Folder Name')+'</label>',
-            '<input type="text" name="folder-name" value="New Folder" class="form-control new-folder-input" style="margin-bottom:10px;"/>',
-            '<input type="submit" class="btn btn-sm btn-primary pull-right" value="'+DTFINDER.Locale.localize('Submit')+'"/>',
-            '<a href="javascript:;" class="btn btn-default btn-sm pull-right" data-dismiss="modal" style="margin-right:10px;">'+DTFINDER.Locale.localize('Cancel')+'</a>',
-            '</form>'].join('');
+        var param = { createFolderUrl: createFolderUrl }
 
-        return this.createModal('new-folder-dialog', html, 'modal-sm');
+        var content = this._render(DTFINDER.Template.newFolder(), param);
+
+        return this.createModal('new-folder-dialog', content, 'modal-sm');
     },
 
     createSubBrowserDialog: function(){
-        var html = '<div><button class="btn btn-xs pull-right btn-primary folder-selector">'+DTFINDER.Locale.localize('Select')+'</button></div>';
-        return this.createModal('sub-browser-dialog', html, 'modal-sm');
+
+        var content = this._render(DTFINDER.Template.moveBrowser());
+        return this.createModal('sub-browser-dialog', content, 'modal-sm');
     },
 
     createPropertiesDialog: function(){
-        var html = '';
-        return this.createModal('properties-dialog', html, 'modal-sm');
+        return this.createModal('properties-dialog', '', 'modal-sm');
     },
 
-    createModal: function(id, html, size) {
+    createModal: function(id, content, size) {
 
         var size = size || '';
-
-        var modal = this.create('DIV', {
-            id: id
-        }).addClass('modal');
-        
-        var body = this.create('DIV').addClass('modal-body');
-
-        var dialog = this.create('DIV').addClass('modal-dialog '+ size);
-
-        var header = this.create('DIV').addClass('modal-header');
-        var content = this.create('DIV').addClass('modal-content');
-
-        $(body).append(html)
-        $(content)
-            .append('<div class="clearfix"><button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin:5px 15px;"><span aria-hidden="true">&times;</span></button></div>')
-            .append(body);
-        $(dialog).append(content);
-        $(modal).append(dialog);
-
-        return modal;
+        return this._render(DTFINDER.Template.modal(), {id:id, content:content, size: size});
     },
 
     createBrowserContext: function() {
-        
+
         var context = {};
 
         if(DTFINDER.config.permissions.create) {
@@ -130,9 +78,9 @@ DTFINDER.DOM = {
 
     // right click context menu
     createItemContext: function() {
-        
+
         var context = {};
- 
+
         if(DTFINDER.config.permissions.move) {
             context.rename =  DTFINDER.Locale.localize('Rename')
             context.move = DTFINDER.Locale.localize('Move')+'\u2026'
@@ -171,8 +119,8 @@ DTFINDER.DOM = {
     },
 
     createFileItem: function(file) {
-        
-        var li = this.create('LI').addClass('dtf-file-item dtf-context-holder');
+
+        var li = this.create('LI').addClass('dtf-item dtf-context-holder');
         li.data('context-target', '#item-context-menu');
 
         if(file.type == 'image') {
@@ -187,12 +135,12 @@ DTFINDER.DOM = {
 
             if(file.type == 'file') {
                 var faClass = 'fa fa-file-o';
-                $(li).addClass('file-item');
-            
+                $(li).addClass('dtf-file-item');
+
             } else if(file.type == 'dir') {
                 var faClass = 'fa fa-folder-o';
 
-                $(li).addClass('folder-item');
+                $(li).addClass('dtf-folder-item');
             } else {
                 var faClass = null;
             }
@@ -202,11 +150,14 @@ DTFINDER.DOM = {
                 .addClass(faClass);
         }
 
-        var a = this.create('A', {href: file.path})
+        var a = this.create('A', {href: '#/'+file.path})
             .append(icon)
-            .append('<div style="overflow: hidden;text-overflow: ellipsis;" class="file-name">'+file.label+'</div>');
+            .append('<span style="overflow: hidden;text-overflow: ellipsis;" class="file-name">'+file.label+'</span>');
 
-        $(li).append(a);
+        var mobileContextMenu = this._render(DTFINDER.Template.mobileContextMenu(), {path: file.path});
+        $(li)
+            .append(a)
+            .append(mobileContextMenu);
 
         return li;
     }

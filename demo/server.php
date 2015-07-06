@@ -11,7 +11,7 @@ $root = __DIR__.'/files';
 $data = array();
 
 switch($op) {
-    
+
     case 'ls':
         $files = new FilesystemIterator($root.$path);
         foreach ($files as $file) {
@@ -127,6 +127,7 @@ function make_path_relative($full) {
 
 function prepare_path($path) {
     global $root;
+    $path = ltrim($path, '#');
     return realpath(implode(DIRECTORY_SEPARATOR, array($root, trim($path, DIRECTORY_SEPARATOR))));
 }
 
