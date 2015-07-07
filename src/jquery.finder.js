@@ -61,7 +61,7 @@
             var _this = this;
 
             this.nav.dttree({
-                initData: data,
+                nodes: data,
                 onBeforeExpand: function(path, dttree) {
 
                     path = path.substr(1);
@@ -298,7 +298,7 @@
                 case 'move':
 
                     $('#sub-browser-dialog .modal-body').dttree({
-                        initData: [{
+                        nodes: [{
                             path: '/',
                             label: '/',
                             type: 'dir'
@@ -474,7 +474,7 @@
                 case 'move':
 
                     $('#sub-browser-dialog .modal-body').dttree({
-                        initData: [{
+                        nodes: [{
                             path: '/',
                             label: '/',
                             type: 'dir'
