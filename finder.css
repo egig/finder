@@ -1,4 +1,5 @@
-    #sub-browser-dialog ul,
+
+#sub-browser-dialog ul,
     .dtf-nav ul {
         list-style: none;
         padding-left: 15px;
@@ -6,8 +7,13 @@
         white-space: nowrap;
     }
 
-    .dtf-browser-container {
+    .dtf-toolbar,
+    .dtf-breadcrumb-container {
         clear: both;
+    }
+
+    .dtf-browser-container {
+        padding: 15px;
     }
 
     .dtf-nav {
@@ -15,6 +21,8 @@
         width:250px;
         float: left;
         padding-top: 10px;
+        border: 1px solid #e1e1e1;
+        overflow: auto;s
     }
 
     .dtf-area {
@@ -60,10 +68,6 @@
 }
 
 @media (max-width: 767px) {
-
-    .dtf-area > ul {
-        padding: 0 15px;
-    }
 
     .dtf-area li.dtf-item {
         border-bottom: 1px solid #e1e1e1;

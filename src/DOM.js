@@ -1,9 +1,3 @@
-DTFINDER.config = {
-    data: {},
-    classes: {},
-    permissions: {}
-};
-
 DTFINDER.DOM = {
 
 

@@ -8,7 +8,7 @@ DTFINDER.Template = function(){
 
         breadcrumb: function(){
                 return ''
-                +'<div class="">'
+                +'<div class="dtf-breadcrumb-container">'
                     +'<div class="col-md-12">'
                         +'<a id="dtf-parent-folder" href="#">'
                             +'<span class="fa-stack fa-lg"> <i class="fa fa-folder-o fa-stack-1x"></i> <i class="fa fa-mail-reply"></i> </span>'
@@ -19,7 +19,7 @@ DTFINDER.Template = function(){
         },
 
         toolbar: function() {
-            return '<div class="dtf-toolbar" style="margin-bottom:5px">'
+            return '<div class="dtf-toolbar clearfix" style="margin-bottom:5px">'
                     +'<div class="toolbar clearfix col-md-6">'
                         +'<a href="#" data-toggle="modal" data-target="#upload-dialog" class="upload-btn tool btn btn-sm btn-success pull-left"><i class="fa fa-upload"></i> Unggah</a>'
                     + '</div>'

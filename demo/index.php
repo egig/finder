@@ -33,25 +33,25 @@
 <script type="text/javascript" src="/demo/deps/bootstrap-contextmenu/bootstrap-contextmenu.js"></script>
 <script type="text/javascript" src="/demo/deps/handlebars/handlebars.min.js"></script>
 
-<!-- this demo also used for developement purpose, so we will just use the src instead of dist -->
+<!-- this demo also used for developement purpose, so we will just use the src instead of dist
 <script src="/../src/plugin-boilerplate.js"></script>
-<script src="/../src/l10n/id.js"></script>
+<script src="/../src/finder.js"></script>
 <script src="/../src/locale.js"></script>
 <script src="/../src/template.js"></script>
 <script src="/../src/DOM.js"></script>
 <script src="/../src/tree.js"></script>
 <script src="/../src/file.js"></script>
 <script src="/../src/layout.js"></script>
-<script src="/../src/finder.js"></script>
+<script src="/../src/jquery.finder.js"></script>-->
 <!-- if you in production mode, it's recomended to use minified version -->
-<!-- <script src="/../dis/finder.min.js"></script> -->
+<script src="/../dist/finder.min.js"></script>
 
+<script src="/../src/l10n/id.js"></script>
 <script type="text/javascript">
 	(function($){
 
 		$('#finder').dtfinder({
 			url: 'demo/server.php',
-			width: '1000px',
 			permissions: {
 				create: 1,
 				move: 1,

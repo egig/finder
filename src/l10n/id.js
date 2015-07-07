@@ -1,5 +1,3 @@
-DTFINDER = {}
-DTFINDER.lang = [];
 DTFINDER.lang['id'] = {
 	'Upload': 'Unggah',
 	'Download': 'Unduh',
