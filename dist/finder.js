@@ -157,7 +157,7 @@ DTFINDER.config = {
         mobileContextMenu: function(){
             // @todo handle permission here
             return ''
-                +'<span class="mobile-context-menu pull-right dropdown"><a data-toggle="dropdown" href="#" style="font-size:1.4em"><i class="fa fa-angle-down"></i></a>'
+                +'<span class="mobile-context-menu dropdown"><a data-toggle="dropdown" href="#" style="font-size:1.4em"><i class="fa fa-angle-down"></i></a>'
                 + '<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">'
                 +'<li><a data-path="{{ path }}" data-op="rename" class="dtf-mobile-context-action" href="#">'+_('Rename')+'</a></li>'
                 +'<li><a data-path="{{ path }}" data-op="move" class="dtf-mobile-context-action" href="#">'+_('Move')+'</a></li>'

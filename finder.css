@@ -70,12 +70,20 @@
 @media (max-width: 767px) {
 
     .dtf-area li.dtf-item {
+        line-height: 30px;
         border-bottom: 1px solid #e1e1e1;
     }
     .dtf-area li .icon {
         display: inline-block;
         line-height: 2em;
         margin: 2px 5px;
+    }
+
+    .dtf-item img {
+        height: 14px !important;
+    }
+    .dtf-item .file-name {
+    	white-space: nowrap;
     }
 }
 
