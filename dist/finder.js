@@ -99,7 +99,7 @@ DTFINDER.config = {
                 +'<div class="dtf-breadcrumb-container row">'
                     +'<div class="col-md-12">'
                         +'<a id="dtf-parent-folder" href="#">'
-                            +'<span class="fa-stack fa-lg"> <i class="fa fa-folder-o fa-stack-1x"></i> <i class="fa fa-level-up fa-stack-1x"></i> </span>'
+                            +'<i class="fa fa-reply"></i> '
                         +'</a>'
                         +'<span id="dtf-breadcrumb"></span>'
                     +'</div>'
@@ -107,8 +107,9 @@ DTFINDER.config = {
         },
 
         toolbar: function() {
-            return '<div class="dtf-toolbar clearfix" style="margin-bottom:5px">'
-                        +'<a href="#" data-toggle="modal" data-target="#upload-dialog" class="upload-btn tool btn btn-sm btn-success pull-left"><i class="fa fa-upload"></i> Unggah</a>'
+            return '<div class="dtf-toolbar clearfix" style="margin-bottom:10px">'
+                        +'<a href="#" data-toggle="modal" data-target="#upload-dialog" class="upload-btn tool btn btn-sm btn-success pull-left"><i class="fa fa-upload"></i> '+_('Upload')+'</a>'
+                        +'<a href="#" data-toggle="modal" data-target="#new-folder-dialog" class="btn btn-sm btn-default pull-left new-folder-btn">'+_('New Folder')+'</a>'
                         +'<form class="form-inline"><input type="text" name="q" placeholder="Cari" class="input-sm form-control pull-right dt-search-input">'
                         +'</form>'
                 +'</div>'
@@ -153,7 +154,7 @@ DTFINDER.config = {
         mobileContextMenu: function(){
             // @todo handle permission here
             return ''
-                +'<span class="mobile-context-menu dropdown"><a data-toggle="dropdown" href="#" style="font-size:1.4em"><i class="fa fa-angle-down"></i></a>'
+                +'<span class="mobile-context-menu dropdown pull-right"><a data-toggle="dropdown" href="#" style="font-size:1.4em"><i class="fa fa-angle-down"></i></a>'
                 + '<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">'
                 +'<li><a data-path="{{ path }}" data-op="rename" class="dtf-mobile-context-action" href="#">'+_('Rename')+'</a></li>'
                 +'<li><a data-path="{{ path }}" data-op="move" class="dtf-mobile-context-action" href="#">'+_('Move')+'</a></li>'
@@ -581,15 +582,17 @@ DTFINDER.config = {
         var wW = $(window).innerWidth();
 
         if(wW <= 756) {
+            $('.dtf-breadcrumb-container').show();
             $('.dtf-nav').hide();
             $('.toolbar').css({margin: '5px'});
             $('.dtf-area').width('98%');
         } else {
+            $('.dtf-breadcrumb-container').hide();
             $('.dtf-nav').show();
             $('.toolbar').css({margin: '0px'});
 
             var w = $('.dtf-browser-container').width() - $('.dtf-nav').width();
-            $('.dtf-area').width(w-20);
+            $('.dtf-area').width(w-35);
         }
 
     },

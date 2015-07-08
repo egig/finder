@@ -32,6 +32,10 @@
         color: #888888;
     }
 
+    .new-folder-btn {
+        margin-left: 5px;
+    }
+
 /* General style */
 .btn {
     border-radius: 2px;
@@ -62,7 +66,7 @@
 
     .mobile-context-menu {
         margin-left: 5px;
-        width: 100px;
+        width: 20px;
     }
 
     .dtf-area li.dtf-item {
@@ -77,9 +81,6 @@
 
     .dtf-item img {
         height: 14px !important;
-    }
-    .dtf-item a {
-    	white-space: nowrap;
     }
 
     .dtf-toolbar a,
@@ -109,5 +110,9 @@
 
     .dtf-area li .icon {
         font-size: 3.6em;
+    }
+
+    .dtf-area {
+        padding-left: 10px;
     }
 }
