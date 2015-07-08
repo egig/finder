@@ -7,15 +7,6 @@
         white-space: nowrap;
     }
 
-    .dtf-toolbar,
-    .dtf-breadcrumb-container {
-        clear: both;
-    }
-
-    .dtf-browser-container {
-        padding: 15px;
-    }
-
     .dtf-nav {
         background-color: #F5F5F5;
         width:250px;
@@ -69,6 +60,11 @@
 
 @media (max-width: 767px) {
 
+    .mobile-context-menu {
+        margin-left: 5px;
+        width: 100px;
+    }
+
     .dtf-area li.dtf-item {
         line-height: 30px;
         border-bottom: 1px solid #e1e1e1;
@@ -82,8 +78,13 @@
     .dtf-item img {
         height: 14px !important;
     }
-    .dtf-item .file-name {
+    .dtf-item a {
     	white-space: nowrap;
+    }
+
+    .dtf-toolbar a,
+    .dtf-toolbar form {
+        margin-bottom: 5px;
     }
 }
 

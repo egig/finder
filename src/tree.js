@@ -84,7 +84,6 @@
           var path = node.path;
           var label = node.label;
 
-
           path = path === '/' ? '' : path;
 
           var a = this._create('A', {href: '#/'+path})
