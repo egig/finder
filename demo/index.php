@@ -34,7 +34,7 @@
 <script type="text/javascript" src="/demo/deps/handlebars/handlebars.min.js"></script>
 
 <!-- this demo also used for developement purpose, so we will just use the src instead of dist -->
-<script src="/../src/plugin-boilerplate.js"></script>
+<!--<script src="/../src/plugin-boilerplate.js"></script>
 <script src="/../src/finder.js"></script>
 <script src="/../src/locale.js"></script>
 <script src="/../src/template.js"></script>
@@ -43,8 +43,8 @@
 <script src="/../src/file.js"></script>
 <script src="/../src/layout.js"></script>
 <script src="/../src/jquery.finder.js"></script>
-<!-- if you in production mode, it's recomended to use minified version -->
-<!--<script src="/../dist/finder.min.js"></script>-->
+ if you in production mode, it's recomended to use minified version -->
+<script src="/../dist/finder.min.js"></script>
 
 <script src="/../src/l10n/id.js"></script>
 <script type="text/javascript">
