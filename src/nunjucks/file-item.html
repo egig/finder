@@ -1,0 +1,25 @@
+<li class="dtf-file-item dtf-context-holder" data-context-target='#item-context-menu' data-file-type="{{ file.type }}">
+    <a tabindex="-1" class="" href="{{ '#/'+file.path }}">
+        <div class="dtf-file-img">
+            {% if file.type == 'image' %}
+                <img src="{{ file.base64 }}" class="ui-li-thumb">
+            {% elif file.type == 'file' %}
+                    <i class="fa fa-file-o"></i></div>
+            {% else %}
+                    <i class="fa fa-folder-o"></i></div>
+            {% endif %}
+        </div>
+        <!-- @todo thumb -->
+        <!--<img src="" class="ui-li-thumb">-->
+        <div class="dtf-file-desc">{{ file.label }}</div>
+    </a>
+    <span class="dtf-item-context">
+        <a href="#" data-toggle="dropdown"><i class="fa fa-angle-down"></i></a>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+            <li><a data-path="{{ path }}" data-op="rename" class="dtf-mobile-context-action" href="#">{{ _("Rename") }}</a></li>
+            <li><a data-path="{{ path }}" data-op="move" class="dtf-mobile-context-action" href="#">{{ _("Move") }}</a></li>
+            <li><a data-path="{{ path }}" data-op="delete" class="dtf-mobile-context-action" href="#">{{ _("Delete") }}</a></li>
+            <li><a data-path="{{ path }}" data-op="properties" class="dtf-mobile-context-action" href="#">{{ _("Properties") }}</a></li>
+        </ul>
+    </span>
+</li>

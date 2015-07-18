@@ -121,10 +121,10 @@
                 parent.open(path);
             };
 
-            $('#sub-browser-dialog').on('click', 'a.dttree-node', function(e){
+            $('#dtf-sub-browser-dialog').on('click', 'a.dttree-node', function(e){
                 e.preventDefault();
                 var a = e.currentTarget;
-                $('#sub-browser-dialog').find('.selected').removeClass('selected');
+                $('#dtf-sub-browser-dialog').find('.selected').removeClass('selected');
                 $(a).addClass('selected');
             });
 
@@ -134,13 +134,13 @@
                this.listenMobileContextMenu();
             }
 
-            this.listenUpload(this._currentPath);
             this.listenCreateFolder(this._currentPath);
+            this.listenUpload(this._currentPath);
             this.listenRename();
             this.listenSearch();
 
             // file (not directory) click
-            $(el).on('click', '.dtf-file-item a', function(e){
+            $(el).on('click', 'li[data-file-type="file"] a', function(e){
                 e.preventDefault();
             });
 
@@ -203,7 +203,7 @@
 
         listenSearch: function(){
             var _this = this;
-            $(document).on('keyup', '.dt-search-input', function(){
+            $(document).on('keyup', '.dtf-search-input', function(){
                 var q = $(this).val();
                 if(q.length > 0) {
                     var data = DTFINDER.File.search(q, _this._currentPath);
@@ -395,7 +395,7 @@
                     op: 'upload'
                }, this.opts.data);
 
-            $('#upload-form').ajaxForm({
+            $('#dtf-upload-form').ajaxForm({
                data: data,
                success: $.proxy(function(data){
                     this.refresh(p);
@@ -415,11 +415,11 @@
                     op: 'mkdir'
                },  this.opts.data);
 
-            $('#new-folder-form').ajaxForm({
+            $('#dtf-new-folder-form').ajaxForm({
                data: data,
                success: $.proxy(function(data){
                     this.refresh(p);
-                    $('#new-folder-dialog').modal('hide');
+                    $('#dtf-new-folder-dialog').modal('hide');
                }, this)
             });
         },
@@ -452,28 +452,28 @@
                 break;
 
                 case 'rename':
-                    var fileNameDiv = $(holder).find('.file-name');
+                    var fileNameDiv = $(holder).find('.dtf-file-desc');
                     var file = fileNameDiv.text();
                     fileNameDiv.hide();
 
-                    $(holder).append('<div><input data-path="'+path+'" type="text" style="height:18px;" class="form-control input-sm dt-rename-input" value="'+file+'"></div>');
+                    $(holder).find('a').after('<div><input data-path="'+path+'" type="text" class="dt-rename-input" value="'+file+'"></div>');
                     $(holder).find('.dt-rename-input').select();
 
                 break;
 
                 case 'new-folder':
 
-                    $('#new-folder-dialog').on('shown.bs.modal', function () {
+                    $('#dtf-new-folder-dialog').on('shown.bs.modal', function () {
                         $('.new-folder-input').select();
                     });
 
-                    $('#new-folder-dialog').modal('show');
+                    $('#dtf-new-folder-dialog').modal('show');
                     return;
                 break;
 
                 case 'move':
 
-                    $('#sub-browser-dialog .modal-body').dttree({
+                    $('#dtf-sub-browser-dialog .modal-body').dttree({
                         nodes: [{
                             path: '/',
                             label: '/',
@@ -488,16 +488,16 @@
                     });
 
                     var parent = this;
-                    $('#sub-browser-dialog').on('click', '.folder-selector', function(){
-                        var href = $('#sub-browser-dialog').find('.selected').attr('href').substr(1);
+                    $('#dtf-sub-browser-dialog').on('click', '.folder-selector', function(){
+                        var href = $('#dtf-sub-browser-dialog').find('.selected').attr('href').substr(1);
 
                         DTFINDER.File.move(path, href);
                         parent.refresh();
 
-                        $('#sub-browser-dialog').modal('hide');
+                        $('#dtf-sub-browser-dialog').modal('hide');
                     });
 
-                    $('#sub-browser-dialog').modal('show');
+                    $('#dtf-sub-browser-dialog').modal('show');
                 break;
 
                 case 'properties':
@@ -532,15 +532,21 @@
         },
 
         updateBrowser: function (data){
-            var ul = $('<ul/>');
+            if(data.length) {
+                var content = $('<ul/>').addClass('dtf-file-list');
 
-            for(var i=0; i<data.length; i++ ) {
+                for(var i=0; i<data.length; i++ ) {
 
-                var node = DTFINDER.DOM.createFileItem(data[i]);
-                $(ul).append(node);
+                    var node = DTFINDER.DOM.createFileItem(data[i]);
+                    content.append(node);
+                }
+
+            } else {
+                // @todo translate this
+                var content = "<p>Folder empty.</p>";
             }
 
-            $(this.browserArea).html(ul)
+            $(this.browserArea).html(content);
         },
 
         refresh: function(path) {
@@ -568,7 +574,7 @@
          */
         createElements: function(el, options) {
 
-            this.nav = $('<div/>').addClass('dtf-nav');
+            /*this.nav = $('<div/>').addClass('dtf-nav');
             this.browserArea = $('<div/>').
               addClass('dtf-area ctn dtf-context-holder').
               data('context-target', '#bro-context-menu');
@@ -579,19 +585,6 @@
 
             var wrapper = $('<div/>').addClass('dtf-contianer clearfix');
 
-            var toolBar = DTFINDER.DOM.createToolbar();
-
-            var uploadUrl = this.opts.uploadUrl || this.opts.url;
-            var uploadDialog = DTFINDER.DOM.createUploadDialog(uploadUrl);
-
-            var createFolderUrl = this.opts.createFolderUrl || this.opts.url;
-            var newFolderDialog = DTFINDER.DOM.createNewFolderDialog(createFolderUrl);
-            var subBrowserDialog = DTFINDER.DOM.createSubBrowserDialog();
-            var propertiesDialog = DTFINDER.DOM.createPropertiesDialog();
-
-            var itemContext = DTFINDER.DOM.createItemContext();
-            var broContext = DTFINDER.DOM.createBrowserContext();
-
             $(row)
                 .append(this.nav)
                 .append(this.browserArea)
@@ -599,17 +592,30 @@
             $(wrapper)
                 .append(toolBar)
                 .append(this.navMobile)
-                .append(row)
+                .append(row)*/
 
-            $(el)
-                //.width(options.width)
-                .append(wrapper)
+            var uploadUrl = this.opts.uploadUrl || this.opts.url;
+            var uploadDialog = DTFINDER.DOM.createUploadDialog(uploadUrl);
+            var createFolderUrl = this.opts.createFolderUrl || this.opts.url;
+            var newFolderDialog = DTFINDER.DOM.createNewFolderDialog(createFolderUrl);
+
+            var itemContext = DTFINDER.DOM.createItemContext();
+            var broContext = DTFINDER.DOM.createBrowserContext();
+            var subBrowserDialog = DTFINDER.DOM.createSubBrowserDialog();
+            var propertiesDialog = DTFINDER.DOM.createPropertiesDialog();
+
+            $(el).html(nunjucks.render('template.html'))
+                .after(uploadDialog)
+                .after(newFolderDialog)
                 .after(itemContext)
                 .after(broContext)
-                .after(uploadDialog)
                 .after(newFolderDialog)
                 .after(subBrowserDialog)
                 .after(propertiesDialog);
+
+            this.nav = $('#dtf-tree');
+            this.browserArea = $('#dtf-area');
+
         },
   };
 

@@ -1,9 +1,13 @@
 DTFINDER.DOM = {
 
 
-    _render: function(templateString, param) {
-        var template = Handlebars.compile(templateString, param)
-        return template(param);
+    _render: function(template, param) {
+        var param = $.extend(param,{
+            _: function(str) {
+                    return DTFINDER.Locale.localize(str);
+                }
+        });
+        return nunjucks.render(template, param);
     },
 
     // Create element
@@ -29,23 +33,23 @@ DTFINDER.DOM = {
 
     createUploadDialog: function(uploadUrl){
 
-        var content = this._render(DTFINDER.Template.uploadForm(), {uploadUrl:uploadUrl});
-        return this.createModal('upload-dialog', content);
+        var content = this._render('upload-form.html', {uploadUrl:uploadUrl});
+        return this.createModal('dtf-upload-dialog', content);
     },
 
     createNewFolderDialog: function(createFolderUrl){
 
         var param = { createFolderUrl: createFolderUrl }
 
-        var content = this._render(DTFINDER.Template.newFolder(), param);
+        var content = this._render('new-folder-form.html', param);
 
-        return this.createModal('new-folder-dialog', content, 'modal-sm');
+        return this.createModal('dtf-new-folder-dialog', content, 'modal-sm');
     },
 
     createSubBrowserDialog: function(){
 
-        var content = this._render(DTFINDER.Template.moveBrowser());
-        return this.createModal('sub-browser-dialog', content, 'modal-sm');
+        var content = this._render('sub-browser.html');
+        return this.createModal('dtf-sub-browser-dialog', content, 'modal-sm');
     },
 
     createPropertiesDialog: function(){
@@ -55,7 +59,7 @@ DTFINDER.DOM = {
     createModal: function(id, content, size) {
 
         var size = size || '';
-        return this._render(DTFINDER.Template.modal(), {id:id, content:content, size: size});
+        return this._render('modal.html', {id:id, content:content, size: size});
     },
 
     createBrowserContext: function() {
@@ -114,7 +118,7 @@ DTFINDER.DOM = {
 
     createFileItem: function(file) {
 
-        var li = this.create('LI').addClass('dtf-item dtf-context-holder');
+        /*var li = this.create('LI').addClass('dtf-item dtf-context-holder');
         li.data('context-target', '#item-context-menu');
 
         if(file.type == 'image') {
@@ -148,11 +152,14 @@ DTFINDER.DOM = {
             .append(icon)
             .append('<span style="overflow: hidden;text-overflow: ellipsis;" class="file-name">'+file.label+'</span>');
 
-        var mobileContextMenu = this._render(DTFINDER.Template.mobileContextMenu(), {path: file.path});
+        var mobileContextMenu = this._render('mobile-context-menu.html', {path: file.path});
         $(li)
             .append(a)
             .append(mobileContextMenu);
 
         return li;
+
+            */
+        return this._render('file-item.html', {file:file});
     }
 }

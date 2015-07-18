@@ -19,6 +19,7 @@
     "bootstrap": "latest",
     "jquery-form": "latest",
     "bootstrap-contextmenu": "latest",
-    "fontawesome": "latest"
+    "fontawesome": "latest",
+    "nunjucks": "~1.3.4"
   }
 }

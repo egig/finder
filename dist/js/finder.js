@@ -57,13 +57,17 @@
     };
   };
 
-}(jQuery));;DTFINDER = {}
-DTFINDER.lang = [];
-DTFINDER.config = {
-    data: {},
-    classes: {},
-    permissions: {}
-};
+}(jQuery));;window.DTFINDER = (function(){
+
+    return {
+        lang: [],
+        config: {
+            data: {},
+            classes: {},
+            permissions: {}
+        }
+    }
+})();
 ;DTFINDER.Locale = {
 
 	locale: null,
@@ -86,91 +90,212 @@ DTFINDER.config = {
 		}
 	}
 }
-;DTFINDER.Template = function(){
+;(function() {(window.nunjucksPrecompiled = window.nunjucksPrecompiled || {})["file-item.html"] = (function() {function root(env, context, frame, runtime, cb) {
+var lineno = null;
+var colno = null;
+var output = "";
+try {
+output += "<li class=\"dtf-file-item dtf-context-holder\" data-context-target='#item-context-menu' data-file-type=\"";
+output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "file")),"type", env.opts.autoescape), env.opts.autoescape);
+output += "\">\n    <a tabindex=\"-1\" class=\"\" href=\"";
+output += runtime.suppressValue("#/" + runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "file")),"path", env.opts.autoescape), env.opts.autoescape);
+output += "\">\n        <div class=\"dtf-file-img\">\n            ";
+if(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "file")),"type", env.opts.autoescape) == "image") {
+output += "\n                <img src=\"";
+output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "file")),"base64", env.opts.autoescape), env.opts.autoescape);
+output += "\" class=\"ui-li-thumb\">\n            ";
+;
+}
+else {
+if(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "file")),"type", env.opts.autoescape) == "file") {
+output += "\n                    <i class=\"fa fa-file-o\"></i></div>\n            ";
+;
+}
+else {
+output += "\n                    <i class=\"fa fa-folder-o\"></i></div>\n            ";
+;
+}
+;
+}
+output += "\n        </div>\n        <!-- @todo thumb -->\n        <!--<img src=\"\" class=\"ui-li-thumb\">-->\n        <div class=\"dtf-file-desc\">";
+output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "file")),"label", env.opts.autoescape), env.opts.autoescape);
+output += "</div>\n    </a>\n    <span class=\"dtf-item-context\">\n        <a href=\"#\" data-toggle=\"dropdown\"><i class=\"fa fa-angle-down\"></i></a>\n        <ul class=\"dropdown-menu\" aria-labelledby=\"dropdownMenu1\">\n            <li><a data-path=\"";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "path"), env.opts.autoescape);
+output += "\" data-op=\"rename\" class=\"dtf-mobile-context-action\" href=\"#\">";
+output += runtime.suppressValue((lineno = 18, colno = 100, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Rename"])), env.opts.autoescape);
+output += "</a></li>\n            <li><a data-path=\"";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "path"), env.opts.autoescape);
+output += "\" data-op=\"move\" class=\"dtf-mobile-context-action\" href=\"#\">";
+output += runtime.suppressValue((lineno = 19, colno = 98, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Move"])), env.opts.autoescape);
+output += "</a></li>\n            <li><a data-path=\"";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "path"), env.opts.autoescape);
+output += "\" data-op=\"delete\" class=\"dtf-mobile-context-action\" href=\"#\">";
+output += runtime.suppressValue((lineno = 20, colno = 100, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Delete"])), env.opts.autoescape);
+output += "</a></li>\n            <li><a data-path=\"";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "path"), env.opts.autoescape);
+output += "\" data-op=\"properties\" class=\"dtf-mobile-context-action\" href=\"#\">";
+output += runtime.suppressValue((lineno = 21, colno = 104, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Properties"])), env.opts.autoescape);
+output += "</a></li>\n        </ul>\n    </span>\n</li>\n";
+cb(null, output);
+;
+} catch (e) {
+  cb(runtime.handleError(e, lineno, colno));
+}
+}
+return {
+root: root
+};
+})();
+})();
+(function() {(window.nunjucksPrecompiled = window.nunjucksPrecompiled || {})["mobile-context-menu.html"] = (function() {function root(env, context, frame, runtime, cb) {
+var lineno = null;
+var colno = null;
+var output = "";
+try {
+output += "<span class=\"mobile-context-menu dropdown pull-right\"><a data-toggle=\"dropdown\" href=\"#\" style=\"font-size:1.4em\"><i class=\"fa fa-angle-down\"></i></a>\n    <ul class=\"dropdown-menu\" aria-labelledby=\"dropdownMenu1\">\n        <li><a data-path=\"";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "path"), env.opts.autoescape);
+output += "\" data-op=\"rename\" class=\"dtf-mobile-context-action\" href=\"#\">";
+output += runtime.suppressValue((lineno = 2, colno = 96, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Rename"])), env.opts.autoescape);
+output += "</a></li>\n        <li><a data-path=\"";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "path"), env.opts.autoescape);
+output += "\" data-op=\"move\" class=\"dtf-mobile-context-action\" href=\"#\">";
+output += runtime.suppressValue((lineno = 3, colno = 94, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Move"])), env.opts.autoescape);
+output += "</a></li>\n        <li><a data-path=\"";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "path"), env.opts.autoescape);
+output += "\" data-op=\"delete\" class=\"dtf-mobile-context-action\" href=\"#\">";
+output += runtime.suppressValue((lineno = 4, colno = 96, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Delete"])), env.opts.autoescape);
+output += "</a></li>\n        <li><a data-path=\"";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "path"), env.opts.autoescape);
+output += "\" data-op=\"properties\" class=\"dtf-mobile-context-action\" href=\"#\">";
+output += runtime.suppressValue((lineno = 5, colno = 100, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Properties"])), env.opts.autoescape);
+output += "</a></li>\n    </ul>\n</span>\n";
+cb(null, output);
+;
+} catch (e) {
+  cb(runtime.handleError(e, lineno, colno));
+}
+}
+return {
+root: root
+};
+})();
+})();
+(function() {(window.nunjucksPrecompiled = window.nunjucksPrecompiled || {})["modal.html"] = (function() {function root(env, context, frame, runtime, cb) {
+var lineno = null;
+var colno = null;
+var output = "";
+try {
+output += "<div id=\"";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "id"), env.opts.autoescape);
+output += "\" class=\"modal in\">\n    <div class=\"modal-dialog ";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "size"), env.opts.autoescape);
+output += "\">\n        <div class=\"modal-content\">\n            <div class=\"clearfix\">\n                <button style=\"margin:5px 15px;\" aria-label=\"Close\" data-dismiss=\"modal\" class=\"close\" type=\"button\"><span aria-hidden=\"true\">×</span></button>\n            </div>\n            <div class=\"modal-body\">";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "content"), env.opts.autoescape);
+output += " </div>\n        </div>\n    </div>\n</div\n";
+cb(null, output);
+;
+} catch (e) {
+  cb(runtime.handleError(e, lineno, colno));
+}
+}
+return {
+root: root
+};
+})();
+})();
+(function() {(window.nunjucksPrecompiled = window.nunjucksPrecompiled || {})["new-folder-form.html"] = (function() {function root(env, context, frame, runtime, cb) {
+var lineno = null;
+var colno = null;
+var output = "";
+try {
+output += "<form method=\"GET\" class=\"form clearfix\" id=\"dtf-new-folder-form\" action=\"";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "createFolderUrl"), env.opts.autoescape);
+output += "\">\n    <label class=\"control-label\">";
+output += runtime.suppressValue((lineno = 1, colno = 35, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["New Folder"])), env.opts.autoescape);
+output += "</label>\n    <input type=\"text\" name=\"folder-name\" value=\"New Folder\" class=\"form-control new-folder-input\"/>\n    <input type=\"submit\" class=\"btn btn-sm btn-primary pull-right\" value=\"";
+output += runtime.suppressValue((lineno = 3, colno = 76, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Submit"])), env.opts.autoescape);
+output += "\"/>\n    <a href=\"javascript:;\" class=\"btn btn-default btn-sm pull-right\" data-dismiss=\"modal\">";
+output += runtime.suppressValue((lineno = 4, colno = 92, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Cancel"])), env.opts.autoescape);
+output += "</a>\n</form>\n";
+cb(null, output);
+;
+} catch (e) {
+  cb(runtime.handleError(e, lineno, colno));
+}
+}
+return {
+root: root
+};
+})();
+})();
+(function() {(window.nunjucksPrecompiled = window.nunjucksPrecompiled || {})["sub-browser.html"] = (function() {function root(env, context, frame, runtime, cb) {
+var lineno = null;
+var colno = null;
+var output = "";
+try {
+output += "<div><button class=\"btn btn-xs pull-right btn-primary folder-selector\">";
+output += runtime.suppressValue((lineno = 0, colno = 73, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Select"])), env.opts.autoescape);
+output += "</button></div>\n";
+cb(null, output);
+;
+} catch (e) {
+  cb(runtime.handleError(e, lineno, colno));
+}
+}
+return {
+root: root
+};
+})();
+})();
+(function() {(window.nunjucksPrecompiled = window.nunjucksPrecompiled || {})["template.html"] = (function() {function root(env, context, frame, runtime, cb) {
+var lineno = null;
+var colno = null;
+var output = "";
+try {
+output += "<div id=\"dtf\">\n    <div class=\"container\">\n        <div class=\"row dtf-row\">\n            <div class=\"dt-col col-md-6\">\n                <a href=\"#\" data-toggle=\"modal\" data-target=\"#dtf-upload-dialog\" class=\"btn btn-success btn-sm\">\n                    <i class=\"fa fa-upload\" style=\"\"></i> Upload\n                </a>\n\n                <a href=\"#\" data-toggle=\"modal\" data-target=\"#dtf-new-folder-dialog\" class=\"btn btn-default btn-sm\">\n                    <i class=\"fa fa-folder-o\"></i> New Folder\n                </a>\n            </div>\n            <div class=\"dt-col col-md-6\">\n                <div class=\"row\">\n                    <div class=\"col-md-5 col-md-offset-7\">\n                        <input class=\"form-control input-sm dtf-search-input\" placeholder=\"Search\" type=\"search\"/>\n                    </div>\n                </div>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col-md-12\">\n                <div id=\"dtf-breadcrumb-container\">\n                    <a id=\"dtf-parent-folder\" href=\"#\">\n                        <i class=\"fa fa-reply\"></i>\n                    </a>\n                    <span id=\"dtf-breadcrumb\"> </span>\n                </div>\n            </div>\n        </div>\n        <div class=\"row\">\n            <div class=\"col-md-12\">\n                <div class=\"dtf-desktop-area\">\n                    <div id=\"dtf-tree\"></div>\n                    <div id=\"dtf-area\" class=\"dtf-context-holder\" data-context-target='#bro-context-menu'></div>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n";
+cb(null, output);
+;
+} catch (e) {
+  cb(runtime.handleError(e, lineno, colno));
+}
+}
+return {
+root: root
+};
+})();
+})();
+(function() {(window.nunjucksPrecompiled = window.nunjucksPrecompiled || {})["upload-form.html"] = (function() {function root(env, context, frame, runtime, cb) {
+var lineno = null;
+var colno = null;
+var output = "";
+try {
+output += "<form method=\"POST\" enctype=\"multipart/form-data\" class=\"form clearfix\" id=\"dtf-upload-form\" action=\"";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "uploadUrl"), env.opts.autoescape);
+output += "\">\n    <input multiple type=\"file\" name=\"files[]\">\n    <div class=\"uploaded\"></div>\n    <input type=\"submit\" class=\"btn btn-primary btn-sm pull-right\" value=\"";
+output += runtime.suppressValue((lineno = 3, colno = 76, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Submit"])), env.opts.autoescape);
+output += "\">\n</form>\n";
+cb(null, output);
+;
+} catch (e) {
+  cb(runtime.handleError(e, lineno, colno));
+}
+}
+return {
+root: root
+};
+})();
+})();
 
-    var _ = function(str) {
-        return DTFINDER.Locale.localize(str);
-    }
-
-    return {
-
-        breadcrumb: function(){
-                return ''
-                +'<div class="dtf-breadcrumb-container row">'
-                    +'<div class="col-md-12">'
-                        +'<a id="dtf-parent-folder" href="#">'
-                            +'<i class="fa fa-reply"></i> '
-                        +'</a>'
-                        +'<span id="dtf-breadcrumb"></span>'
-                    +'</div>'
-                +'</div>';
-        },
-
-        toolbar: function() {
-            return '<div class="dtf-toolbar clearfix" style="margin-bottom:10px">'
-                        +'<a href="#" data-toggle="modal" data-target="#upload-dialog" class="upload-btn tool btn btn-sm btn-success pull-left"><i class="fa fa-upload"></i> '+_('Upload')+'</a>'
-                        +'<a href="#" data-toggle="modal" data-target="#new-folder-dialog" class="btn btn-sm btn-default pull-left new-folder-btn">'+_('New Folder')+'</a>'
-                        +'<form class="form-inline"><input type="text" name="q" placeholder="Cari" class="input-sm form-control pull-right dt-search-input">'
-                        +'</form>'
-                +'</div>'
-        },
-
-        modal: function() {
-            return '<div id="{{ id }}" class="modal in">'
-                +'<div class="modal-dialog {{ size }}">'
-                    +'<div class="modal-content">'
-                        +'<div class="clearfix">'
-                            +'<button style="margin:5px 15px;" aria-label="Close" data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span></button>'
-                        +'</div>'
-                        +'<div class="modal-body">{{{ content }}} </div>'
-                    +'</div>'
-                +'</div>'
-            +'</div>'
-        },
-
-        newFolder: function(){
-
-            return '<form method="GET" class="form clearfix" id="new-folder-form" action="{{ createFolderUrl }}">'
-                + '<label class="control-label">'+_('New Folder')+'</label>'
-                + '<input type="text" name="folder-name" value="New Folder" class="form-control new-folder-input" style="margin-bottom:10px;"/>'
-                + '<input type="submit" class="btn btn-sm btn-primary pull-right" value="'+_('Submit')+'"/>'
-                + '<a href="javascript:;" class="btn btn-default btn-sm pull-right" data-dismiss="modal" style="margin-right:10px;">'+_('Cancel')+'</a>'
-            + '</form>'
-        },
-
-        uploadForm: function(){
-
-            return '<form method="POST" enctype="multipart/form-data" class="form clearfix" id="upload-form" action="{{ uploadUrl }}">'
-                + '<input multiple type="file" name="files[]" style="margin-bottom:10px;">'
-                + '<div class="uploaded"></div>'
-                + '<input type="submit" class="btn btn-primary btn-sm pull-right" value="'+_('Submit')+'">'
-            + '</form>'
-        },
-
-        moveBrowser: function() {
-            return '<div><button class="btn btn-xs pull-right btn-primary folder-selector">'+_('Select')+'</button></div>'
-        },
-
-        mobileContextMenu: function(){
-            // @todo handle permission here
-            return ''
-                +'<span class="mobile-context-menu dropdown pull-right"><a data-toggle="dropdown" href="#" style="font-size:1.4em"><i class="fa fa-angle-down"></i></a>'
-                + '<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">'
-                +'<li><a data-path="{{ path }}" data-op="rename" class="dtf-mobile-context-action" href="#">'+_('Rename')+'</a></li>'
-                +'<li><a data-path="{{ path }}" data-op="move" class="dtf-mobile-context-action" href="#">'+_('Move')+'</a></li>'
-                +'<li><a data-path="{{ path }}" data-op="delete" class="dtf-mobile-context-action" href="#">'+_('Delete')+'</a></li>'
-                +'<li><a data-path="{{ path }}" data-op="properties" class="dtf-mobile-context-action" href="#">'+_('Properties')+'</a></li>'
-                +'</ul></span>'
-        }
-
-    }
-}();
 ;DTFINDER.DOM = {
 
 
-    _render: function(templateString, param) {
-        var template = Handlebars.compile(templateString, param)
-        return template(param);
+    _render: function(template, param) {
+        var param = $.extend(param,{
+            _: function(str) {
+                    return DTFINDER.Locale.localize(str);
+                }
+        });
+        return nunjucks.render(template, param);
     },
 
     // Create element
@@ -196,23 +321,23 @@ DTFINDER.config = {
 
     createUploadDialog: function(uploadUrl){
 
-        var content = this._render(DTFINDER.Template.uploadForm(), {uploadUrl:uploadUrl});
-        return this.createModal('upload-dialog', content);
+        var content = this._render('upload-form.html', {uploadUrl:uploadUrl});
+        return this.createModal('dtf-upload-dialog', content);
     },
 
     createNewFolderDialog: function(createFolderUrl){
 
         var param = { createFolderUrl: createFolderUrl }
 
-        var content = this._render(DTFINDER.Template.newFolder(), param);
+        var content = this._render('new-folder-form.html', param);
 
-        return this.createModal('new-folder-dialog', content, 'modal-sm');
+        return this.createModal('dtf-new-folder-dialog', content, 'modal-sm');
     },
 
     createSubBrowserDialog: function(){
 
-        var content = this._render(DTFINDER.Template.moveBrowser());
-        return this.createModal('sub-browser-dialog', content, 'modal-sm');
+        var content = this._render('sub-browser.html');
+        return this.createModal('dtf-sub-browser-dialog', content, 'modal-sm');
     },
 
     createPropertiesDialog: function(){
@@ -222,7 +347,7 @@ DTFINDER.config = {
     createModal: function(id, content, size) {
 
         var size = size || '';
-        return this._render(DTFINDER.Template.modal(), {id:id, content:content, size: size});
+        return this._render('modal.html', {id:id, content:content, size: size});
     },
 
     createBrowserContext: function() {
@@ -281,7 +406,7 @@ DTFINDER.config = {
 
     createFileItem: function(file) {
 
-        var li = this.create('LI').addClass('dtf-item dtf-context-holder');
+        /*var li = this.create('LI').addClass('dtf-item dtf-context-holder');
         li.data('context-target', '#item-context-menu');
 
         if(file.type == 'image') {
@@ -315,12 +440,15 @@ DTFINDER.config = {
             .append(icon)
             .append('<span style="overflow: hidden;text-overflow: ellipsis;" class="file-name">'+file.label+'</span>');
 
-        var mobileContextMenu = this._render(DTFINDER.Template.mobileContextMenu(), {path: file.path});
+        var mobileContextMenu = this._render('mobile-context-menu.html', {path: file.path});
         $(li)
             .append(a)
             .append(mobileContextMenu);
 
         return li;
+
+            */
+        return this._render('file-item.html', {file:file});
     }
 }
 ;(function($, win, doc, undefined) {
@@ -727,10 +855,10 @@ DTFINDER.config = {
                 parent.open(path);
             };
 
-            $('#sub-browser-dialog').on('click', 'a.dttree-node', function(e){
+            $('#dtf-sub-browser-dialog').on('click', 'a.dttree-node', function(e){
                 e.preventDefault();
                 var a = e.currentTarget;
-                $('#sub-browser-dialog').find('.selected').removeClass('selected');
+                $('#dtf-sub-browser-dialog').find('.selected').removeClass('selected');
                 $(a).addClass('selected');
             });
 
@@ -740,13 +868,13 @@ DTFINDER.config = {
                this.listenMobileContextMenu();
             }
 
-            this.listenUpload(this._currentPath);
             this.listenCreateFolder(this._currentPath);
+            this.listenUpload(this._currentPath);
             this.listenRename();
             this.listenSearch();
 
             // file (not directory) click
-            $(el).on('click', '.dtf-file-item a', function(e){
+            $(el).on('click', 'li[data-file-type="file"] a', function(e){
                 e.preventDefault();
             });
 
@@ -809,7 +937,7 @@ DTFINDER.config = {
 
         listenSearch: function(){
             var _this = this;
-            $(document).on('keyup', '.dt-search-input', function(){
+            $(document).on('keyup', '.dtf-search-input', function(){
                 var q = $(this).val();
                 if(q.length > 0) {
                     var data = DTFINDER.File.search(q, _this._currentPath);
@@ -1001,7 +1129,7 @@ DTFINDER.config = {
                     op: 'upload'
                }, this.opts.data);
 
-            $('#upload-form').ajaxForm({
+            $('#dtf-upload-form').ajaxForm({
                data: data,
                success: $.proxy(function(data){
                     this.refresh(p);
@@ -1021,11 +1149,11 @@ DTFINDER.config = {
                     op: 'mkdir'
                },  this.opts.data);
 
-            $('#new-folder-form').ajaxForm({
+            $('#dtf-new-folder-form').ajaxForm({
                data: data,
                success: $.proxy(function(data){
                     this.refresh(p);
-                    $('#new-folder-dialog').modal('hide');
+                    $('#dtf-new-folder-dialog').modal('hide');
                }, this)
             });
         },
@@ -1058,28 +1186,28 @@ DTFINDER.config = {
                 break;
 
                 case 'rename':
-                    var fileNameDiv = $(holder).find('.file-name');
+                    var fileNameDiv = $(holder).find('.dtf-file-desc');
                     var file = fileNameDiv.text();
                     fileNameDiv.hide();
 
-                    $(holder).append('<div><input data-path="'+path+'" type="text" style="height:18px;" class="form-control input-sm dt-rename-input" value="'+file+'"></div>');
+                    $(holder).find('a').after('<div><input data-path="'+path+'" type="text" class="dt-rename-input" value="'+file+'"></div>');
                     $(holder).find('.dt-rename-input').select();
 
                 break;
 
                 case 'new-folder':
 
-                    $('#new-folder-dialog').on('shown.bs.modal', function () {
+                    $('#dtf-new-folder-dialog').on('shown.bs.modal', function () {
                         $('.new-folder-input').select();
                     });
 
-                    $('#new-folder-dialog').modal('show');
+                    $('#dtf-new-folder-dialog').modal('show');
                     return;
                 break;
 
                 case 'move':
 
-                    $('#sub-browser-dialog .modal-body').dttree({
+                    $('#dtf-sub-browser-dialog .modal-body').dttree({
                         nodes: [{
                             path: '/',
                             label: '/',
@@ -1094,16 +1222,16 @@ DTFINDER.config = {
                     });
 
                     var parent = this;
-                    $('#sub-browser-dialog').on('click', '.folder-selector', function(){
-                        var href = $('#sub-browser-dialog').find('.selected').attr('href').substr(1);
+                    $('#dtf-sub-browser-dialog').on('click', '.folder-selector', function(){
+                        var href = $('#dtf-sub-browser-dialog').find('.selected').attr('href').substr(1);
 
                         DTFINDER.File.move(path, href);
                         parent.refresh();
 
-                        $('#sub-browser-dialog').modal('hide');
+                        $('#dtf-sub-browser-dialog').modal('hide');
                     });
 
-                    $('#sub-browser-dialog').modal('show');
+                    $('#dtf-sub-browser-dialog').modal('show');
                 break;
 
                 case 'properties':
@@ -1138,15 +1266,21 @@ DTFINDER.config = {
         },
 
         updateBrowser: function (data){
-            var ul = $('<ul/>');
+            if(data.length) {
+                var content = $('<ul/>').addClass('dtf-file-list');
 
-            for(var i=0; i<data.length; i++ ) {
+                for(var i=0; i<data.length; i++ ) {
 
-                var node = DTFINDER.DOM.createFileItem(data[i]);
-                $(ul).append(node);
+                    var node = DTFINDER.DOM.createFileItem(data[i]);
+                    content.append(node);
+                }
+
+            } else {
+                // @todo translate this
+                var content = "<p>Folder empty.</p>";
             }
 
-            $(this.browserArea).html(ul)
+            $(this.browserArea).html(content);
         },
 
         refresh: function(path) {
@@ -1174,7 +1308,7 @@ DTFINDER.config = {
          */
         createElements: function(el, options) {
 
-            this.nav = $('<div/>').addClass('dtf-nav');
+            /*this.nav = $('<div/>').addClass('dtf-nav');
             this.browserArea = $('<div/>').
               addClass('dtf-area ctn dtf-context-holder').
               data('context-target', '#bro-context-menu');
@@ -1185,19 +1319,6 @@ DTFINDER.config = {
 
             var wrapper = $('<div/>').addClass('dtf-contianer clearfix');
 
-            var toolBar = DTFINDER.DOM.createToolbar();
-
-            var uploadUrl = this.opts.uploadUrl || this.opts.url;
-            var uploadDialog = DTFINDER.DOM.createUploadDialog(uploadUrl);
-
-            var createFolderUrl = this.opts.createFolderUrl || this.opts.url;
-            var newFolderDialog = DTFINDER.DOM.createNewFolderDialog(createFolderUrl);
-            var subBrowserDialog = DTFINDER.DOM.createSubBrowserDialog();
-            var propertiesDialog = DTFINDER.DOM.createPropertiesDialog();
-
-            var itemContext = DTFINDER.DOM.createItemContext();
-            var broContext = DTFINDER.DOM.createBrowserContext();
-
             $(row)
                 .append(this.nav)
                 .append(this.browserArea)
@@ -1205,17 +1326,30 @@ DTFINDER.config = {
             $(wrapper)
                 .append(toolBar)
                 .append(this.navMobile)
-                .append(row)
+                .append(row)*/
 
-            $(el)
-                //.width(options.width)
-                .append(wrapper)
+            var uploadUrl = this.opts.uploadUrl || this.opts.url;
+            var uploadDialog = DTFINDER.DOM.createUploadDialog(uploadUrl);
+            var createFolderUrl = this.opts.createFolderUrl || this.opts.url;
+            var newFolderDialog = DTFINDER.DOM.createNewFolderDialog(createFolderUrl);
+
+            var itemContext = DTFINDER.DOM.createItemContext();
+            var broContext = DTFINDER.DOM.createBrowserContext();
+            var subBrowserDialog = DTFINDER.DOM.createSubBrowserDialog();
+            var propertiesDialog = DTFINDER.DOM.createPropertiesDialog();
+
+            $(el).html(nunjucks.render('template.html'))
+                .after(uploadDialog)
+                .after(newFolderDialog)
                 .after(itemContext)
                 .after(broContext)
-                .after(uploadDialog)
                 .after(newFolderDialog)
                 .after(subBrowserDialog)
                 .after(propertiesDialog);
+
+            this.nav = $('#dtf-tree');
+            this.browserArea = $('#dtf-area');
+
         },
   };
 
