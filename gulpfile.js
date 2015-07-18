@@ -4,6 +4,7 @@ var gulp = require('gulp');
 var sass = require('gulp-sass');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglifyjs');
+var run = require('gulp-run');
 
 var config = {
     srcDir: './src',
@@ -17,7 +18,7 @@ gulp.task('css', function() {
 
 });
 
-gulp.task('concat', function(cb) {
+gulp.task('concat', ['precompile'], function(cb) {
     var stream = gulp.src([
         'src/js/plugin-boilerplate.js',
         'src/js/finder.js',
@@ -45,4 +46,8 @@ gulp.task('uglify', ['concat'], function() {
     return stream;
 });
 
-gulp.task('default', ['css', 'concat','uglify']);
+gulp.task('precompile', function () {
+  return run('nunjucks-precompile src/nunjucks > src/js/template.js').exec()
+})
+
+gulp.task('default', ['css', 'precompile', 'concat','uglify']);

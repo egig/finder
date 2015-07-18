@@ -119,23 +119,7 @@ output += "\n                    <i class=\"fa fa-folder-o\"></i></div>\n       
 }
 output += "\n        </div>\n        <!-- @todo thumb -->\n        <!--<img src=\"\" class=\"ui-li-thumb\">-->\n        <div class=\"dtf-file-desc\">";
 output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "file")),"label", env.opts.autoescape), env.opts.autoescape);
-output += "</div>\n    </a>\n    <span class=\"dtf-item-context\">\n        <a href=\"#\" data-toggle=\"dropdown\"><i class=\"fa fa-angle-down\"></i></a>\n        <ul class=\"dropdown-menu\" aria-labelledby=\"dropdownMenu1\">\n            <li><a data-path=\"";
-output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "path"), env.opts.autoescape);
-output += "\" data-op=\"rename\" class=\"dtf-mobile-context-action\" href=\"#\">";
-output += runtime.suppressValue((lineno = 18, colno = 100, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Rename"])), env.opts.autoescape);
-output += "</a></li>\n            <li><a data-path=\"";
-output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "path"), env.opts.autoescape);
-output += "\" data-op=\"move\" class=\"dtf-mobile-context-action\" href=\"#\">";
-output += runtime.suppressValue((lineno = 19, colno = 98, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Move"])), env.opts.autoescape);
-output += "</a></li>\n            <li><a data-path=\"";
-output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "path"), env.opts.autoescape);
-output += "\" data-op=\"delete\" class=\"dtf-mobile-context-action\" href=\"#\">";
-output += runtime.suppressValue((lineno = 20, colno = 100, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Delete"])), env.opts.autoescape);
-output += "</a></li>\n            <li><a data-path=\"";
-output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "path"), env.opts.autoescape);
-output += "\" data-op=\"properties\" class=\"dtf-mobile-context-action\" href=\"#\">";
-output += runtime.suppressValue((lineno = 21, colno = 104, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Properties"])), env.opts.autoescape);
-output += "</a></li>\n        </ul>\n    </span>\n</li>\n";
+output += "</div>\n    </a>\n    <div class=\"dtf-item-context\">\n        <a href=\"#\" class=\"dtf-mobile-item-context\"><i class=\"fa fa-angle-down\"></i></a>\n    </div>\n</li>\n";
 cb(null, output);
 ;
 } catch (e) {
@@ -210,13 +194,13 @@ var output = "";
 try {
 output += "<form method=\"GET\" class=\"form clearfix\" id=\"dtf-new-folder-form\" action=\"";
 output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "createFolderUrl"), env.opts.autoescape);
-output += "\">\n    <label class=\"control-label\">";
-output += runtime.suppressValue((lineno = 1, colno = 35, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["New Folder"])), env.opts.autoescape);
-output += "</label>\n    <input type=\"text\" name=\"folder-name\" value=\"New Folder\" class=\"form-control new-folder-input\"/>\n    <input type=\"submit\" class=\"btn btn-sm btn-primary pull-right\" value=\"";
-output += runtime.suppressValue((lineno = 3, colno = 76, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Submit"])), env.opts.autoescape);
-output += "\"/>\n    <a href=\"javascript:;\" class=\"btn btn-default btn-sm pull-right\" data-dismiss=\"modal\">";
-output += runtime.suppressValue((lineno = 4, colno = 92, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Cancel"])), env.opts.autoescape);
-output += "</a>\n</form>\n";
+output += "\">\n    <div class=\"form-group\">\n        <label class=\"control-label\">";
+output += runtime.suppressValue((lineno = 2, colno = 39, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["New Folder"])), env.opts.autoescape);
+output += "</label>\n        <input type=\"text\" name=\"folder-name\" value=\"New Folder\" class=\"form-control new-folder-input\"/>\n    </div>\n    <div class=\"form-group\">\n        <input type=\"submit\" class=\"btn btn-sm btn-primary pull-right\" value=\"";
+output += runtime.suppressValue((lineno = 6, colno = 80, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Submit"])), env.opts.autoescape);
+output += "\"/>\n        <a href=\"javascript:;\" class=\"btn btn-default btn-sm pull-right\" data-dismiss=\"modal\" style=\"margin-right:5px\">";
+output += runtime.suppressValue((lineno = 7, colno = 121, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Cancel"])), env.opts.autoescape);
+output += "</a>\n    </div>\n</form>\n";
 cb(null, output);
 ;
 } catch (e) {
@@ -865,7 +849,6 @@ root: root
             // context menu
             if(options.manage) {
                this.listenContextMenu(el);
-               this.listenMobileContextMenu();
             }
 
             this.listenCreateFolder(this._currentPath);
@@ -958,7 +941,7 @@ root: root
                 if(e.keyCode == KEYCODE_ESC || e.which == KEYCODE_ESC) {
                     $( e.target).parent()
                     .siblings('a')
-                    .children('.file-name')
+                    .children('.dtf-file-desc')
                     .show();
 
                     $( e.target).parent().remove();
@@ -985,106 +968,13 @@ root: root
             $(document).on('blur', '.dt-rename-input', function(e){
                 $( e.target).parent()
                     .siblings('a')
-                    .children('.file-name')
+                    .children('.dtf-file-desc')
                     .show();
 
                 $( e.target).parent().remove();
             });
         },
 
-        listenMobileContextMenu: function(el) {
-            var _this = this;
-            $(document).on("click", '.dtf-mobile-context-action', function(e) {
-                e.preventDefault();
-                var path = $(this).data('path');
-                var op = $(this).data('op');
-
-                _this.handleMobileContexAction(op, path, $(this))
-            })
-        },
-
-        handleMobileContexAction: function(op, path, a) {
-
-            var item = a.closest('.dtf-item');
-
-            switch (op) {
-                case 'rename':
-                    var fileNameDiv = $(item).find('.file-name');
-                    var file = fileNameDiv.text();
-                    fileNameDiv.hide();
-
-                    $(item).append('<div><input data-path="'+path+'" type="text" style="height:18px;" class="form-control input-sm dt-rename-input" value="'+file+'"></div>');
-                    $(item).find('.dt-rename-input').select();
-
-                break;
-
-                case 'delete':
-
-                    if(confirm('Are you sure you want to delete '+path+' ?, this cannot be undone.')) {
-                        var res = DTFINDER.File.delete(path);
-                        this.refresh();
-                    } else {
-                        return false;
-                    }
-
-                break;
-
-                case 'move':
-
-                    $('#sub-browser-dialog .modal-body').dttree({
-                        nodes: [{
-                            path: '/',
-                            label: '/',
-                            type: 'dir'
-                        }],
-                        onBeforeExpand: function(path, dttree) {
-
-                            path = path.substr(1);
-                            var data = DTFINDER.File.list(path);
-                            dttree.setChildren(data, path);
-                        }
-                    });
-
-                    var parent = this;
-                    $('#sub-browser-dialog').on('click', '.folder-selector', function(){
-                        var href = $('#sub-browser-dialog').find('.selected').attr('href').substr(1);
-
-                        DTFINDER.File.move(path, href);
-                        parent.refresh();
-
-                        $('#sub-browser-dialog').modal('hide');
-                    });
-
-                    $('#sub-browser-dialog').modal('show');
-                break;
-                case 'properties':
-
-                    // if no path, we just well use current path
-                    if(!path) {
-                        path = this._currentPath;
-                    }
-
-                    var file = DTFINDER.File.properties(path);
-
-                    var html = [
-                        '<table>',
-                            '<tr><td class="property-label" valign="top" width="70px;">'+DTFINDER.Locale.localize('Name')+'</td><td>'+file.Name+'</td></tr>',
-                            '<tr><td class="property-label" valign="top" width="70px;">'+DTFINDER.Locale.localize('Type')+'</td><td>'+file.Type+'</td></tr>',
-                            '<tr><td class="property-label" valign="top" width="70px;">'+DTFINDER.Locale.localize('Size')+'</td><td>'+file.Size+'</td></tr>',
-                            '<tr><td class="property-label" valign="top" width="70px;">'+DTFINDER.Locale.localize('Location')+'</td><td>'+file.Location+'</td></tr>',
-                        '</table>'
-                    ].join('');
-
-                    $('#properties-dialog').on('shown.bs.modal', function (e) {
-                        $(this).find('.modal-body').html(html);
-                    });
-
-                    $('#properties-dialog').modal('show');
-                break;
-                default:
-
-            }
-        },
 
         listenContextMenu: function (el){
 
@@ -1119,6 +1009,13 @@ root: root
                     $(el).data('target', contextTarget);
                     return true;
                   }
+            });
+
+
+            //mobile context menu
+            $(document).on('click','.dtf-item-context a', function(e){
+                e.preventDefault();
+                $(el).data('context').show(e);
             });
         },
 
@@ -1169,7 +1066,14 @@ root: root
 
             var op = $(e.target).parent().data('action');
 
-            var holder = $(context).data('context-holder');
+            console.log(context);
+
+            if(context.hasClass('dtf-mobile-item-context')) {
+                // context is for mobile
+                var holder = $(context).closest('li.dtf-context-holder');
+            } else {
+                var holder = $(context).data('context-holder');
+            }
 
             var path = $(holder).children('a').attr('href');
 
@@ -1190,7 +1094,7 @@ root: root
                     var file = fileNameDiv.text();
                     fileNameDiv.hide();
 
-                    $(holder).find('a').after('<div><input data-path="'+path+'" type="text" class="dt-rename-input" value="'+file+'"></div>');
+                    $(holder).append('<div><input data-path="'+path+'" type="text" class="dt-rename-input" value="'+file+'"></div>');
                     $(holder).find('.dt-rename-input').select();
 
                 break;

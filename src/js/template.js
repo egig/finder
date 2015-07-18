@@ -27,23 +27,7 @@ output += "\n                    <i class=\"fa fa-folder-o\"></i></div>\n       
 }
 output += "\n        </div>\n        <!-- @todo thumb -->\n        <!--<img src=\"\" class=\"ui-li-thumb\">-->\n        <div class=\"dtf-file-desc\">";
 output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "file")),"label", env.opts.autoescape), env.opts.autoescape);
-output += "</div>\n    </a>\n    <span class=\"dtf-item-context\">\n        <a href=\"#\" data-toggle=\"dropdown\"><i class=\"fa fa-angle-down\"></i></a>\n        <ul class=\"dropdown-menu\" aria-labelledby=\"dropdownMenu1\">\n            <li><a data-path=\"";
-output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "path"), env.opts.autoescape);
-output += "\" data-op=\"rename\" class=\"dtf-mobile-context-action\" href=\"#\">";
-output += runtime.suppressValue((lineno = 18, colno = 100, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Rename"])), env.opts.autoescape);
-output += "</a></li>\n            <li><a data-path=\"";
-output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "path"), env.opts.autoescape);
-output += "\" data-op=\"move\" class=\"dtf-mobile-context-action\" href=\"#\">";
-output += runtime.suppressValue((lineno = 19, colno = 98, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Move"])), env.opts.autoescape);
-output += "</a></li>\n            <li><a data-path=\"";
-output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "path"), env.opts.autoescape);
-output += "\" data-op=\"delete\" class=\"dtf-mobile-context-action\" href=\"#\">";
-output += runtime.suppressValue((lineno = 20, colno = 100, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Delete"])), env.opts.autoescape);
-output += "</a></li>\n            <li><a data-path=\"";
-output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "path"), env.opts.autoescape);
-output += "\" data-op=\"properties\" class=\"dtf-mobile-context-action\" href=\"#\">";
-output += runtime.suppressValue((lineno = 21, colno = 104, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Properties"])), env.opts.autoescape);
-output += "</a></li>\n        </ul>\n    </span>\n</li>\n";
+output += "</div>\n    </a>\n    <div class=\"dtf-item-context\">\n        <a href=\"#\" class=\"dtf-mobile-item-context\"><i class=\"fa fa-angle-down\"></i></a>\n    </div>\n</li>\n";
 cb(null, output);
 ;
 } catch (e) {
@@ -118,13 +102,13 @@ var output = "";
 try {
 output += "<form method=\"GET\" class=\"form clearfix\" id=\"dtf-new-folder-form\" action=\"";
 output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "createFolderUrl"), env.opts.autoescape);
-output += "\">\n    <label class=\"control-label\">";
-output += runtime.suppressValue((lineno = 1, colno = 35, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["New Folder"])), env.opts.autoescape);
-output += "</label>\n    <input type=\"text\" name=\"folder-name\" value=\"New Folder\" class=\"form-control new-folder-input\"/>\n    <input type=\"submit\" class=\"btn btn-sm btn-primary pull-right\" value=\"";
-output += runtime.suppressValue((lineno = 3, colno = 76, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Submit"])), env.opts.autoescape);
-output += "\"/>\n    <a href=\"javascript:;\" class=\"btn btn-default btn-sm pull-right\" data-dismiss=\"modal\">";
-output += runtime.suppressValue((lineno = 4, colno = 92, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Cancel"])), env.opts.autoescape);
-output += "</a>\n</form>\n";
+output += "\">\n    <div class=\"form-group\">\n        <label class=\"control-label\">";
+output += runtime.suppressValue((lineno = 2, colno = 39, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["New Folder"])), env.opts.autoescape);
+output += "</label>\n        <input type=\"text\" name=\"folder-name\" value=\"New Folder\" class=\"form-control new-folder-input\"/>\n    </div>\n    <div class=\"form-group\">\n        <input type=\"submit\" class=\"btn btn-sm btn-primary pull-right\" value=\"";
+output += runtime.suppressValue((lineno = 6, colno = 80, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Submit"])), env.opts.autoescape);
+output += "\"/>\n        <a href=\"javascript:;\" class=\"btn btn-default btn-sm pull-right\" data-dismiss=\"modal\" style=\"margin-right:5px\">";
+output += runtime.suppressValue((lineno = 7, colno = 121, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Cancel"])), env.opts.autoescape);
+output += "</a>\n    </div>\n</form>\n";
 cb(null, output);
 ;
 } catch (e) {
