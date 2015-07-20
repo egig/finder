@@ -120,6 +120,39 @@ root: root
 };
 })();
 })();
+(function() {(window.nunjucksPrecompiled = window.nunjucksPrecompiled || {})["properties.html"] = (function() {function root(env, context, frame, runtime, cb) {
+var lineno = null;
+var colno = null;
+var output = "";
+try {
+output += "<table>\n    <tr><td class=\"property-label\" valign=\"top\" width=\"70px;\">";
+output += runtime.suppressValue((lineno = 1, colno = 64, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Name"])), env.opts.autoescape);
+output += "</td><td>";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "Name"), env.opts.autoescape);
+output += "</td></tr>\n    <tr><td class=\"property-label\" valign=\"top\" width=\"70px;\">";
+output += runtime.suppressValue((lineno = 2, colno = 64, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Type"])), env.opts.autoescape);
+output += "</td><td>";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "Type"), env.opts.autoescape);
+output += "</td></tr>\n    <tr><td class=\"property-label\" valign=\"top\" width=\"70px;\">";
+output += runtime.suppressValue((lineno = 3, colno = 64, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Size"])), env.opts.autoescape);
+output += "</td><td>";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "Size"), env.opts.autoescape);
+output += "</td></tr>\n    <tr><td class=\"property-label\" valign=\"top\" width=\"70px;\">";
+output += runtime.suppressValue((lineno = 4, colno = 64, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Location"])), env.opts.autoescape);
+output += "</td><td>";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "Location"), env.opts.autoescape);
+output += "</td></tr>\n</table>\n";
+cb(null, output);
+;
+} catch (e) {
+  cb(runtime.handleError(e, lineno, colno));
+}
+}
+return {
+root: root
+};
+})();
+})();
 (function() {(window.nunjucksPrecompiled = window.nunjucksPrecompiled || {})["sub-browser.html"] = (function() {function root(env, context, frame, runtime, cb) {
 var lineno = null;
 var colno = null;

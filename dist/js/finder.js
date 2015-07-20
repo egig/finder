@@ -57,7 +57,8 @@
     };
   };
 
-}(jQuery));;window.DTFINDER = (function(){
+}(jQuery));
+;window.DTFINDER = (function(){
 
     return {
         lang: [],
@@ -212,6 +213,39 @@ root: root
 };
 })();
 })();
+(function() {(window.nunjucksPrecompiled = window.nunjucksPrecompiled || {})["properties.html"] = (function() {function root(env, context, frame, runtime, cb) {
+var lineno = null;
+var colno = null;
+var output = "";
+try {
+output += "<table>\n    <tr><td class=\"property-label\" valign=\"top\" width=\"70px;\">";
+output += runtime.suppressValue((lineno = 1, colno = 64, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Name"])), env.opts.autoescape);
+output += "</td><td>";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "Name"), env.opts.autoescape);
+output += "</td></tr>\n    <tr><td class=\"property-label\" valign=\"top\" width=\"70px;\">";
+output += runtime.suppressValue((lineno = 2, colno = 64, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Type"])), env.opts.autoescape);
+output += "</td><td>";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "Type"), env.opts.autoescape);
+output += "</td></tr>\n    <tr><td class=\"property-label\" valign=\"top\" width=\"70px;\">";
+output += runtime.suppressValue((lineno = 3, colno = 64, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Size"])), env.opts.autoescape);
+output += "</td><td>";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "Size"), env.opts.autoescape);
+output += "</td></tr>\n    <tr><td class=\"property-label\" valign=\"top\" width=\"70px;\">";
+output += runtime.suppressValue((lineno = 4, colno = 64, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", ["Location"])), env.opts.autoescape);
+output += "</td><td>";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "Location"), env.opts.autoescape);
+output += "</td></tr>\n</table>\n";
+cb(null, output);
+;
+} catch (e) {
+  cb(runtime.handleError(e, lineno, colno));
+}
+}
+return {
+root: root
+};
+})();
+})();
 (function() {(window.nunjucksPrecompiled = window.nunjucksPrecompiled || {})["sub-browser.html"] = (function() {function root(env, context, frame, runtime, cb) {
 var lineno = null;
 var colno = null;
@@ -271,7 +305,6 @@ root: root
 })();
 
 ;DTFINDER.DOM = {
-
 
     _render: function(template, param) {
         var param = $.extend(param,{
@@ -389,49 +422,6 @@ root: root
     },
 
     createFileItem: function(file) {
-
-        /*var li = this.create('LI').addClass('dtf-item dtf-context-holder');
-        li.data('context-target', '#item-context-menu');
-
-        if(file.type == 'image') {
-             var icon = this.create('IMG',{
-                src: file.base64
-             })
-                .addClass('icon')
-
-            $(li).addClass('img-item');
-
-        } else {
-
-            if(file.type == 'file') {
-                var faClass = 'fa fa-file-o';
-                $(li).addClass('dtf-file-item');
-
-            } else if(file.type == 'dir') {
-                var faClass = 'fa fa-folder-o';
-
-                $(li).addClass('dtf-folder-item');
-            } else {
-                var faClass = null;
-            }
-
-            var icon = this.create('I')
-                .addClass('icon')
-                .addClass(faClass);
-        }
-
-        var a = this.create('A', {href: '#/'+file.path})
-            .append(icon)
-            .append('<span style="overflow: hidden;text-overflow: ellipsis;" class="file-name">'+file.label+'</span>');
-
-        var mobileContextMenu = this._render('mobile-context-menu.html', {path: file.path});
-        $(li)
-            .append(a)
-            .append(mobileContextMenu);
-
-        return li;
-
-            */
         return this._render('file-item.html', {file:file});
     }
 }
@@ -688,35 +678,7 @@ root: root
             return r;
         }
     }
-};DTFINDER.Layout = {
-
-    handleScreenSize: function(){
-        var wW = $(window).innerWidth();
-
-        if(wW <= 756) {
-            $('.dtf-breadcrumb-container').show();
-            $('.dtf-nav').hide();
-            $('.toolbar').css({margin: '5px'});
-            $('.dtf-area').width('98%');
-        } else {
-            $('.dtf-breadcrumb-container').hide();
-            $('.dtf-nav').show();
-            $('.toolbar').css({margin: '0px'});
-
-            var w = $('.dtf-browser-container').width() - $('.dtf-nav').width();
-            $('.dtf-area').width(w-35);
-        }
-
-    },
-
-    listenWindowResize: function(){
-        var _this = this;
-        $(window).resize(function(){
-            _this.handleScreenSize();
-        });
-    }
-}
-;(function($, win, doc, undefined) {
+};(function($, win, doc, undefined) {
 
   var pluginName, defaults, methods, global;
 
@@ -757,7 +719,6 @@ root: root
         DTFINDER.config.data = $.extend( {}, defaults.data, this.opts.data);
         DTFINDER.config.permissions = $.extend( {}, defaults.permissions, this.opts.permissions);
 
-
         DTFINDER.File.url = this.opts.url;
         DTFINDER.File.data = this.opts.data;
         DTFINDER.Locale.locale = this.opts.locale;
@@ -768,15 +729,11 @@ root: root
         this.listen(this.el, this.opts);
 
         this.openRoot();
-
-        DTFINDER.Layout.handleScreenSize();
-        DTFINDER.Layout.listenWindowResize();
     },
 
     initTree: function() {
-            var data = [{path: '/', label: '/', type: 'dir'}]
-            //var roots = this.buildList(data);
             var _this = this;
+            var data = [{path: '/', label: '/', type: 'dir'}]
 
             this.nav.dttree({
                 nodes: data,
@@ -797,64 +754,60 @@ root: root
                 }
             });
     },
+
     /*
-         * Open first created root
-         */
-        openRoot: function(){
-            var path = window.location.hash.substr(1);
-            if(!path) {
-                path = '/';
-                window.location.hash = '/';
+     * Open first created root
+     */
+    openRoot: function(){
+        var path = window.location.hash.substr(1);
+        if(!path) {
+            path = '/';
+            window.location.hash = '/';
 
-                var a = $('a[href="#'+path+'"]');
-                this.nav.dttree('expand', path);
+            var a = $('a[href="#'+path+'"]');
+            this.nav.dttree('expand', path);
 
-            } else {
+        } else {
 
-                var x = path.split('/');
-                var s = '';
-                var p = '/';
-                while(x.length !== 0) {
-                    s = s+x.shift()+'/';
-                    s.trim();
+            var x = path.split('/');
+            var s = '';
+            var p = '/';
+            while(x.length !== 0) {
+                s = s+x.shift()+'/';
+                s.trim();
 
-                    if(s != '/') {
-                        p = s.substr(0,s.length-1);
-                    }
-
-                    this.nav.dttree('expand', p);
+                if(s != '/') {
+                    p = s.substr(0,s.length-1);
                 }
+
+                this.nav.dttree('expand', p);
             }
+        }
 
-            this.open(path);
-        },
+        this.open(path);
+    },
 
-
-        listen: function (el, options) {
-
-            var parent = this;
-
+        listenUrl: function(){
+            var _this = this
             window.onpopstate = function(e){
                 var path = window.location.hash.substr(1);
-                parent.open(path);
+                _this.open(path);
             };
+        },
 
-            $('#dtf-sub-browser-dialog').on('click', 'a.dttree-node', function(e){
+        listenMoveBrowser: function(){
+
+            var moveBrowser = $('#dtf-sub-browser-dialog');
+
+            moveBrowser.on('click', 'a.dttree-node', function(e){
                 e.preventDefault();
                 var a = e.currentTarget;
-                $('#dtf-sub-browser-dialog').find('.selected').removeClass('selected');
+                moveBrowser.find('.selected').removeClass('selected');
                 $(a).addClass('selected');
             });
+        },
 
-            // context menu
-            if(options.manage) {
-               this.listenContextMenu(el);
-            }
-
-            this.listenCreateFolder(this._currentPath);
-            this.listenUpload(this._currentPath);
-            this.listenRename();
-            this.listenSearch();
+        listenFileItemClick: function(el, options){
 
             // file (not directory) click
             $(el).on('click', 'li[data-file-type="file"] a', function(e){
@@ -869,7 +822,23 @@ root: root
                     options.onISelect(e);
                 }
             });
+        },
 
+        listen: function (el, options) {
+
+            this.listenUrl();
+            this.listenMoveBrowser();
+
+            // context menu
+            if(options.manage) {
+               this.listenContextMenu(el);
+            }
+
+            this.listenCreateFolder(this._currentPath);
+            this.listenUpload(this._currentPath);
+            this.listenRename();
+            this.listenSearch();
+            this.listenFileItemClick(el);
         },
 
         open: function(path) {
@@ -1066,8 +1035,6 @@ root: root
 
             var op = $(e.target).parent().data('action');
 
-            console.log(context);
-
             if(context.hasClass('dtf-mobile-item-context')) {
                 // context is for mobile
                 var holder = $(context).closest('li.dtf-context-holder');
@@ -1147,14 +1114,7 @@ root: root
 
                     var file = DTFINDER.File.properties(path);
 
-                    var html = [
-                        '<table>',
-                            '<tr><td class="property-label" valign="top" width="70px;">'+DTFINDER.Locale.localize('Name')+'</td><td>'+file.Name+'</td></tr>',
-                            '<tr><td class="property-label" valign="top" width="70px;">'+DTFINDER.Locale.localize('Type')+'</td><td>'+file.Type+'</td></tr>',
-                            '<tr><td class="property-label" valign="top" width="70px;">'+DTFINDER.Locale.localize('Size')+'</td><td>'+file.Size+'</td></tr>',
-                            '<tr><td class="property-label" valign="top" width="70px;">'+DTFINDER.Locale.localize('Location')+'</td><td>'+file.Location+'</td></tr>',
-                        '</table>'
-                    ].join('');
+                    var html = DTFINDER.DOM._render('properties.html', file);
 
                     $('#properties-dialog').on('shown.bs.modal', function (e) {
                         $(this).find('.modal-body').html(html);
@@ -1212,26 +1172,6 @@ root: root
          */
         createElements: function(el, options) {
 
-            /*this.nav = $('<div/>').addClass('dtf-nav');
-            this.browserArea = $('<div/>').
-              addClass('dtf-area ctn dtf-context-holder').
-              data('context-target', '#bro-context-menu');
-
-            this.navMobile = DTFINDER.DOM.createBreadcrumb();
-
-            var row = $('<div/>').addClass('dtf-browser-container clearfix').css({width:'100%'});
-
-            var wrapper = $('<div/>').addClass('dtf-contianer clearfix');
-
-            $(row)
-                .append(this.nav)
-                .append(this.browserArea)
-
-            $(wrapper)
-                .append(toolBar)
-                .append(this.navMobile)
-                .append(row)*/
-
             var uploadUrl = this.opts.uploadUrl || this.opts.url;
             var uploadDialog = DTFINDER.DOM.createUploadDialog(uploadUrl);
             var createFolderUrl = this.opts.createFolderUrl || this.opts.url;
@@ -1243,10 +1183,9 @@ root: root
             var propertiesDialog = DTFINDER.DOM.createPropertiesDialog();
 
             $(el).html(nunjucks.render('template.html'))
-                .after(uploadDialog)
-                .after(newFolderDialog)
                 .after(itemContext)
                 .after(broContext)
+                .after(uploadDialog)
                 .after(newFolderDialog)
                 .after(subBrowserDialog)
                 .after(propertiesDialog);

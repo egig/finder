@@ -20,14 +20,13 @@ gulp.task('css', function() {
 
 gulp.task('concat', ['precompile'], function(cb) {
     var stream = gulp.src([
-        'src/js/plugin-boilerplate.js',
+        'src/js/jquery.boilerplate.js',
         'src/js/finder.js',
         'src/js/locale.js',
         'src/js/template.js',
         'src/js/DOM.js',
         'src/js/tree.js',
         'src/js/file.js',
-        'src/js/layout.js',
         'src/js/locale.js',
         'src/js/jquery.finder.js'
     ])

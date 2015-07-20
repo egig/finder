@@ -1,6 +1,5 @@
 DTFINDER.DOM = {
 
-
     _render: function(template, param) {
         var param = $.extend(param,{
             _: function(str) {
@@ -117,49 +116,6 @@ DTFINDER.DOM = {
     },
 
     createFileItem: function(file) {
-
-        /*var li = this.create('LI').addClass('dtf-item dtf-context-holder');
-        li.data('context-target', '#item-context-menu');
-
-        if(file.type == 'image') {
-             var icon = this.create('IMG',{
-                src: file.base64
-             })
-                .addClass('icon')
-
-            $(li).addClass('img-item');
-
-        } else {
-
-            if(file.type == 'file') {
-                var faClass = 'fa fa-file-o';
-                $(li).addClass('dtf-file-item');
-
-            } else if(file.type == 'dir') {
-                var faClass = 'fa fa-folder-o';
-
-                $(li).addClass('dtf-folder-item');
-            } else {
-                var faClass = null;
-            }
-
-            var icon = this.create('I')
-                .addClass('icon')
-                .addClass(faClass);
-        }
-
-        var a = this.create('A', {href: '#/'+file.path})
-            .append(icon)
-            .append('<span style="overflow: hidden;text-overflow: ellipsis;" class="file-name">'+file.label+'</span>');
-
-        var mobileContextMenu = this._render('mobile-context-menu.html', {path: file.path});
-        $(li)
-            .append(a)
-            .append(mobileContextMenu);
-
-        return li;
-
-            */
         return this._render('file-item.html', {file:file});
     }
 }
