@@ -2,7 +2,7 @@
     <a tabindex="-1" class="" href="{{ '#/'+file.path }}">
         <div class="dtf-file-img">
             {% if file.type == 'image' %}
-                <img src="{{ file.base64 }}" class="ui-li-thumb">
+                <img src="{{ file.base64 }}" class="ui-li-thumb" data-path="{{ '#/'+file.path }}">
             {% elif file.type == 'file' %}
                     <i class="fa fa-file-o"></i></div>
             {% else %}

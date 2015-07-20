@@ -104,7 +104,9 @@ output += "\">\n        <div class=\"dtf-file-img\">\n            ";
 if(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "file")),"type", env.opts.autoescape) == "image") {
 output += "\n                <img src=\"";
 output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "file")),"base64", env.opts.autoescape), env.opts.autoescape);
-output += "\" class=\"ui-li-thumb\">\n            ";
+output += "\" class=\"ui-li-thumb\" data-path=\"";
+output += runtime.suppressValue("#/" + runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "file")),"path", env.opts.autoescape), env.opts.autoescape);
+output += "\">\n            ";
 ;
 }
 else {
@@ -815,7 +817,7 @@ root: root
             });
 
             // item image
-            $(el).on('click', '.img-item a', function(e){
+            $(el).on('click', '.dtf-file-item img', function(e){
                 e.preventDefault();
 
                 if($.isFunction(options.onISelect)) {
@@ -838,7 +840,7 @@ root: root
             this.listenUpload(this._currentPath);
             this.listenRename();
             this.listenSearch();
-            this.listenFileItemClick(el);
+            this.listenFileItemClick(el, options);
         },
 
         open: function(path) {

@@ -135,7 +135,7 @@
             });
 
             // item image
-            $(el).on('click', '.img-item a', function(e){
+            $(el).on('click', '.dtf-file-item img', function(e){
                 e.preventDefault();
 
                 if($.isFunction(options.onISelect)) {
@@ -158,7 +158,7 @@
             this.listenUpload(this._currentPath);
             this.listenRename();
             this.listenSearch();
-            this.listenFileItemClick(el);
+            this.listenFileItemClick(el, options);
         },
 
         open: function(path) {
