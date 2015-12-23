@@ -32,9 +32,11 @@
 <script type="text/javascript" src="/demo/deps/bootstrap/dist/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/demo/deps/bootstrap-contextmenu/bootstrap-contextmenu.js"></script>
 <script type="text/javascript" src="/demo/deps/nunjucks/browser/nunjucks.js"></script>
+<script type="text/javascript" src="/demo/deps/underscore/underscore-min.js"></script>
+<script type="text/javascript" src="/demo/deps/backbone/backbone-min.js"></script>
 
 <!-- if you in production mode, it's recomended to use minified version -->
-<script src="/../dist/js/finder.js"></script>
+<script src="/../dist/js/finder.js?v=<?php echo time() ?>"></script>
 
 <script src="/../src/l10n/id.js"></script>
 <script type="text/javascript">

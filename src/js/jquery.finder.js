@@ -44,11 +44,38 @@
         DTFINDER.Locale.locale = this.opts.locale;
 
         this.createElements(this.el, this.opts);
+
+        this.initApp();
         this.initTree();
 
-        this.listen(this.el, this.opts);
+        //this.listen(this.el, this.opts);
 
-        this.openRoot();
+        //this.openRoot();
+    },
+
+    initApp: function () {
+
+        var fileModel = Backbone.Model.extend({
+            defaults: {
+                "thumbnail":"false",
+                "base64":"false",
+                "type":"file",
+                "label":""
+            },
+            idAttribute: "path",
+        });
+
+        var _this = this;
+        var files = Backbone.Collection.extend({
+            modal: fileModel,
+            url: _this.opts.url
+        });
+
+        DTFINDER.files = new files();
+
+        DTFINDER.files.fetch({data:{'op':'ls', 'path':'/'}});
+
+        console.log(DTFINDER.files.models);
     },
 
     initTree: function() {

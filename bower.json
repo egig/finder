@@ -20,6 +20,8 @@
     "jquery-form": "latest",
     "bootstrap-contextmenu": "latest",
     "fontawesome": "latest",
-    "nunjucks": "~1.3.4"
+    "nunjucks": "1.3.*",
+    "underscore": "1.8.*",
+    "backbone": "1.2.*"
   }
 }
