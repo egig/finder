@@ -47,7 +47,7 @@
 				move: 1,
 				delete: 1,
 			},
-			locale: 'id'
+			locale: 'en'
 		});
 
 	})(jQuery);

@@ -434,6 +434,11 @@
 
                     var file = DTFINDER.File.properties(path);
 
+                    file.nameLabel = DTFINDER.Locale.localize("Name");
+                    file.sizeLabel = DTFINDER.Locale.localize("Size");
+                    file.typeLabel = DTFINDER.Locale.localize("Type");
+                    file.locationLabel = DTFINDER.Locale.localize("Location");
+
                     var html = DTFINDER.DOM._render('properties.html', file);
 
                     $('#properties-dialog').on('shown.bs.modal', function (e) {

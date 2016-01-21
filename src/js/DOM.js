@@ -32,13 +32,20 @@ DTFINDER.DOM = {
 
     createUploadDialog: function(uploadUrl){
 
-        var content = this._render('upload-form.html', {uploadUrl:uploadUrl});
+        var content = this._render('upload-form.html', {
+            uploadUrl:uploadUrl,
+            Submit: DTFINDER.Locale.localize("Submit")
+        });
         return this.createModal('dtf-upload-dialog', content);
     },
 
     createNewFolderDialog: function(createFolderUrl){
 
-        var param = { createFolderUrl: createFolderUrl }
+        var param = {
+            createFolderUrl: createFolderUrl,
+            Submit: DTFINDER.Locale.localize("Submit"),
+            Cancel: DTFINDER.Locale.localize("Cancel")
+        }
 
         var content = this._render('new-folder-form.html', param);
 
