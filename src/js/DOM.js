@@ -24,7 +24,7 @@ DTFINDER.DOM = {
 
     createUploadDialog: function(uploadUrl){
 
-        this._render('upload-form.html', {
+        var content = this._render('upload-form.html', {
             uploadUrl:uploadUrl,
             Submit: DTFINDER.Locale.localize("Submit")
         });
