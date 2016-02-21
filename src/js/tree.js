@@ -12,9 +12,12 @@
   defaults = {
     nodes: [],
     classes: {
-          collapsedToggler: 'fa fa-folder-o',
-          expandedToggler: 'fa fa-folder-open-o'
-      },
+          collapsedToggler: 'fa fa-plus-square-o',
+          expandedToggler: 'fa fa-minus-square-o'
+    },
+    filterNode: function(node) {
+      return true
+    }
   };
 
   // Public methods
@@ -42,34 +45,38 @@
 
               var toggler = $(this);
 
-              var a = toggler.siblings('.dttree-node');
+              var node = toggler.data('node');
 
-              var path = a.attr('href');
-
-              if(toggler.children('i').hasClass(_this.opts.classes.expandedToggler)) {
-                  _this.collapse(path);
+              if(typeof node.collapsed === 'undefined') {
+                  _this.expand(node);
               } else {
-                  _this.expand(path);
+                if(node.collapsed) {
+                    _this.expand(node);
+                } else {
+                    _this.collapse(node);
+                }
               }
           });
       },
 
     // data prototype:
-    // var nodes = [{path: '/', label: '/', type: 'dir'}]
+    // var nodes = [{path: '/', text: '/'}]
     // path and label is mandatory
-    _renderNodes: function (nodes){
+    _renderNodes: function (nodes, parent){
 
           if(nodes.length > 0) {
               var ul =  this._create(NODES_ELEMENT);
+              $(ul).css('padding-left', "15px");
+              $(ul).css('list-style', "none");
 
               for(i=0; i<nodes.length; i++) {
 
-                  // @todo decouple filter dir
-                  if(nodes[i].type === 'dir') {
-                      var li = this._renderNode(nodes[i]);
-                      $(ul).append(li);
-                  }
+                if(this.opts.filterNode(nodes[i])) {                
+                  var li = this._renderNode(nodes[i], parent);
+                  $(ul).append(li);
+                }
               }
+
               return ul;
           }
 
@@ -79,34 +86,56 @@
       // render single node to node element
       // if node contains nodes, then it will
       // recursively rendered as well
-      _renderNode: function(node) {
+      _renderNode: function(node, parent) {
+
+          var text = node.text;
+
+          // @todo replace special char
+          node.id = node.text.replace(" ", "_");
+
+          if(typeof(parent) !== 'undefined') {
+            node.id = parent.id+"_"+node.id;
+          }
 
           var path = node.path;
-          var label = node.label;
 
-          path = path === '/' ? '' : path;
-
-          var a = this._create('A', {href: '#/'+path})
+          var a = this._create('A', {href: path})
               .addClass('dttree-node')
-              .append(' '+label);
+              .append('&nbsp;'+text);
 
-          var toggler = this._createNodeToggler(node);
-          var li = this._create(NODE_ELEMENT)
-              .append(toggler)
-              .append(a);
+          $(a).data('node', node);
 
-          if(typeof node.nodes == 'array') {
-              var ul = this._renderNodes(node.nodes);
+          var li = this._create(NODE_ELEMENT, {id: node.id});
+
+          if($.isArray(node.nodes)) {
+            var toggler = this._createNodeToggler(node, node.expand);
+            toggler.data('node', node);
+            li.append(toggler);
+            }
+
+          li.append(a);
+
+          if($.isArray(node.nodes)) {
+              var ul = this._renderNodes(node.nodes, node);
               li.append(ul);
+
+              if(!node.expand) {
+                $(ul).hide();
+              }
           }
 
           return li;
       },
 
       // Creat node toggler and attach the node to it
-      _createNodeToggler: function(node) {
+      _createNodeToggler: function(node, expand) {
 
-          var togglerIcon = this._create('I').addClass(this.opts.classes.collapsedToggler);
+          var togglerClass = expand ? this.opts.classes.expandedToggler
+            : this.opts.classes.collapsedToggler;
+
+          var togglerIcon = this._create('I')
+            .addClass(togglerClass);
+          
           var toggler = this._create('A', {href: '#'})
               .addClass(NODE_TOGGLER_CLASS)
               .append(togglerIcon)
@@ -127,23 +156,21 @@
           return $(el);
       },
 
-      setChildren: function(childs, path) {
+      redraw: function(node) {
 
-        if(typeof(path) == 'undefined') {
-          var parent = this.element;
-        } else {
-          var a = $('a[href="#'+path+'"].dttree-node', this.el);
-          var parent = a.parent('li');
-        }
 
-        parent.children('ul').remove();
-        var html = this._renderNodes(childs);
+        var path = node.path
+
+        var a = $('a[href="'+path+'"].dttree-node', this.el);
+        var parent = a.parent('li');
+        var html = this._renderNodes(node.nodes);
+        
         $(html).hide();
         parent.append(html);
       },
 
-      collapse: function(path) {
-          path = this._sanitizePath(path);
+      collapse: function(node) {
+          path = node.path
           var a = $('a[href="'+path+'"]', this.el);
           var i = $(a).siblings('.dttree-node-toggler').children('i');
 
@@ -151,29 +178,26 @@
           i.addClass(this.opts.classes.collapsedToggler);
 
           $(a).siblings('ul').slideUp('fast');
+          node.collapsed = true;
       },
 
-      expand: function(path) {
-        path = this._sanitizePath(path);
-        var a = $('a[href="'+path+'"]', this.el);
+      expand: function(node) {
 
         if($.isFunction(this.opts.onBeforeExpand)) {
-          this.opts.onBeforeExpand(path, this);
+          this.opts.onBeforeExpand(node, this);
         }
+
+        var path = node.path
+
+        var a = $('a[href="'+path+'"]', this.el);
 
         var i = $(a).siblings('.dttree-node-toggler').children('i');
 
         i.removeClass(this.opts.classes.collapsedToggler);
         i.addClass(this.opts.classes.expandedToggler);
         $(a).siblings('ul').slideDown('fast');
-      },
 
-      _sanitizePath: function(path) {
-        if(path[0] == '#') {
-          return path;
-        } else {
-          return '#'+path;
-        }
+          node.collapsed = false;
       }
   };
 

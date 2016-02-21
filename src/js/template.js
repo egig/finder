@@ -57,7 +57,7 @@ var parentTemplate = null;
 output += "<li class=\"dtf-file-item dtf-context-holder\" data-context-target='#item-context-menu' data-file-type=\"";
 output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "file")),"type"), env.opts.autoescape);
 output += "\">\n    <a tabindex=\"-1\" class=\"\" href=\"";
-output += runtime.suppressValue("#/" + runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "file")),"path"), env.opts.autoescape);
+output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "file")),"path"), env.opts.autoescape);
 output += "\">\n        <div class=\"dtf-file-img\">\n            ";
 if(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "file")),"type") == "image") {
 output += "\n                <img src=\"";
@@ -79,7 +79,7 @@ output += "\n                    <i class=\"fa fa-folder-o\"></i></div>\n       
 ;
 }
 output += "\n        </div>\n        <!-- @todo thumb -->\n        <!--<img src=\"\" class=\"ui-li-thumb\">-->\n        <div class=\"dtf-file-desc\">";
-output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "file")),"label"), env.opts.autoescape);
+output += runtime.suppressValue(runtime.memberLookup((runtime.contextOrFrameLookup(context, frame, "file")),"text"), env.opts.autoescape);
 output += "</div>\n    </a>\n    <div class=\"dtf-item-context\">\n        <a href=\"#\" class=\"dtf-mobile-item-context\"><i class=\"fa fa-angle-down\"></i></a>\n    </div>\n</li>\n";
 if(parentTemplate) {
 parentTemplate.rootRenderFunc(env, context, frame, runtime, cb);

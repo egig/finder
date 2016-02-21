@@ -17,13 +17,19 @@ switch($op) {
         foreach ($files as $file) {
             $type = $file->isDir() ? 'dir' : 'file';
 
-            $data[] = array(
+            $item = array(
                 'thumbnail' => 'false',
                 'base64' => 'false',
                 'type' => $type,
                 'path' => make_path_relative($file->getRealpath()),
-                'label' => $file->getFilename()
+                'text' => $file->getFilename()
             );
+
+            if($file->isDir()) {
+                $item['nodes'] = [];
+            }
+
+            $data[] = $item;
         }
     break;
 
@@ -91,7 +97,7 @@ switch($op) {
                 'base64' => 'false',
                 'type' => $type,
                 'path' => make_path_relative($file->getRealpath()),
-                'label' => $file->getFilename()
+                'text' => $file->getFilename()
             );
         }
     break;
@@ -123,7 +129,7 @@ function make_path_relative($full) {
     global $root;
     $base = realpath($root);
     $full = realpath($full);
-    return trim(str_replace($base, '', $full), '/');
+    return '#/'.trim(str_replace($base, '', $full), '/');
 }
 
 function prepare_path($path) {

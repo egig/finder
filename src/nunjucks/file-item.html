@@ -1,5 +1,5 @@
 <li class="dtf-file-item dtf-context-holder" data-context-target='#item-context-menu' data-file-type="{{ file.type }}">
-    <a tabindex="-1" class="" href="{{ '#/'+file.path }}">
+    <a tabindex="-1" class="" href="{{ file.path }}">
         <div class="dtf-file-img">
             {% if file.type == 'image' %}
                 <img src="{{ file.base64 }}" class="ui-li-thumb" data-path="{{ '#/'+file.path }}">
@@ -11,7 +11,7 @@
         </div>
         <!-- @todo thumb -->
         <!--<img src="" class="ui-li-thumb">-->
-        <div class="dtf-file-desc">{{ file.label }}</div>
+        <div class="dtf-file-desc">{{ file.text }}</div>
     </a>
     <div class="dtf-item-context">
         <a href="#" class="dtf-mobile-item-context"><i class="fa fa-angle-down"></i></a>

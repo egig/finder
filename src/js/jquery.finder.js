@@ -53,13 +53,20 @@
 
     initTree: function() {
             var _this = this;
-            var data = [{path: '/', label: '/', type: 'dir'}]
+            var data = [{path: '#/', text: '/', type: 'dir', nodes: []}]
 
             this.nav.dttree({
                 nodes: data,
-                onBeforeExpand: function(path, dttree) {
+                classes: {
+                      collapsedToggler: 'fa fa-folder-o',
+                      expandedToggler: 'fa fa-folder-open-o'
+                },
+                filterNode: function(node) {
+                    return node.type === "dir"
+                },
+                onBeforeExpand: function(node, dttree) {
+                    var path = node.path.substr(1);
 
-                    path = path.substr(1);
                     if($.inArray(path, _this._loadedPaths) === -1) {
 
                         var data = DTFINDER.File.list(path);
@@ -67,10 +74,12 @@
                         _this._cache[path] = data;
 
                         _this._loadedPaths.push(path);
-                    }
+                        node.nodes = _this._cache[path];
 
-                    dttree.setChildren(_this._cache[path], path);
-                    _this.handleHight();
+                        dttree.redraw(node);
+                        
+                        _this.handleHight();
+                    }
                 }
             });
     },
@@ -84,8 +93,10 @@
             path = '/';
             window.location.hash = '/';
 
-            var a = $('a[href="#'+path+'"]');
-            this.nav.dttree('expand', path);
+            var a = $('a[href="#'+path+'"].dttree-node');
+
+            var node = a.data('node');
+            this.nav.dttree('expand', node);
 
         } else {
 
@@ -100,7 +111,10 @@
                     p = s.substr(0,s.length-1);
                 }
 
-                this.nav.dttree('expand', p);
+                var a = $('a[href="#'+p+'"].dttree-node');
+                var node = a.data('node');
+
+                this.nav.dttree('expand', node);
             }
         }
 
@@ -171,7 +185,7 @@
                 //save data
                 this._cache[path] = data;
 
-                this._loadedPaths.push(path);
+                //this._loadedPaths.push(path);
             }
 
             //upload
@@ -401,14 +415,18 @@
                     $('#dtf-sub-browser-dialog .modal-body').dttree({
                         nodes: [{
                             path: '/',
-                            label: '/',
-                            type: 'dir'
+                            text: '/',
+                            type: 'dir',
+                            nodes: []
                         }],
-                        onBeforeExpand: function(path, dttree) {
+                        filterNode: function(node) {
+                            return node.type === "dir";
+                        },
+                        onBeforeExpand: function(node, dttree) {
 
-                            path = path.substr(1);
-                            var data = DTFINDER.File.list(path);
-                            dttree.setChildren(data, path);
+                            var path = node.path;
+                            node.nodes = DTFINDER.File.list(path);
+                            dttree.redraw(node, dttree);
                         }
                     });
 
