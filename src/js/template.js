@@ -1,3 +1,52 @@
+(function() {(window.nunjucksPrecompiled = window.nunjucksPrecompiled || {})["context-menu.html"] = (function() {
+function root(env, context, frame, runtime, cb) {
+var lineno = null;
+var colno = null;
+var output = "";
+try {
+var parentTemplate = null;
+output += "<div id=\"";
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "id"), env.opts.autoescape);
+output += "\">\n\t<ul role=\"menu\" class=\"dropdown-menu\">\n\t\t";
+frame = frame.push();
+var t_3 = runtime.contextOrFrameLookup(context, frame, "menus");
+if(t_3) {var t_2 = t_3.length;
+for(var t_1=0; t_1 < t_3.length; t_1++) {
+var t_4 = t_3[t_1];
+frame.set("menu", t_4);
+frame.set("loop.index", t_1 + 1);
+frame.set("loop.index0", t_1);
+frame.set("loop.revindex", t_2 - t_1);
+frame.set("loop.revindex0", t_2 - t_1 - 1);
+frame.set("loop.first", t_1 === 0);
+frame.set("loop.last", t_1 === t_2 - 1);
+frame.set("loop.length", t_2);
+output += "\n\t\t<li data-action=\"";
+output += runtime.suppressValue(runtime.memberLookup((t_4),"action"), env.opts.autoescape);
+output += "\"><a href=\"#\">";
+output += runtime.suppressValue(runtime.memberLookup((t_4),"text"), env.opts.autoescape);
+output += "</a></li>\n\t\t";
+;
+}
+}
+frame = frame.pop();
+output += "\n\t</ul>\n</div>";
+if(parentTemplate) {
+parentTemplate.rootRenderFunc(env, context, frame, runtime, cb);
+} else {
+cb(null, output);
+}
+;
+} catch (e) {
+  cb(runtime.handleError(e, lineno, colno));
+}
+}
+return {
+root: root
+};
+
+})();
+})();
 (function() {(window.nunjucksPrecompiled = window.nunjucksPrecompiled || {})["file-item.html"] = (function() {
 function root(env, context, frame, runtime, cb) {
 var lineno = null;
@@ -198,7 +247,7 @@ var output = "";
 try {
 var parentTemplate = null;
 output += "<div><button class=\"btn btn-xs pull-right btn-primary folder-selector\">";
-output += runtime.suppressValue((lineno = 0, colno = 73, runtime.callWrap(runtime.contextOrFrameLookup(context, frame, "_"), "_", context, ["Select"])), env.opts.autoescape);
+output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "selectLabel"), env.opts.autoescape);
 output += "</button></div>\n";
 if(parentTemplate) {
 parentTemplate.rootRenderFunc(env, context, frame, runtime, cb);

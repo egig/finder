@@ -22,17 +22,9 @@ DTFINDER.DOM = {
         return $(el);
     },
 
-    createBreadcrumb:function(){
-        return this._render(DTFINDER.Template.breadcrumb());
-    },
-
-    createToolbar: function(){
-        return this._render(DTFINDER.Template.toolbar());
-    },
-
     createUploadDialog: function(uploadUrl){
 
-        var content = this._render('upload-form.html', {
+        this._render('upload-form.html', {
             uploadUrl:uploadUrl,
             Submit: DTFINDER.Locale.localize("Submit")
         });
@@ -54,7 +46,10 @@ DTFINDER.DOM = {
 
     createSubBrowserDialog: function(){
 
-        var content = this._render('sub-browser.html');
+        var param = {
+            selectLabel: DTFINDER.Locale.localize('Select')
+        }
+        var content = this._render('sub-browser.html', param);
         return this.createModal('dtf-sub-browser-dialog', content, 'modal-sm');
     },
 
@@ -70,56 +65,34 @@ DTFINDER.DOM = {
 
     createBrowserContext: function() {
 
-        var context = {};
+        var context = [];
 
         if(DTFINDER.config.permissions.create) {
-            context['new-folder'] = DTFINDER.Locale.localize('New Folder')+'\u2026'
+            context.push({action: "new-folder", text: DTFINDER.Locale.localize('New Folder')+'\u2026'});
         }
 
-        context.properties = DTFINDER.Locale.localize('Properties');
-        return this.createContextMenu('bro-context-menu', context);
+        context.push({action: "properties", text:DTFINDER.Locale.localize('Properties')});
+
+        return this._render('context-menu.html', {id:"bro-context-menu",  menus: context});
     },
 
     // right click context menu
     createItemContext: function() {
 
-        var context = {};
+        var context = [];
 
         if(DTFINDER.config.permissions.move) {
-            context.rename =  DTFINDER.Locale.localize('Rename')
-            context.move = DTFINDER.Locale.localize('Move')+'\u2026'
+            context.push({action: "rename", text: DTFINDER.Locale.localize('Rename')});
+            context.push({action: "move", text: DTFINDER.Locale.localize('Move')+'\u2026'});
         }
 
         if(DTFINDER.config.permissions.delete) {
-            context.delete = DTFINDER.Locale.localize('Delete')+'\u2026'
+            context.push({action: "delete", text: DTFINDER.Locale.localize('Delete')+'\u2026'});
         }
 
-        context.properties = DTFINDER.Locale.localize('Properties');
-        return this.createContextMenu('item-context-menu', context);
-    },
+        context.push({action: "properties", text: DTFINDER.Locale.localize('Properties')});
 
-    createContextMenu: function(id, menu){
-
-        var dropUL = this.create('UL', {role: 'menu'}).addClass('dropdown-menu');
-
-        $.each(menu, $.proxy(function(key, value) {
-            var li = this.createContextAction(key, value);
-            $(dropUL).append(li);
-        }, this));
-
-        var contextWrapper = this.create('DIV', {
-            id: id
-        }).append(dropUL);
-
-        return contextWrapper;
-    },
-
-    // context action
-    createContextAction: function(act, text) {
-        var a = this.create('A', {href: '#'}).text(text);
-        var li = this.create('LI', {'data-action': act}).append(a);
-
-        return li;
+        return this._render('context-menu.html', {id:"item-context-menu",  menus: context});
     },
 
     createFileItem: function(file) {

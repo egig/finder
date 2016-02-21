@@ -1,0 +1,7 @@
+<div id="{{ id }}">
+	<ul role="menu" class="dropdown-menu">
+		{% for menu in menus %}
+		<li data-action="{{ menu.action }}"><a href="#">{{ menu.text }}</a></li>
+		{% endfor %}
+	</ul>
+</div>

@@ -16,6 +16,7 @@ switch($op) {
         $files = new FilesystemIterator($root.$path);
         foreach ($files as $file) {
             $type = $file->isDir() ? 'dir' : 'file';
+
             $data[] = array(
                 'thumbnail' => 'false',
                 'base64' => 'false',
