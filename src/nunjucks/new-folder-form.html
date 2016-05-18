@@ -1,6 +1,12 @@
+{% extends "modal.html" %}
+
+{% block id %}dtf-new-folder-dialog{% endblock %}
+{% block size %}modal-sm{% endblock %}
+
+{% block content %}
 <form method="GET" class="form clearfix" id="dtf-new-folder-form" action="{{ createFolderUrl }}">
     <div class="form-group">
-        <label class="control-label">{{ _('New Folder') }}</label>
+        <label class="control-label">{{  NewFolder }}</label>
         <input type="text" name="folder-name" value="New Folder" class="form-control new-folder-input"/>
     </div>
     <div class="form-group">
@@ -8,3 +14,4 @@
         <a href="javascript:;" class="btn btn-default btn-sm pull-right" data-dismiss="modal" style="margin-right:5px">{{  Cancel }}</a>
     </div>
 </form>
+{% endblock %}

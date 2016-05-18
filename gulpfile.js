@@ -24,7 +24,6 @@ gulp.task('concat', ['precompile'], function(cb) {
         'src/js/finder.js',
         'src/js/locale.js',
         'src/js/template.js',
-        'src/js/DOM.js',
         'src/js/tree.js',
         'src/js/file.js',
         'src/js/locale.js',

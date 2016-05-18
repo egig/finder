@@ -478,7 +478,7 @@
 
                 for(var i=0; i<data.length; i++ ) {
 
-                    var node = DTFINDER.DOM.createFileItem(data[i]);
+                    var node = this.createFileItem(data[i]);
                     content.append(node);
                 }
 
@@ -516,27 +516,71 @@
         createElements: function(el, options) {
 
             var uploadUrl = this.opts.uploadUrl || this.opts.url;
-            var uploadDialog = DTFINDER.DOM.createUploadDialog(uploadUrl);
             var createFolderUrl = this.opts.createFolderUrl || this.opts.url;
-            var newFolderDialog = DTFINDER.DOM.createNewFolderDialog(createFolderUrl);
 
-            var itemContext = DTFINDER.DOM.createItemContext();
-            var broContext = DTFINDER.DOM.createBrowserContext();
-            var subBrowserDialog = DTFINDER.DOM.createSubBrowserDialog();
-            var propertiesDialog = DTFINDER.DOM.createPropertiesDialog();
+            var itemContext = this.createItemContext();
+            var broContext = this.createBrowserContext();
 
-            $(el).html(nunjucks.render('template.html'))
+            var content = nunjucks.render('template.html', {
+                createFolderUrl: createFolderUrl,
+                Submit: DTFINDER.Locale.localize("Submit"),
+                Cancel: DTFINDER.Locale.localize("Cancel"),
+                selectLabel: DTFINDER.Locale.localize('Select')
+            });
+
+            $(el).html(content)
                 .after(itemContext)
                 .after(broContext)
-                .after(uploadDialog)
-                .after(newFolderDialog)
-                .after(subBrowserDialog)
-                .after(propertiesDialog);
 
             this.nav = $('#dtf-tree');
             this.browserArea = $('#dtf-area');
 
         },
+
+        _render: function(template, param) {
+            var param = $.extend(param,{
+                _: function(str) {
+                        return DTFINDER.Locale.localize(str);
+                    }
+            });
+            return nunjucks.render(template, param);
+        },
+
+        createBrowserContext: function() {
+
+            var context = [];
+
+            if(DTFINDER.config.permissions.create) {
+                context.push({action: "new-folder", text: DTFINDER.Locale.localize('New Folder')+'\u2026'});
+            }
+
+            context.push({action: "properties", text:DTFINDER.Locale.localize('Properties')});
+
+            return this._render('context-menu.html', {id:"bro-context-menu",  menus: context});
+        },
+
+        // right click context menu
+        createItemContext: function() {
+
+            var context = [];
+
+            if(DTFINDER.config.permissions.move) {
+                context.push({action: "rename", text: DTFINDER.Locale.localize('Rename')});
+                context.push({action: "move", text: DTFINDER.Locale.localize('Move')+'\u2026'});
+            }
+
+            if(DTFINDER.config.permissions.delete) {
+                context.push({action: "delete", text: DTFINDER.Locale.localize('Delete')+'\u2026'});
+            }
+
+            context.push({action: "properties", text: DTFINDER.Locale.localize('Properties')});
+
+            return this._render('context-menu.html', {id:"item-context-menu",  menus: context});
+        },
+
+        createFileItem: function(file) {
+            return this._render('file-item.html', {file:file});
+        }
   };
 
   // Global properties and methods get attached to `$`
