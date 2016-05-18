@@ -457,7 +457,7 @@
                     file.typeLabel = DTFINDER.Locale.localize("Type");
                     file.locationLabel = DTFINDER.Locale.localize("Location");
 
-                    var html = DTFINDER.DOM._render('properties.html', file);
+                    var html = this._render('properties.html', file);
 
                     $('#properties-dialog').on('shown.bs.modal', function (e) {
                         $(this).find('.modal-body').html(html);
