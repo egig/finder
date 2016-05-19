@@ -6,7 +6,7 @@ ini_set('display_errors', 1);
 $op = $_GET['op'] or $op = $_POST['op'];
 $path = $_GET['path'] or $path = $_POST['path'];
 
-$root = __DIR__.'/files';
+$root = __DIR__.DIRECTORY_SEPARATOR.'files';
 
 $data = array();
 
@@ -135,6 +135,7 @@ function make_path_relative($full) {
 function prepare_path($path) {
     global $root;
     $path = ltrim($path, '#');
+    $path = urldecode($path);
     return realpath(implode(DIRECTORY_SEPARATOR, array($root, trim($path, DIRECTORY_SEPARATOR))));
 }
 
