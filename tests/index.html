@@ -30,11 +30,11 @@
 <script type="text/javascript" src="../bower_components/jquery-form/jquery.form.js"></script>
 <script type="text/javascript" src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="../bower_components/bootstrap-contextmenu/bootstrap-contextmenu.js"></script>
-<script type="text/javascript" src="../bower_components/nunjucks/browser/nunjucks.js"></script>
+<script type="text/javascript" src="../bower_components/nunjucks/browser/nunjucks-slim.js"></script>
 
 <script>
 	// @todo why precompiled does not works !
-	nunjucks.configure('../src/nunjucks');
+	// nunjucks.configure('../src/nunjucks');
 </script>
 
 <script src="../src/js/jquery.boilerplate.js" ></script>
@@ -42,12 +42,13 @@
 <script src="../src/js/locale.js" ></script>
 <script src="../src/js/tree.js" ></script>
 <script src="../src/js/file.js" ></script>
-<script src="../src/js/locale.js" ></script>	
+<script src="../src/js/locale.js" ></script>
 <script src="../src/js/jquery.finder.js" ></script>
+<script src="../src/js/template.js" ></script>
 
 <script src="../src/l10n/id.js"></script>
 <script type="text/javascript">
-	
+
 	(function($){
 
 		$('#finder').dtfinder({
