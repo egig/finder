@@ -111,7 +111,7 @@
             var toggler = this._createNodeToggler(node, node.expand);
             toggler.data('node', node);
             li.append(toggler);
-            }
+          }
 
           li.append(a);
 
