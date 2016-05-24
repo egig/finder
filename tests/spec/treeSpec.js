@@ -87,12 +87,30 @@ describe("DTTREE initilization", function(){
 				path: "#/foo",
 				text: "Foo",
 				nodes: [
-					{path: "#/foo/bar", text: "Bar"}
+					{
+						path: "#/foo/bar",
+						text: "Bar",
+						nodes: [{
+							path: "#/foo/bar/baz",
+							text: "Baz"
+							}
+						]
+					}
 				]
 			}]
 		});
 
 		expect(1).toBe(1);
+	});
+
+	it("node click event is ok", function() {
+
+		var a = $("a.dttree-node-toggler:first");
+
+		expect(a.siblings("ul").css("display")).toBe('none');
+		
+		a.trigger("click");
+		expect(a.siblings("ul").css("display")).toBe('block');
 	});
 });
 
