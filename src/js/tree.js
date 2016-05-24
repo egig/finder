@@ -113,12 +113,23 @@ window.DTTREE = (function(window, document) {
         return $(el);
     };
 
+    // Default Options
+    var _OPTIONS = {
+        filterNode: function(node) {
+          return true;
+        },
+        onBeforeExpand: false
+    }
 
     var ret = {
-         options: {
-            filterNode: function(node) {
-                return true
-            }
+        el: null,
+        $el: null,
+        options: _OPTIONS,
+
+        init: function(el, options) {
+            this.el = el;
+            this.$el = $(el);
+            this.options = $.extend(true, _OPTIONS, options);
         }
     }
 

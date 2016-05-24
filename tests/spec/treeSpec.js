@@ -39,7 +39,7 @@ describe("DTTREE", function(){
 
 		expect(li[0].tagName).toBe("LI");
 		expect(li[0].outerHTML.indexOf("dttree-node-toggler")).toEqual(-1);
-	
+
 	});
 
 	it("should be able to render a nodes",  function() {
@@ -58,4 +58,25 @@ describe("DTTREE", function(){
 		expect(li[0].outerHTML.indexOf("dttree-node-toggler")).not.toEqual(-1);
 	});
 
+	it("should throw error on render invalid node",  function() {
+
+			expect(function(){
+				DTTREE.renderNode({});
+			}).toThrow();
+	});
+
+});
+
+
+describe("DTTREE initilization", function(){
+	it("should override default options after init",  function() {
+
+			var defaultLength = Object.keys(DTTREE.options).length;
+
+			expect(Object.keys(DTTREE.options).length).toBe(defaultLength);
+
+			DTTREE.init("#dt-tree", { otherOptions: true });
+
+			expect(Object.keys(DTTREE.options).length).toBe(defaultLength+1);
+	});
 });
