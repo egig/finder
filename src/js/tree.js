@@ -48,6 +48,8 @@ window.DTTREE = (function(window, document) {
               }
           }
 
+          node.HTMLNode = li;
+
           return li;
     };
 
@@ -115,6 +117,7 @@ window.DTTREE = (function(window, document) {
 
     // Default Options
     var _OPTIONS = {
+        nodes: [{path: "/", text: "/"}],
         filterNode: function(node) {
           return true;
         },
@@ -130,6 +133,67 @@ window.DTTREE = (function(window, document) {
             this.el = el;
             this.$el = $(el);
             this.options = $.extend(true, _OPTIONS, options);
+
+            var root = _renderNodes(this.options.nodes);
+            $(this.el).append(root);
+
+            this.listen();
+        },
+
+        expand: function(node) {
+
+            if($.isFunction(this.options.onBeforeExpand)) {
+                this.options.onBeforeExpand(node, this);
+            }
+
+            var path = node.path
+
+            var li =  node.HTMLNode;
+
+            var i = $(li).children('.'+NODE_TOGGLER_CLASS).children('i');
+
+            i.removeClass(COLLAPSED_TOGGLER_CLASS);
+            i.addClass(EXPANDED_TOGGLER_CLASS);
+
+            $(li).children(NODES_ELEMENT).slideDown('fast');
+
+            node.collapsed = false;
+        },
+
+        collapse: function(node) {
+
+            var li =  node.HTMLNode;
+            var i = $(li).children('.'+NODE_TOGGLER_CLASS).children('i');
+
+            i.removeClass(EXPANDED_TOGGLER_CLASS);
+            i.addClass(COLLAPSED_TOGGLER_CLASS);
+
+            $(li).children(NODES_ELEMENT).slideUp('fast');
+
+            node.collapsed = true;
+        },
+
+        listen: function() {
+
+            var _this = this;
+
+            $(this.el).on('click', 'a.'+NODE_TOGGLER_CLASS, function(e){
+                e.preventDefault();
+
+                var toggler = $(this);
+
+                var node = toggler.data('node');
+
+                if(typeof node.collapsed === 'undefined') {
+                    _this.expand(node);
+                } else {
+                    if(node.collapsed) {
+                        _this.expand(node);
+                    } else {
+                        _this.collapse(node);
+                    }
+                }
+            });
         }
     }
 

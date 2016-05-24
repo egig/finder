@@ -177,7 +177,7 @@
           i.removeClass(this.opts.classes.expandedToggler);
           i.addClass(this.opts.classes.collapsedToggler);
 
-          $(a).siblings('ul').slideUp('fast');
+          $().siblings('ul').slideUp('fast');
           node.collapsed = true;
       },
 
