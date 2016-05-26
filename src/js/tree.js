@@ -194,7 +194,16 @@ window.DTTREE = (function(window, document) {
                     }
                 }
             });
-        }
+        },
+
+        redraw: function(node) {
+          
+          var li = node.HTMLNode;
+          var html = _renderNodes(node.nodes);
+
+          $(html).hide();
+          li.append(html);
+        },
     }
 
     // We return private if its test

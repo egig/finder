@@ -426,7 +426,7 @@
 
                             var path = node.path;
                             node.nodes = DTFINDER.File.list(path);
-                            dttree.redraw(node, dttree);
+                            // dttree.redraw(node, dttree);
                         }
                     });
 
@@ -523,6 +523,7 @@
 
             var content = nunjucks.render('template.html', {
                 createFolderUrl: createFolderUrl,
+                uploadUrl: uploadUrl,
                 Submit: DTFINDER.Locale.localize("Submit"),
                 Cancel: DTFINDER.Locale.localize("Cancel"),
                 selectLabel: DTFINDER.Locale.localize('Select')
