@@ -4,3 +4,5 @@ npm-debug.log
 demo/deps
 /dist
 /src/js/template.js
+/files/*
+!/files/.gitkeep
