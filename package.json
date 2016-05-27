@@ -4,6 +4,7 @@
   "description": "finder ======",
   "main": "gulpfile.js",
   "dependencies": {
+    "express": "^4.13.4",
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
     "gulp-run": "^1.6.8",
