@@ -120,6 +120,15 @@
 
         this.open(path);
     },
+        listenTreeNodeClick: function(el) {
+
+            $(el).on('click', 'a.dttree-node, li.dtf-file-item > a', function(e){
+                e.preventDefault();
+
+                var href = $(this).attr("href");
+                window.location.hash = href;                
+            });
+        },
 
         listenUrl: function(){
             var _this = this
@@ -160,6 +169,7 @@
 
         listen: function (el, options) {
 
+            this.listenTreeNodeClick(el);
             this.listenUrl();
             this.listenMoveBrowser();
 

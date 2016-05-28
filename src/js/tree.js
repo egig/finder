@@ -15,10 +15,10 @@ window.DTTREE = (function(window, document) {
           var text = node.text;
 
           // @todo replace special char
-          node.id = node.text.replace(" ", "_");
+          node.id = '_'+node.text.replace(" ", "_");
 
           if(typeof(parent) !== 'undefined') {
-            node.id = parent.id+"_"+node.id;
+            node.id = parent.id+node.id;
           }
 
           var path = node.path;
@@ -83,7 +83,7 @@ window.DTTREE = (function(window, document) {
 
         var togglerIcon = _create('I').addClass(togglerClass);
 
-        var toggler = _create('A', {href: '#'})
+        var toggler = _create('A', {href: 'javaascript:;'})
             .addClass(NODE_TOGGLER_CLASS)
             .append(togglerIcon)
             .data('node', node);
@@ -199,7 +199,7 @@ window.DTTREE = (function(window, document) {
         redraw: function(node) {
           
           var li = node.HTMLNode;
-          var html = _renderNodes(node.nodes);
+          var html = _renderNodes(node.nodes, node);
 
           $(html).hide();
           li.append(html);
