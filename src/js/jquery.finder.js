@@ -360,8 +360,9 @@
                },  this.opts.data);
 
             $('#dtf-new-folder-form').ajaxForm({
-               data: data,
-               success: $.proxy(function(data){
+                type: "POST",
+                data: data,
+                success: $.proxy(function(data){
                     this.refresh(p);
                     $('#dtf-new-folder-dialog').modal('hide');
                }, this)

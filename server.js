@@ -4,6 +4,7 @@ var express = require('express')
 var path = require('path')
 var fs = require('fs')
 var app = express()
+var bodyParser = require('body-parser');
 
 var base_path = path.join(__dirname, 'files');
 
@@ -13,6 +14,10 @@ var Server = {
         var op = request.query.op;
         var q_path = request.query.path;
 
+        if( typeof op == 'undefined') {
+            op = request.body.op;
+        }
+
         switch (op) {
             case 'ls':
                 var json_response = this.ls(q_path);
@@ -20,12 +25,30 @@ var Server = {
             case 'properties':
                 var json_response = this.properties(q_path);
                 break;
+            case 'mkdir':
+                var folder_name = request.body['folder-name'];
+                q_path = request.body.path;
+    
+                var json_response = this.mkdir(q_path, folder_name);
+                break;
             default:
                 var json_response = {error: "Unknown op"};
                 break;
         }
 
         response.json(json_response);
+    },
+
+    mkdir: function(q_path, folder_name) {
+        var reqx_path = prepare_path(q_path);
+        var full_path = path.join(reqx_path, folder_name);
+
+        fs.mkdir(full_path);
+
+        return {
+            type: "dir",
+            path: path.join(q_path, folder_name),
+        }
     },
 
     properties: function(q_path) {
@@ -79,13 +102,19 @@ function make_relative_path(path, base) {
 }
 
 // setting up
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     next();
 });
 
-app.all("/files", function(request, response) {
+app.get("/files", function(request, response) {
+    Server.handle(request, response);
+});
+
+app.post("/files", function(request, response) {
     Server.handle(request, response);
 });
 
