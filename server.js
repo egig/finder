@@ -17,12 +17,27 @@ var Server = {
             case 'ls':
                 var json_response = this.ls(q_path);
                 break;
+            case 'properties':
+                var json_response = this.properties(q_path);
+                break;
             default:
                 var json_response = {error: "Unknown op"};
                 break;
         }
 
         response.json(json_response);
+    },
+
+    properties: function(q_path) {
+
+        var reqx_path = prepare_path(q_path);
+        var p_stat = fs.lstatSync(reqx_path);
+        return {
+            name: q_path,
+            size: p_stat.size,
+            type: q_path.isFile ? "File" : "Directory",
+            location: path.dirname(reqx_path)
+        };
     },
 
     ls: function(q_path) {
