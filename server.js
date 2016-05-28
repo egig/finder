@@ -49,14 +49,18 @@ var Server = {
         var array_data = [];
         for(var i=0;i<data.length;i++) {
 
-            var full_path = path.join(base_path, data[i]);
-            var p = make_relative_path(full_path, base_path);
+            var full_path = path.join(reqx_path, data[i]);
+            var p = make_relative_path(full_path, reqx_path);
             var p_stat = fs.lstatSync(full_path);
 
             var file = {
                 type: p_stat.isFile() ? "file" : "dir",
                 path: path.join(q_path, p),
                 text: data[i],
+            }
+
+            if(p_stat.isDirectory()) {
+                file.nodes = [];
             }
 
             array_data.push(file);
@@ -71,7 +75,7 @@ function prepare_path(q_path) {
 }
 
 function make_relative_path(path, base) {
-    return path.replace(base, "");
+    return path.replace(base, "").trimLeft('/');
 }
 
 // setting up

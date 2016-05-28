@@ -53,7 +53,7 @@
 
     initTree: function() {
             var _this = this;
-            var data = [{path: '#/', text: '/', type: 'dir', nodes: []}]
+            var data = [{path: '/', text: '/', type: 'dir', nodes: []}]
 
             this.nav.dttree({
                 nodes: data,
@@ -65,7 +65,7 @@
                     return node.type === "dir"
                 },
                 onBeforeExpand: function(node, dttree) {
-                    var path = node.path.substr(1);
+                    var path = node.path;
 
                     if($.inArray(path, _this._loadedPaths) === -1) {
 
