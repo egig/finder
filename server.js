@@ -1,4 +1,4 @@
-var port = 3002;
+ var port = 3002;
 
 var express = require('express')
 var path = require('path')
@@ -69,12 +69,30 @@ var Server = {
                 q_path = request.body.path;
                 var json_response = this.delete(q_path);
                 break;
+            case 'rename':
+                q_path = request.body.path;
+                new_name = request.body.newName;
+                var json_response = this.rename(q_path, new_name);
+                break;
             default:
                 var json_response = {error: "Unknown op"};
                 break;
         }
 
         response.json(json_response);
+    },
+
+    rename: function(q_path, new_name) {
+
+        var reqx_path = prepare_path(q_path);
+
+        var dirname = path.dirname(reqx_path);
+
+        var new_path = path.join(dirname, new_name);
+
+        fs.rename(reqx_path, new_path);
+
+        return [];
     },
 
     delete: function(q_path) {
