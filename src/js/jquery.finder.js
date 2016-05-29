@@ -138,18 +138,6 @@
             };
         },
 
-        listenMoveBrowser: function(){
-
-            var moveBrowser = $('#dtf-sub-browser-dialog');
-
-            moveBrowser.on('click', 'a.dttree-node', function(e){
-                e.preventDefault();
-                var a = e.currentTarget;
-                moveBrowser.find('.selected').removeClass('selected');
-                $(a).addClass('selected');
-            });
-        },
-
         listenFileItemClick: function(el, options){
 
             // file (not directory) click
@@ -171,7 +159,6 @@
 
             this.listenTreeNodeClick(el);
             this.listenUrl();
-            this.listenMoveBrowser();
 
             // context menu
             if(options.manage) {
@@ -320,6 +307,14 @@
                     }
 
                     $(el).data('target', contextTarget);
+
+                    // listen clipboard
+                    var menu = this.getMenu();
+
+                    if(DTFINDER._copyClipboard || DTFINDER._cutClipboard) {
+                        menu.find('UL').prepend('<li id="dtf-paste-context" data-action="paste"><a href="#">Paste</a></li>');
+                    }
+
                     return true;
                   }
             });
@@ -421,37 +416,31 @@
                     return;
                 break;
 
-                case 'move':
+                case "copy":
+                    DTFINDER._copyClipboard = path;
+                    DTFINDER._cutClipboard = null;
+                break;
+                case "cut":
+                    DTFINDER._cutClipboard = path;
+                    DTFINDER._copyClipboard = null;
+                break;
 
-                    $('#dtf-sub-browser-dialog .modal-body').dttree({
-                        nodes: [{
-                            path: '/',
-                            text: '/',
-                            type: 'dir',
-                            nodes: []
-                        }],
-                        filterNode: function(node) {
-                            return node.type === "dir";
-                        },
-                        onBeforeExpand: function(node, dttree) {
+                case "paste":
 
-                            var path = node.path;
-                            node.nodes = DTFINDER.File.list(path);
-                            // dttree.redraw(node, dttree);
-                        }
-                    });
+                    if(!path) {
+                        path = this._currentPath;
+                    }
 
-                    var parent = this;
-                    $('#dtf-sub-browser-dialog').on('click', '.folder-selector', function(){
-                        var href = $('#dtf-sub-browser-dialog').find('.selected').attr('href').substr(1);
+                    if(DTFINDER._copyClipboard) {
+                        DTFINDER.File.copy(DTFINDER._copyClipboard, path);
+                    } else {
+                        DTFINDER.File.cut(DTFINDER._cutClipboard, path);
+                    }
 
-                        DTFINDER.File.move(path, href);
-                        parent.refresh();
-
-                        $('#dtf-sub-browser-dialog').modal('hide');
-                    });
-
-                    $('#dtf-sub-browser-dialog').modal('show');
+                    DTFINDER._copyClipboard =  null;
+                    $("#dtf-paste-context").remove();
+                    this.refresh();
+                    
                 break;
 
                 case 'properties':
@@ -566,6 +555,10 @@
                 context.push({action: "new-folder", text: DTFINDER.Locale.localize('New Folder')+'\u2026'});
             }
 
+            if(DTFINDER._copyClipboard) {
+                context.push({action: "paste", text: DTFINDER.Locale.localize('Paste')});
+            }
+
             context.push({action: "properties", text:DTFINDER.Locale.localize('Properties')});
 
             return this._render('context-menu.html', {id:"bro-context-menu",  menus: context});
@@ -578,7 +571,11 @@
 
             if(DTFINDER.config.permissions.move) {
                 context.push({action: "rename", text: DTFINDER.Locale.localize('Rename')});
-                context.push({action: "move", text: DTFINDER.Locale.localize('Move')+'\u2026'});
+                
+                // context.push({action: "move", text: DTFINDER.Locale.localize('Move')+'\u2026'});
+                
+                context.push({action: "cut", text: DTFINDER.Locale.localize('Cut')});
+                context.push({action: "copy", text: DTFINDER.Locale.localize('Copy')});
             }
 
             if(DTFINDER.config.permissions.delete) {

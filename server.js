@@ -2,7 +2,7 @@
 
 var express = require('express')
 var path = require('path')
-var fs = require('fs')
+var fs = require('fs-extra')
 var app = express()
 var bodyParser = require('body-parser')
 var rimraf = require('rimraf')
@@ -74,12 +74,70 @@ var Server = {
                 new_name = request.body.newName;
                 var json_response = this.rename(q_path, new_name);
                 break;
+            case 'copy':
+                q_path = request.body.path;
+                var dest = request.body.dest;
+
+                var json_response = this.copy(q_path, dest);
+
+                break;
+             case 'cut':
+                q_path = request.body.path;
+                var dest = request.body.dest;
+
+                var json_response = this.cut(q_path, dest);
+
+                break;
             default:
                 var json_response = {error: "Unknown op"};
                 break;
         }
 
         response.json(json_response);
+    },
+
+    copy: function(q_path, dest) {
+        var reqx_path = prepare_path(q_path);
+        var req_dest = prepare_path(dest);
+
+        var p_stat = fs.lstatSync(req_dest);
+        if(p_stat.isFile()) {
+            console.log("Cannot override file");
+            return false;
+        }
+
+        var bname = path.basename(reqx_path);
+        if(p_stat.isDirectory()) {
+            req_dest = path.join(req_dest, bname);
+        }
+
+        fs.copy(reqx_path, req_dest, function(err) {
+            if(err) console.log(err);
+        });
+
+        return [];
+    },
+
+    cut: function(q_path, dest) {
+        var reqx_path = prepare_path(q_path);
+        var req_dest = prepare_path(dest);
+
+        var p_stat = fs.lstatSync(req_dest);
+        if(p_stat.isFile()) {
+            console.log("Cannot override file");
+            return false;
+        }
+
+        var bname = path.basename(reqx_path);
+        if(p_stat.isDirectory()) {
+            req_dest = path.join(req_dest, bname);
+        }
+
+        fs.move(reqx_path, req_dest, function(err) {
+            if(err) console.log(err);
+        });
+
+        return [];
     },
 
     rename: function(q_path, new_name) {

@@ -1,6 +1,9 @@
 window.DTFINDER = (function(){
 
     return {
+
+    	_copyClipboard: null,
+    	_cutClipboard: null,
         lang: [],
         config: {
             data: {},
@@ -8,4 +11,5 @@ window.DTFINDER = (function(){
             permissions: {}
         }
     }
+
 })();

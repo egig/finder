@@ -8,13 +8,24 @@ DTFINDER.File = {
         return this._sendRequest('GET', data, true)
     },
 
-    move: function(path, dest) {
+    cut: function(path, dest) {
 
         var data = {
-            op: 'move',
+            op: 'cut',
             path:path,
             dest: dest
         }
+        return this._sendRequest('POST', data)
+    },
+
+    copy: function(file, dest) {
+        
+        var data = {
+            op: 'copy',
+            path: file,
+            dest: dest
+        }
+
         return this._sendRequest('POST', data)
     },
 
