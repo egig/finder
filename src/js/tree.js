@@ -83,7 +83,7 @@ window.DTTREE = (function(window, document) {
 
         var togglerIcon = _create('I').addClass(togglerClass);
 
-        var toggler = _create('A', {href: 'javaascript:;'})
+        var toggler = _create('A', {href: 'javascript:;'})
             .addClass(NODE_TOGGLER_CLASS)
             .append(togglerIcon)
             .data('node', node);

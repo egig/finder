@@ -25,10 +25,10 @@ describe("DTTREE", function(){
 		var aNodeToggler = DTTREE.createNodeToggler(aNode);
 
 		expect(aNodeToggler[0].tagName).toBe("A");
-		expect(aNodeToggler[0].outerHTML).toBe('<a class="dttree-node-toggler" href="#"><i class="fa fa-plus-square-o"></i></a>');
+		expect(aNodeToggler[0].outerHTML).toBe('<a class="dttree-node-toggler" href="javascript:;"><i class="fa fa-plus-square-o"></i></a>');
 
 		var anExpandedToggler = DTTREE.createNodeToggler(aNode, true);
-		expect(anExpandedToggler[0].outerHTML).toBe('<a class="dttree-node-toggler" href="#"><i class="fa fa-minus-square-o"></i></a>');
+		expect(anExpandedToggler[0].outerHTML).toBe('<a class="dttree-node-toggler" href="javascript:;"><i class="fa fa-minus-square-o"></i></a>');
 
 	});
 
