@@ -77,7 +77,7 @@
                         node.nodes = _this._cache[path];
 
                         dttree.redraw(node);
-                        
+
                         _this.handleHight();
                     }
                 }
@@ -126,7 +126,7 @@
                 e.preventDefault();
 
                 var href = $(this).attr("href");
-                window.location.hash = href;                
+                window.location.hash = href;
             });
         },
 
@@ -440,7 +440,7 @@
                     DTFINDER._copyClipboard =  null;
                     $("#dtf-paste-context").remove();
                     this.refresh();
-                    
+
                 break;
 
                 case 'properties':
@@ -521,12 +521,9 @@
             var itemContext = this.createItemContext();
             var broContext = this.createBrowserContext();
 
-            var content = nunjucks.render('template.html', {
+            var content = this._render('template.html', {
                 createFolderUrl: createFolderUrl,
-                uploadUrl: uploadUrl,
-                Submit: DTFINDER.Locale.localize("Submit"),
-                Cancel: DTFINDER.Locale.localize("Cancel"),
-                selectLabel: DTFINDER.Locale.localize('Select')
+                uploadUrl: uploadUrl
             });
 
             $(el).html(content)
@@ -540,7 +537,7 @@
 
         _render: function(template, param) {
             var param = $.extend(param,{
-                _: function(str) {
+                __: function(str) {
                         return DTFINDER.Locale.localize(str);
                     }
             });
@@ -571,9 +568,9 @@
 
             if(DTFINDER.config.permissions.move) {
                 context.push({action: "rename", text: DTFINDER.Locale.localize('Rename')});
-                
+
                 // context.push({action: "move", text: DTFINDER.Locale.localize('Move')+'\u2026'});
-                
+
                 context.push({action: "cut", text: DTFINDER.Locale.localize('Cut')});
                 context.push({action: "copy", text: DTFINDER.Locale.localize('Copy')});
             }
